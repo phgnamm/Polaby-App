@@ -1,10 +1,8 @@
-﻿using Polaby.Repositories.Enums;
-
-namespace Polaby.Repositories.Entities
+﻿namespace Polaby.Repositories.Entities
 {
     public class Rating : BaseEntity
     {
-        public RatingStar Start { get; set; }
+        public int Star { get; set; }
         public string? Comment { get; set; }
 
         // Foreign key

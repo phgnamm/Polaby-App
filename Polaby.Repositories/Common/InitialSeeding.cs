@@ -9,7 +9,8 @@ namespace Polaby.Repositories.Common
     /// </summary>
     public class InitialSeeding
     {
-        private static readonly string[] RoleList = [Enums.Role.Admin.ToString(), Enums.Role.User.ToString()];
+        private static readonly string[] RoleList =
+            [Enums.Role.Admin.ToString(), Enums.Role.User.ToString(), Enums.Role.Expert.ToString()];
 
         public static async Task Initialize(IServiceProvider serviceProvider)
         {

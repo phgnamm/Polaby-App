@@ -6,7 +6,7 @@ namespace Polaby.Repositories.Entities
     {
         public string? Title { get; set; }
         public Trimester Trimester { get; set; }
-        public DateTime Date { get; set; }
+        public DateOnly? Date { get; set; }
 
         // Foreign key
         public Guid? UserId { get; set; }

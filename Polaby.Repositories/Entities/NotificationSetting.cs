@@ -1,5 +1,4 @@
-﻿
-namespace Polaby.Repositories.Entities
+﻿namespace Polaby.Repositories.Entities
 {
     public class NotificationSetting : BaseEntity
     {
@@ -12,6 +11,5 @@ namespace Polaby.Repositories.Entities
         // Relationship
         public virtual Account? User { get; set; }
         public virtual NotificationType? NotificationType { get; set; }
-
     }
 }

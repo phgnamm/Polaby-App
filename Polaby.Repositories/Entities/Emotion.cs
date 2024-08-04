@@ -2,10 +2,10 @@
 
 namespace Polaby.Repositories.Entities
 {
-    public class Emotion: BaseEntity
+    public class Emotion : BaseEntity
     {
         public EmotionType? Type { get; set; }
-        public DateTime Date { get; set; }
+        public DateOnly? Date { get; set; }
 
         // Foreign key
         public Guid? UserId { get; set; }

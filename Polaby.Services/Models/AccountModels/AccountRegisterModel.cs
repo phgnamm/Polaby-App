@@ -18,7 +18,7 @@ namespace Polaby.Services.Models.AccountModels
         public Gender Gender { get; set; }
 
         [Required(ErrorMessage = "Date of Birth is required")]
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
 
         public string? Address { get; set; }
 

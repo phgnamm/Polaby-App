@@ -1,15 +1,15 @@
 ﻿namespace Polaby.Repositories.Entities
 {
-    public class Comment: BaseEntity
+    public class Comment : BaseEntity
     {
-        public string? Content { get; set; }            
-        public int LikesCount { get; set; }             
+        public string? Content { get; set; }
+        public int LikesCount { get; set; }
         public string? Attachments { get; set; }
 
         // Foreign key
-        public Guid? UserId { get; set; }               
-        public Guid? PostId { get; set; }               
-        public Guid? ParentCommentId { get; set; }       
+        public Guid? UserId { get; set; }
+        public Guid? PostId { get; set; }
+        public Guid? ParentCommentId { get; set; }
 
         // Relationship
         public virtual Account? Account { get; set; }

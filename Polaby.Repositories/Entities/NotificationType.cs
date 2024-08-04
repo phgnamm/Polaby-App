@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Polaby.Repositories.Enums;
 
 namespace Polaby.Repositories.Entities
 {
     public class NotificationType : BaseEntity
     {
-        public string? Name { get; set; }
+        public NotificationTypeName? Name { get; set; }
         public string? Content { get; set; }
+        public Guid? NotificationId { get; set; }
 
         // Relationship
         public virtual Notification? Notification { get; set; }
-        public virtual ICollection<NotificationSetting> NotificationSettings { get; set; } = new List<NotificationSetting>();
+
+        public virtual ICollection<NotificationSetting> NotificationSettings { get; set; } =
+            new List<NotificationSetting>();
     }
 }
