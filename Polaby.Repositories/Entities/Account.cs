@@ -69,8 +69,8 @@ namespace Polaby.Repositories.Entities
         public virtual ICollection<CommunityPost> CommunityPosts { get; set; } = new List<CommunityPost>();
         public virtual ICollection<UserMenu> UserMenus { get; set; } = new List<UserMenu>();
         public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
-
-        public virtual ICollection<NotificationSetting> NotificationSettings { get; set; } =
-            new List<NotificationSetting>();
+        public virtual ICollection<NotificationSetting> NotificationSettings { get; set; } = new List<NotificationSetting>();
+        public virtual ICollection<CommunityPostLike> CommunityPostLikes { get; set; } = new List<CommunityPostLike>();
+        public virtual ICollection<CommentLike> CommentLikes { get; set; } = new List<CommentLike>();
     }
 }

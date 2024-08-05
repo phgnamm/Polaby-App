@@ -12,7 +12,7 @@ using Polaby.Repositories;
 namespace Polaby.Repositories.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240804152504_EntityV1")]
+    [Migration("20240805144413_EntityV1")]
     partial class EntityV1
     {
         /// <inheritdoc />
@@ -363,6 +363,48 @@ namespace Polaby.Repositories.Migrations
                     b.ToTable("Comment");
                 });
 
+            modelBuilder.Entity("Polaby.Repositories.Entities.CommentLike", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CommentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CommentLike");
+                });
+
             modelBuilder.Entity("Polaby.Repositories.Entities.CommunityPost", b =>
                 {
                     b.Property<Guid>("Id")
@@ -426,6 +468,48 @@ namespace Polaby.Repositories.Migrations
                     b.HasIndex("AccountId");
 
                     b.ToTable("CommunityPost");
+                });
+
+            modelBuilder.Entity("Polaby.Repositories.Entities.CommunityPostLike", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CommunityPostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommunityPostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CommunityPostLike");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.Dish", b =>
@@ -1677,6 +1761,21 @@ namespace Polaby.Repositories.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("Polaby.Repositories.Entities.CommentLike", b =>
+                {
+                    b.HasOne("Polaby.Repositories.Entities.Comment", "Comment")
+                        .WithMany("CommentLikes")
+                        .HasForeignKey("CommentId");
+
+                    b.HasOne("Polaby.Repositories.Entities.Account", "User")
+                        .WithMany("CommentLikes")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Comment");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Polaby.Repositories.Entities.CommunityPost", b =>
                 {
                     b.HasOne("Polaby.Repositories.Entities.Account", "Account")
@@ -1684,6 +1783,21 @@ namespace Polaby.Repositories.Migrations
                         .HasForeignKey("AccountId");
 
                     b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("Polaby.Repositories.Entities.CommunityPostLike", b =>
+                {
+                    b.HasOne("Polaby.Repositories.Entities.CommunityPost", "CommunityPost")
+                        .WithMany("CommunityPostLikes")
+                        .HasForeignKey("CommunityPostId");
+
+                    b.HasOne("Polaby.Repositories.Entities.Account", "User")
+                        .WithMany("CommunityPostLikes")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("CommunityPost");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.DishIngredient", b =>
@@ -1898,7 +2012,11 @@ namespace Polaby.Repositories.Migrations
 
             modelBuilder.Entity("Polaby.Repositories.Entities.Account", b =>
                 {
+                    b.Navigation("CommentLikes");
+
                     b.Navigation("Comments");
+
+                    b.Navigation("CommunityPostLikes");
 
                     b.Navigation("CommunityPosts");
 
@@ -1927,11 +2045,15 @@ namespace Polaby.Repositories.Migrations
 
             modelBuilder.Entity("Polaby.Repositories.Entities.Comment", b =>
                 {
+                    b.Navigation("CommentLikes");
+
                     b.Navigation("Reports");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.CommunityPost", b =>
                 {
+                    b.Navigation("CommunityPostLikes");
+
                     b.Navigation("Reports");
                 });
 
