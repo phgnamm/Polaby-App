@@ -16,5 +16,6 @@
         public virtual CommunityPost? Post { get; set; }
         public virtual Comment? ParentComment { get; set; }
         public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
+        public virtual ICollection<CommentLike> CommentLikes { get; set; } = new List<CommentLike>();
     }
 }

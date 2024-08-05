@@ -791,6 +791,36 @@ namespace Polaby.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CommunityPostLike",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CommunityPostId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommunityPostLike", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CommunityPostLike_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CommunityPostLike_CommunityPost_CommunityPostId",
+                        column: x => x.CommunityPostId,
+                        principalTable: "CommunityPost",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Notification",
                 columns: table => new
                 {
@@ -827,6 +857,36 @@ namespace Polaby.Repositories.Migrations
                         name: "FK_Notification_CommunityPost_CommunityPostId",
                         column: x => x.CommunityPostId,
                         principalTable: "CommunityPost",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CommentLike",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModificationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommentLike", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CommentLike_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_CommentLike_Comment_CommentId",
+                        column: x => x.CommentId,
+                        principalTable: "Comment",
                         principalColumn: "Id");
                 });
 
@@ -976,9 +1036,29 @@ namespace Polaby.Repositories.Migrations
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CommentLike_CommentId",
+                table: "CommentLike",
+                column: "CommentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CommentLike_UserId",
+                table: "CommentLike",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CommunityPost_AccountId",
                 table: "CommunityPost",
                 column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CommunityPostLike_CommunityPostId",
+                table: "CommunityPostLike",
+                column: "CommunityPostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CommunityPostLike_UserId",
+                table: "CommunityPostLike",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DishIngredient_DishId",
@@ -1132,6 +1212,12 @@ namespace Polaby.Repositories.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "CommentLike");
+
+            migrationBuilder.DropTable(
+                name: "CommunityPostLike");
 
             migrationBuilder.DropTable(
                 name: "DishIngredient");
