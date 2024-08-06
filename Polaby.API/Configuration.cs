@@ -50,6 +50,10 @@ namespace Polaby.API
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
 
+            //CommunityPost
+            services.AddScoped<ICommunityPostService, CommunityPostService>();
+            services.AddScoped<ICommuntityPostRepository, CommunityPostRepository>();
+
             return services;
         }
     }
