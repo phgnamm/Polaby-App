@@ -16,13 +16,13 @@ namespace Polaby.Repositories.Entities
         public double? Height { get; set; }
         public double? InitialWeight { get; set; }
         public Diet? Diet { get; set; }
-        public FrequencyOfActivity FrequencyOfActivity { get; set; }
-        public FrequencyOfStress FrequencyOfStress { get; set; }
+        public FrequencyOfActivity? FrequencyOfActivity { get; set; }
+        public FrequencyOfStress? FrequencyOfStress { get; set; }
 
         // Information of Baby
         public string? BabyName { get; set; }
         public Gender? BabyGender { get; set; }
-        public DateOnly DueDate { get; set; }
+        public DateOnly? DueDate { get; set; }
         public BMI? BMI { get; set; }
 
         // Information of Expert
@@ -36,7 +36,7 @@ namespace Polaby.Repositories.Entities
         // Subscription details
         public DateTime? SubscriptionStartDate { get; set; }
         public DateTime? SubscriptionEndDate { get; set; }
-        public bool IsSubscriptionActive { get; set; }
+        public bool IsSubscriptionActive { get; set; } = false;
 
         // Refresh Token
         public string? RefreshToken { get; set; }

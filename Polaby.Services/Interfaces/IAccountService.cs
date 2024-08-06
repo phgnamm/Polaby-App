@@ -21,7 +21,8 @@ namespace Polaby.Services.Interfaces
 		Task<ResponseModel> AddAccounts(List<AccountRegisterModel> accountRegisterModels);
 		Task<ResponseDataModel<AccountModel>> GetAccount(Guid id);
 		Task<Pagination<AccountModel>> GetAllAccounts(AccountFilterModel accountFilterModel);
-		Task<ResponseModel> UpdateAccount(Guid id, AccountUpdateModel accountUpdateModel);
+		Task<ResponseModel> UpdateAccountUser(Guid id, AccountUserUpdateModel accountUserUpdateModel);
+		Task<ResponseModel> UpdateAccountExpert(Guid id, AccountExpertUpdateModel accountExpertUpdateModel);
 		Task<ResponseModel> DeleteAccount(Guid id);
 		Task<ResponseModel> RestoreAccount(Guid id);
 	}
