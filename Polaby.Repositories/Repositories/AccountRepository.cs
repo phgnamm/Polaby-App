@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Polaby.Repositories.Common;
+using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.AccountModels;
 using Polaby.Repositories.Models.QueryModels;
@@ -91,6 +92,11 @@ namespace Polaby.Repositories.Repositories
                 TotalCount = totalCount,
                 Data = await query.ToListAsync(),
             };
+        }
+
+        public async Task<Account> GetAccountById(Guid id)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }
