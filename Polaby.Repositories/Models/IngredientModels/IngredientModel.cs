@@ -1,11 +1,12 @@
-﻿namespace Polaby.Repositories.Entities
+﻿
+namespace Polaby.Repositories.Models.MenuModels
 {
-    public class Ingredient : BaseEntity
+    public class IngredientModel
     {
+        public Guid Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
         public string? Image { get; set; }
-        public bool Animal { get; set; }
         public float? Kcal { get; set; }
         public float? Water { get; set; }
         public float? Protein { get; set; }
@@ -26,8 +27,5 @@
         public float? Zinc { get; set; }
         public string? Source { get; set; }
         public string? SourceUrl { get; set; }
-
-        // Relationship
-        public virtual ICollection<DishIngredient> DishIngredients { get; set; } = new List<DishIngredient>();
     }
 }

@@ -4,7 +4,8 @@
 	{
 		AppDbContext DbContext { get; }
 		IAccountRepository AccountRepository { get; }
-
-		public Task<int> SaveChangeAsync();
+		IMenuRepository MenuRepository { get; }
+        IMenuMealRepository MenuMealRepository { get; }
+        public Task<int> SaveChangeAsync();
 	}
 }
