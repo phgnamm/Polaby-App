@@ -15,7 +15,7 @@ namespace Polaby.API.Controllers
         {
             _accountService = accountService;
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> AddAccounts([FromBody] List<AccountRegisterModel> accountRegisterModels)
         {
@@ -77,12 +77,33 @@ namespace Polaby.API.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAccount(Guid id, [FromBody] AccountUpdateModel accountUpdateModel)
+        [HttpPut("user/{id}")]
+        public async Task<IActionResult> UpdateAccountUser(Guid id,
+            [FromBody] AccountUserUpdateModel accountUserUpdateModel)
         {
             try
             {
-                var result = await _accountService.UpdateAccount(id, accountUpdateModel);
+                var result = await _accountService.UpdateAccountUser(id, accountUserUpdateModel);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut("expert/{id}")]
+        public async Task<IActionResult> UpdateAccountExpert(Guid id,
+            [FromBody] AccountExpertUpdateModel accountExpertUpdateModel)
+        {
+            try
+            {
+                var result = await _accountService.UpdateAccountExpert(id, accountExpertUpdateModel);
                 if (result.Status)
                 {
                     return Ok(result);

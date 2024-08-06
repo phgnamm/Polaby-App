@@ -56,6 +56,10 @@ namespace Polaby.API
             //MenuMeal
             services.AddScoped<IMenuMealRepository, MenuMealRepository>();
 
+            //CommunityPost
+            services.AddScoped<ICommunityPostService, CommunityPostService>();
+            services.AddScoped<ICommuntityPostRepository, CommunityPostRepository>();
+
             return services;
         }
     }

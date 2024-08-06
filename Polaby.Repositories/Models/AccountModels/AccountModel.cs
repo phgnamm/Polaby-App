@@ -8,23 +8,30 @@ public class AccountModel : BaseEntity
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public Gender? Gender { get; set; }
+
     public DateOnly? DateOfBirth { get; set; }
-    public string? Address { get; set; }
+
+    // public string? Address { get; set; }
     public string? Image { get; set; }
+
     public string? Email { get; set; }
-    public string? PhoneNumber { get; set; }
+
+    // public string? PhoneNumber { get; set; }
     public bool? EmailConfirmed { get; set; }
+
     public string? Role { get; set; }
+
+    // Information of initial health
     public double? Height { get; set; }
     public double? InitialWeight { get; set; }
     public Diet? Diet { get; set; }
-    public FrequencyOfActivity FrequencyOfActivity { get; set; }
-    public FrequencyOfStress FrequencyOfStress { get; set; }
+    public FrequencyOfActivity? FrequencyOfActivity { get; set; }
+    public FrequencyOfStress? FrequencyOfStress { get; set; }
 
     // Information of Baby
     public string? BabyName { get; set; }
     public Gender? BabyGender { get; set; }
-    public DateOnly DueDate { get; set; }
+    public DateOnly? DueDate { get; set; }
     public BMI? BMI { get; set; }
 
     // Information of Expert

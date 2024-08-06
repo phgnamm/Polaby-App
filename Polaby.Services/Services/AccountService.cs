@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
+using Polaby.Repositories.Enums;
 using Polaby.Repositories.Models.AccountModels;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
@@ -56,6 +57,7 @@ namespace Polaby.Services.Services
             // Create new account
             var user = _mapper.Map<Account>(accountRegisterModel);
             user.UserName = user.Email;
+            user.Gender = Gender.Female; // User is female by default
             user.CreationDate = DateTime.Now;
             user.VerificationCode = AuthenticationTools.GenerateVerificationCode(6);
             user.VerificationCodeExpiryTime = DateTime.Now.AddMinutes(15);
@@ -65,7 +67,7 @@ namespace Polaby.Services.Services
             if (result.Succeeded)
             {
                 // Add role
-                await _userManager.AddToRoleAsync(user, Polaby.Repositories.Enums.Role.User.ToString());
+                await _userManager.AddToRoleAsync(user, Repositories.Enums.Role.User.ToString());
 
                 // Email verification (disable this function if users are not required to verify their email)
                 await SendVerificationEmail(user);
@@ -494,7 +496,7 @@ namespace Polaby.Services.Services
                 if (saveUserResult.Succeeded)
                 {
                     // Add role
-                    await _userManager.AddToRoleAsync(user, Polaby.Repositories.Enums.Role.User.ToString());
+                    await _userManager.AddToRoleAsync(user, Repositories.Enums.Role.User.ToString());
                 }
                 else
                 {
@@ -590,7 +592,7 @@ namespace Polaby.Services.Services
                     if (result.Succeeded)
                     {
                         // Add role
-                        await _userManager.AddToRoleAsync(user, Polaby.Repositories.Enums.Role.User.ToString());
+                        await _userManager.AddToRoleAsync(user, Repositories.Enums.Role.User.ToString());
 
                         // Email verification (disable this function if users are not required to verify their email)
                         // await SendVerificationEmail(user);
@@ -622,7 +624,7 @@ namespace Polaby.Services.Services
 
             var userModel = _mapper.Map<AccountModel>(user);
             var role = await _userManager.GetRolesAsync(user);
-            userModel.Role = Enum.Parse(typeof(Polaby.Repositories.Enums.Role), role[0]).ToString()!;
+            userModel.Role = Enum.Parse(typeof(Repositories.Enums.Role), role[0]).ToString()!;
 
             return new ResponseDataModel<AccountModel>()
             {
@@ -674,7 +676,7 @@ namespace Polaby.Services.Services
                 accountFilterModel.PageSize);
         }
 
-        public async Task<ResponseModel> UpdateAccount(Guid id, AccountUpdateModel accountUpdateModel)
+        public async Task<ResponseModel> UpdateAccountUser(Guid id, AccountUserUpdateModel accountUserUpdateModel)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
 
@@ -687,15 +689,86 @@ namespace Polaby.Services.Services
                 };
             }
 
-            user.FirstName = accountUpdateModel.FirstName;
-            user.LastName = accountUpdateModel.LastName;
-            user.Gender = accountUpdateModel.Gender;
-            user.DateOfBirth = accountUpdateModel.DateOfBirth;
-            user.Address = accountUpdateModel.Address;
-            user.Image = accountUpdateModel.Image;
-            user.PhoneNumber = accountUpdateModel.PhoneNumber;
+            user.FirstName = accountUserUpdateModel.FirstName;
+            user.LastName = accountUserUpdateModel.LastName;
+            // user.Gender = accountUpdateModel.Gender;
+            user.DateOfBirth = accountUserUpdateModel.DateOfBirth;
+            // user.Address = accountUpdateModel.Address;
+            user.Image = accountUserUpdateModel.Image;
+            // user.PhoneNumber = accountUpdateModel.PhoneNumber;
             user.ModificationDate = DateTime.Now;
             user.ModifiedBy = _claimsService.GetCurrentUserId;
+            user.Height = accountUserUpdateModel.Height;
+            user.InitialWeight = accountUserUpdateModel.InitialWeight;
+            user.Diet = accountUserUpdateModel.Diet;
+            user.FrequencyOfActivity = accountUserUpdateModel.FrequencyOfActivity;
+            user.FrequencyOfStress = accountUserUpdateModel.FrequencyOfStress;
+            user.BabyName = accountUserUpdateModel.BabyName;
+            user.BabyGender = accountUserUpdateModel.BabyGender;
+            user.DueDate = accountUserUpdateModel.DueDate;
+
+            double heightInMeters = user.Height.Value / 100.0; // Convert height from cm to meters
+            double bmi = user.InitialWeight.Value / (heightInMeters * heightInMeters);
+
+            if (bmi < 18.5)
+            {
+                user.BMI = BMI.Underweight;
+            }
+            else if (bmi is >= 18.5 and < 24.9)
+            {
+                user.BMI = BMI.NormalWeight;
+            }
+            else if (bmi >= 25)
+            {
+                user.BMI = BMI.Overweight;
+            }
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return new ResponseModel
+                {
+                    Status = true,
+                    Message = "Update account successfully",
+                };
+            }
+
+            return new ResponseModel
+            {
+                Status = false,
+                Message = "Cannot update account",
+            };
+        }
+
+        public async Task<ResponseModel> UpdateAccountExpert(Guid id, AccountExpertUpdateModel accountExpertUpdateModel)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+            {
+                return new ResponseModel
+                {
+                    Status = false,
+                    Message = "User not found"
+                };
+            }
+
+            user.FirstName = accountExpertUpdateModel.FirstName;
+            user.LastName = accountExpertUpdateModel.LastName;
+            // user.Gender = accountUpdateModel.Gender;
+            user.DateOfBirth = accountExpertUpdateModel.DateOfBirth;
+            // user.Address = accountUpdateModel.Address;
+            user.Image = accountExpertUpdateModel.Image;
+            // user.PhoneNumber = accountUpdateModel.PhoneNumber;
+            user.ModificationDate = DateTime.Now;
+            user.ModifiedBy = _claimsService.GetCurrentUserId;
+            user.ClinicAddress = accountExpertUpdateModel.ClinicAddress;
+            user.Description = accountExpertUpdateModel.Description;
+            user.Education = accountExpertUpdateModel.Education;
+            user.YearsOfExperience = accountExpertUpdateModel.YearsOfExperience;
+            user.Workplace = accountExpertUpdateModel.Workplace;
+            user.Level = accountExpertUpdateModel.Level;
 
             var result = await _userManager.UpdateAsync(user);
 

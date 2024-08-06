@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Polaby.Repositories.Common;
+using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.AccountModels;
 using Polaby.Repositories.Models.QueryModels;
@@ -41,12 +42,30 @@ namespace Polaby.Repositories.Repositories
                         LastName = userRolePair.user.LastName,
                         Gender = userRolePair.user.Gender,
                         DateOfBirth = userRolePair.user.DateOfBirth,
-                        Address = userRolePair.user.Address,
+                        // Address = userRolePair.user.Address,
                         Image = userRolePair.user.Image,
                         Email = userRolePair.user.Email,
                         EmailConfirmed = userRolePair.user.EmailConfirmed,
-                        PhoneNumber = userRolePair.user.PhoneNumber,
+                        // PhoneNumber = userRolePair.user.PhoneNumber,
                         Role = role.Name!,
+                        Height = userRolePair.user.Height,
+                        InitialWeight = userRolePair.user.InitialWeight,
+                        Diet = userRolePair.user.Diet,
+                        FrequencyOfActivity = userRolePair.user.FrequencyOfActivity,
+                        FrequencyOfStress = userRolePair.user.FrequencyOfStress,
+                        BabyName = userRolePair.user.BabyName,
+                        BabyGender = userRolePair.user.BabyGender,
+                        DueDate = userRolePair.user.DueDate,
+                        BMI = userRolePair.user.BMI,
+                        ClinicAddress = userRolePair.user.ClinicAddress,
+                        Description = userRolePair.user.Description,
+                        Education = userRolePair.user.Education,
+                        YearsOfExperience = userRolePair.user.YearsOfExperience,
+                        Workplace = userRolePair.user.Workplace,
+                        Level = userRolePair.user.Level,
+                        SubscriptionStartDate = userRolePair.user.SubscriptionStartDate,
+                        SubscriptionEndDate = userRolePair.user.SubscriptionEndDate,
+                        IsSubscriptionActive = userRolePair.user.IsSubscriptionActive,
                         CreationDate = userRolePair.user.CreationDate,
                         CreatedBy = userRolePair.user.CreatedBy,
                         ModificationDate = userRolePair.user.ModificationDate,
@@ -91,6 +110,11 @@ namespace Polaby.Repositories.Repositories
                 TotalCount = totalCount,
                 Data = await query.ToListAsync(),
             };
+        }
+
+        public async Task<Account> GetAccountById(Guid id)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }
