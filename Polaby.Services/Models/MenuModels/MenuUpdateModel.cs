@@ -13,9 +13,6 @@ namespace Polaby.Services.Models.MenuModels
         [Required(ErrorMessage = "Image is required!")]
         public string? Image { get; set; }
 
-        [Range(1, 5000, ErrorMessage = "Kcal must be greater than 0 and less than 5000")]
-        public float? Kcal { get; set; }
-
         [Range(1, 5000, ErrorMessage = "Water must be greater than 0 and less than 5000")]
         public float? Water { get; set; }
 

@@ -1,5 +1,4 @@
-﻿
-namespace Polaby.Repositories.Models.MenuModels
+﻿namespace Polaby.Repositories.Models.MenuModels
 {
     public class MenuModel
     {
@@ -9,6 +8,5 @@ namespace Polaby.Repositories.Models.MenuModels
         public string? Image { get; set; }
         public float? Kcal { get; set; }
         public float? Water { get; set; }
-        public List<MenuMealModel> MenuMeals { get; set; } = new List<MenuMealModel>();
     }
 }

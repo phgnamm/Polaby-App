@@ -3,10 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
-using Polaby.Repositories.Models.MenuModels;
 using Polaby.Services.Models.MenuModels;
-using Polaby.Repositories.Entities;
-using Polaby.Services.Models.ResponseModels;
 
 namespace Polaby.API.Controllers
 {
@@ -123,21 +120,19 @@ namespace Polaby.API.Controllers
             }
         }
 
-        [HttpGet("recommendations/{accountId}")]
+        [HttpGet("recommendations")]
         //[Authorize(Roles = "User")]
-        public async Task<IActionResult> GetMenuRecommendations(Guid accountId)
+        public async Task<IActionResult> GetMenuRecommendations([FromQuery] MenuRecommentFilterModel model)
         {
-             try
+            try
             {
-                var result = await _menuService.GetMenuRecommendations(accountId);
-
+                var result = await _menuService.GetMenuRecommendations(model);
                 var metadata = new
                 {
                     result.PageSize,
                     result.CurrentPage,
                     result.TotalPages,
                 };
-
                 Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
 
                 return Ok(result);
@@ -146,6 +141,6 @@ namespace Polaby.API.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            }
+        }
     }
 }

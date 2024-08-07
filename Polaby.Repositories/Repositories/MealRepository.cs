@@ -3,10 +3,10 @@ using Polaby.Repositories.Interfaces;
 
 namespace Polaby.Repositories.Repositories
 {
-    public class MenuMealRepository : GenericRepository<MenuMeal>, IMenuMealRepository
+    public class MealRepository : GenericRepository<Meal>, IMealRepository
     {
         private readonly AppDbContext _dbContext;
-        public MenuMealRepository(AppDbContext dbContext, IClaimsService claimsService) : base(dbContext, claimsService)
+        public MealRepository(AppDbContext dbContext, IClaimsService claimsService) : base(dbContext, claimsService)
         {
             _dbContext = dbContext;
         }

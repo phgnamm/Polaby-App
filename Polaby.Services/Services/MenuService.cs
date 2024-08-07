@@ -29,22 +29,68 @@ namespace Polaby.Services.Services
         public async Task<ResponseModel> AddRangeMenu(List<MenuImportModel> menus)
         {
             var menuList = _mapper.Map<List<Menu>>(menus);
-            if (menuList != null)
+            if (menuList == null)
             {
-                await _unitOfWork.MenuRepository.AddRangeAsync(menuList);
-                await _unitOfWork.SaveChangeAsync();
                 return new ResponseModel()
                 {
-                    Status = true,
-                    Message = "Menu created successfully"
+                    Status = false,
+                    Message = "Cannot create Menu!"
                 };
             }
+            await _unitOfWork.MenuRepository.AddRangeAsync(menuList);
+            await _unitOfWork.SaveChangeAsync();
+
+            var addedMenus = await _unitOfWork.MenuRepository.GetAllAsync(
+                filter: menu => menus.Select(m => m.Name).Contains(menu.Name)
+            );
+
+            var menuMeals = menus
+                .SelectMany(menuImportModel =>
+                    menuImportModel.MealIds.Select(mealId => new MenuMeal
+                    {
+                        MenuId = addedMenus.Data.First(menu => menu.Name == menuImportModel.Name).Id,
+                        MealId = mealId
+                    })
+                ).ToList();
+
+            await _unitOfWork.MenuMealRepository.AddRangeAsync(menuMeals);
+            await _unitOfWork.SaveChangeAsync();
+
+            var menuIds = addedMenus.Data.Select(menu => menu.Id).ToList();
+            var menuMealsGrouped = await _unitOfWork.MenuMealRepository.GetAllAsync(
+                filter: mm => menuIds.Contains((Guid)mm.MenuId),
+                include: "MenuMeals.Meal" 
+            );
+
+            var kcalUpdates = menuMealsGrouped.Data
+                .GroupBy(mm => mm.MenuId)
+                .Select(group => new
+                {
+                    MenuId = group.Key,
+                    TotalKcal = group.Sum(mm => mm.Meal.Kcal)
+                }).ToList();
+
+            var updatedMenus = addedMenus.Data
+                .Join(kcalUpdates,
+                    menu => menu.Id,
+                    update => update.MenuId,
+                    (menu, update) =>
+                    {
+                        menu.Kcal = update.TotalKcal;
+                        return menu;
+                    }).ToList();
+
+            _unitOfWork.MenuRepository.UpdateRange(updatedMenus);
+            await _unitOfWork.SaveChangeAsync();
+
             return new ResponseModel()
             {
-                Status = false,
-                Message = "Can not create Menu !"
+                Status = true,
+                Message = "Menu created successfully with associated meals and updated Kcal"
             };
         }
+
+
 
         public async Task<Pagination<MenuModel>> GetAllMenu(MenuFilterModel menuFilterModel)
         {
@@ -52,6 +98,7 @@ namespace Polaby.Services.Services
                 pageSize: menuFilterModel.PageSize,
                 filter: (x =>
                     x.IsDeleted == menuFilterModel.IsDeleted &&
+                    menuFilterModel.KcalValues.Any(kcalValue => x.Kcal >= kcalValue - 50 && x.Kcal <= kcalValue + 50) &&
                     (string.IsNullOrEmpty(menuFilterModel.Search) ||
                      x.Kcal.Equals(menuFilterModel.Search) ||
                      x.Water.Equals(menuFilterModel.Search) ||
@@ -78,8 +125,7 @@ namespace Polaby.Services.Services
                                 ? x.OrderByDescending(x => x.CreationDate)
                                 : x.OrderBy(x => x.CreationDate);
                     }
-                },
-                include: "MenuMeals.Meal.MealDishes.Dish.DishIngredients.Ingredient"
+                }
             );
             if (menuList != null)
             {
@@ -121,6 +167,15 @@ namespace Polaby.Services.Services
                 }
             }
 
+            var updatedMenuMeals = await _unitOfWork.MenuMealRepository.GetAllAsync(
+                filter: mm => mm.MenuId == id,
+                include: "MenuMeals.Meal"
+            );
+
+            var totalKcal = updatedMenuMeals.Data.Sum(mm => mm.Meal.Kcal);
+            existingMenu.Kcal = totalKcal;
+
+            _unitOfWork.MenuRepository.Update(existingMenu);
             await _unitOfWork.SaveChangeAsync();
 
             return new ResponseModel()
@@ -150,7 +205,7 @@ namespace Polaby.Services.Services
             return new ResponseModel()
             {
                 Status = true,
-                Message = "Menu and related MenuMeals deleted successfully"
+                Message = "Menu deleted successfully"
             };
         }
 
@@ -173,9 +228,9 @@ namespace Polaby.Services.Services
                 Message = "Can not create MenuMeal !"
             };
         }
-        public async Task<Pagination<MenuModel>> GetMenuRecommendations(Guid accountId)
+        public async Task<Pagination<MenuModel>> GetMenuRecommendations(MenuRecommentFilterModel model)
         {
-            var accountResponse = await _accountService.GetAccount(accountId);
+            var accountResponse = await _accountService.GetAccount(model.AccountId.Value);
             if (accountResponse == null || accountResponse.Data == null)
             {
                 throw new Exception("Account not found");
@@ -187,17 +242,18 @@ namespace Polaby.Services.Services
             int maxCalories = totalCaloriesRequired + 50;
 
             var queryResult = await _unitOfWork.MenuRepository.GetAllAsync(
-                pageIndex: 1,
-                pageSize: 10,
+              pageIndex: model.PageIndex,
+                pageSize: model.PageSize,
                 filter: menu =>
                     menu.Kcal >= minCalories &&
                     menu.Kcal <= maxCalories &&
                     menu.MenuMeals.All(menuMeal =>
                         menuMeal.Meal.MealDishes.All(mealDish => IsDietSuitable(mealDish.Dish, account.Diet))),
-                orderBy: menus => menus.OrderBy(menu => menu.Name)
+                orderBy: menus => menus.OrderBy(menu => menu.Name),
+                include: "MenuMeals.Meal.MealDishes.Dish.DishIngredients.Ingredient"
             );
             var menus = _mapper.Map<List<MenuModel>>(queryResult.Data);
-            return new Pagination<MenuModel>(menus, queryResult.TotalCount,1,10);
+            return new Pagination<MenuModel>(menus, queryResult.TotalCount, model.PageIndex, model.PageSize);
         }
 
 
@@ -205,7 +261,7 @@ namespace Polaby.Services.Services
         private int CalculateTotalCaloriesRequired(AccountModel account)
         {
             int baseCalories = 0;
-            int currentWeek = 41 - ((DateTime.Now.Date - account.DueDate.ToDateTime(TimeOnly.MinValue)).Days / 7);
+            int currentWeek = 41 - ((DateTime.Now.Date - account.DueDate.Value.ToDateTime(TimeOnly.MinValue)).Days / 7);
             switch (account.BMI)
             {
                 case BMI.Underweight:

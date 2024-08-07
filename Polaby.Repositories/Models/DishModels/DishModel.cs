@@ -11,6 +11,5 @@ namespace Polaby.Repositories.Models.MenuModels
         public float? Protein { get; set; }
         public float? Starch { get; set; }
         public float? Fat { get; set; }
-        public List<DishIngredientModel> DishIngredients { get; set; } = new List<DishIngredientModel>();
     }
 }
