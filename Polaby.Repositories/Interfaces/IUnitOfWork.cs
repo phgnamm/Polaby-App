@@ -9,6 +9,8 @@
 		IMenuMealRepository MenuMealRepository { get; }
 		IMealRepository MealRepository { get; }
 		IMealDishRepository MealDishRepository {get; }
+		IDishRepository DishRepository { get; }
+		IDishIngredientRepository DishIngredientRepository { get; }
         public Task<int> SaveChangeAsync();
 	}
 }

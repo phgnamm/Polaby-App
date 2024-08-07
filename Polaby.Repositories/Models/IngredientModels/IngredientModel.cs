@@ -1,5 +1,5 @@
 ﻿
-namespace Polaby.Repositories.Models.MenuModels
+namespace Polaby.Repositories.Models.IngredientModels
 {
     public class IngredientModel
     {

@@ -2,25 +2,25 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
-using Polaby.Services.Models.MealModels;
+using Polaby.Services.Models.DishModels;
 
 namespace Polaby.API.Controllers
 {
-    [Route("api/v1/meals")]
+    [Route("api/v1/dishes")]
     [ApiController]
-    public class MealController : ControllerBase
+    public class DishController : ControllerBase
     {
-        private readonly IMealService _mealService;
+        private readonly IDishService _dishService;
 
-        public MealController(IMealService mealService)
+        public DishController(IDishService dishService)
         {
-            _mealService = mealService;
+            _dishService = dishService;
         }
 
 
         [HttpPost()]
         //[Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateMeal(List<MealImportModel> meals)
+        public async Task<IActionResult> CreateDish(List<DishImportModel> dishes)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace Polaby.API.Controllers
                 {
                     return ValidationProblem(ModelState);
                 }
-                var result = await _mealService.AddRangeMeal(meals);
+                var result = await _dishService.AddRangeDish(dishes);
                 if (result.Status)
                 {
                     return Ok(result);
@@ -43,11 +43,11 @@ namespace Polaby.API.Controllers
 
         [HttpGet]
         //[Authorize(Roles = "Admin,User, Expert")]
-        public async Task<IActionResult> GetAllMenuByFilter([FromQuery] MealFilterModel mealFilterModel)
+        public async Task<IActionResult> GetAllDishByFilter([FromQuery] DishFilterModel dishFilterModel)
         {
             try
             {
-                var result = await _mealService.GetAllMeal(mealFilterModel);
+                var result = await _dishService.GetAllDish(dishFilterModel);
 
                 var metadata = new
                 {
@@ -68,11 +68,11 @@ namespace Polaby.API.Controllers
 
         [HttpPut("{id}")]
         //[Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateMeal(Guid id, [FromBody] MealUpdateModel mealUpdateModel)
+        public async Task<IActionResult> UpdateDish(Guid id, [FromBody] DishUpdateModel dishUpdateModel)
         {
             try
             {
-                var result = await _mealService.UpdateMeal(id, mealUpdateModel);
+                var result = await _dishService.UpdateDish(id, dishUpdateModel);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -83,11 +83,11 @@ namespace Polaby.API.Controllers
 
         [HttpDelete("{id}")]
         //[Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteMeal(Guid id)
+        public async Task<IActionResult> DeleteDish(Guid id)
         {
             try
             {
-                var result = await _mealService.DeleteMeal(id);
+                var result = await _dishService.DeleteDish(id);
                 return Ok(result);
             }
             catch (Exception ex)

@@ -94,6 +94,7 @@ namespace Polaby.Services.Services
                 pageSize: mealFilterModel.PageSize,
                 filter: (x =>
                     x.IsDeleted == mealFilterModel.IsDeleted &&
+                    (!mealFilterModel.MenuId.HasValue || x.MenuMeals.Any(mm => mm.MenuId == mealFilterModel.MenuId)) &&
                     (string.IsNullOrEmpty(mealFilterModel.Search) ||
                      x.Kcal.Equals(mealFilterModel.Search) ||
                      x.Name.ToString().ToLower().Contains(mealFilterModel.Search.ToLower()))),
@@ -114,7 +115,8 @@ namespace Polaby.Services.Services
                                 ? x.OrderByDescending(x => x.CreationDate)
                                 : x.OrderBy(x => x.CreationDate);
                     }
-                }
+                },
+                include: "MenuMeals"
             );
             if (mealList != null)
             {

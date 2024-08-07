@@ -63,6 +63,13 @@ namespace Polaby.API
             //MealDish
             services.AddScoped<IMealDishRepository, MealDishRepository>();
 
+            //Dish
+            services.AddScoped<IDishService, DishService>();
+            services.AddScoped<IDishRepository, DishRepository>();
+
+            //DishIngredient
+            services.AddScoped<IDishIngredientRepository, DishIngredientRepository>();
+
             //CommunityPost
             services.AddScoped<ICommunityPostService, CommunityPostService>();
             services.AddScoped<ICommuntityPostRepository, CommunityPostRepository>();
