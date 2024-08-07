@@ -48,5 +48,68 @@ namespace Polaby.Services.Services
                 Data = result
             };
         }
+
+        public async Task<ResponseDataModel<CommunityPostModel>> Update(Guid id, CommunityPostUpdateModel communityPostUpdateModel)
+        {
+            var existingCommunityPost = await _unitOfWork.CommuntityPostRepository.GetAsync(id);
+            if (existingCommunityPost == null)
+            {
+                return new ResponseDataModel<CommunityPostModel>()
+                {
+                    Message = "Post not found",
+                    Status = false
+                };
+            }
+
+            existingCommunityPost = _mapper.Map(communityPostUpdateModel, existingCommunityPost);
+            _unitOfWork.CommuntityPostRepository.Update(existingCommunityPost);
+            await _unitOfWork.SaveChangeAsync();
+
+            var result = _mapper.Map<CommunityPostModel>(existingCommunityPost);
+            if (result != null)
+            {
+                return new ResponseDataModel<CommunityPostModel>()
+                {
+                    Status = true,
+                    Message = "Update post successfully",
+                    Data = result
+                };
+            }
+            return new ResponseDataModel<CommunityPostModel>()
+            {
+                Status = false,
+                Message = "Update post fail"
+            };
+        }
+
+        public async Task<ResponseDataModel<CommunityPostModel>> Delete(Guid id)
+        {
+            var communityPost = await _unitOfWork.CommuntityPostRepository.GetAsync(id);
+            if (communityPost != null)
+            {
+                var result = _mapper.Map<CommunityPostModel>(communityPost);
+                _unitOfWork.CommuntityPostRepository.SoftDelete(communityPost);
+                await _unitOfWork.SaveChangeAsync();
+                if (result != null)
+                {
+                    return new ResponseDataModel<CommunityPostModel>()
+                    {
+                        Status = true,
+                        Message = "Delete post successfully",
+                        Data = result
+                    };
+                }
+                return new ResponseDataModel<CommunityPostModel>()
+                {
+                    Status = false,
+                    Message = "Delete post failed"
+                };
+            }
+            return new ResponseDataModel<CommunityPostModel>()
+            {
+                Status = false,
+                Message = "Post not found"
+            };
+        }
     }
 }
