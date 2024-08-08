@@ -81,12 +81,33 @@ namespace Polaby.API.Controllers
             }
         }
 
+        // [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateReport(Guid id, [FromBody] ReportUpdateModel reportUpdateModel)
         {
             try
             {
                 var result = await _reportService.UpdateReport(id, reportUpdateModel);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        // [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteReport(Guid id)
+        {
+            try
+            {
+                var result = await _reportService.DeleteReport(id);
                 if (result.Status)
                 {
                     return Ok(result);

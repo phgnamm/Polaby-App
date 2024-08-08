@@ -140,9 +140,9 @@ public class ReportService : IReportService
                 x.IsDeleted == reportFilterModel.IsDeleted &&
                 (reportFilterModel.Status == null || x.Status == reportFilterModel.Status) &&
                 (reportFilterModel.Reason == null || x.Reason == reportFilterModel.Reason) &&
-                (reportFilterModel.CommentId == null && x.Comment != null ||
+                (reportFilterModel.CommentId == null && x.Comment != null && !x.Comment.IsDeleted ||
                  x.CommentId == reportFilterModel.CommentId) &&
-                (reportFilterModel.CommunityPostId == null && x.CommunityPost != null ||
+                (reportFilterModel.CommunityPostId == null && x.CommunityPost != null && !x.CommunityPost.IsDeleted ||
                  x.CommunityPostId == reportFilterModel.CommunityPostId) &&
                 (string.IsNullOrEmpty(reportFilterModel.Search) ||
                  (x.Note != null &&
@@ -152,7 +152,8 @@ public class ReportService : IReportService
                   x.Comment.Content.IndexOf(reportFilterModel.Search, StringComparison.OrdinalIgnoreCase) >= 0) ||
                  (x.CommunityPost != null && !x.CommunityPost.IsDeleted &&
                   x.CommunityPost.Content != null &&
-                  x.CommunityPost.Content.IndexOf(reportFilterModel.Search, StringComparison.OrdinalIgnoreCase) >= 0)),
+                  (x.CommunityPost.Content.IndexOf(reportFilterModel.Search, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   x.CommunityPost.Title.IndexOf(reportFilterModel.Search, StringComparison.OrdinalIgnoreCase) >= 0))),
             orderBy:
             (x =>
             {
@@ -209,6 +210,37 @@ public class ReportService : IReportService
         {
             Status = false,
             Message = "Cannot update report",
+        };
+    }
+
+    public async Task<ResponseModel> DeleteReport(Guid id)
+    {
+        var report = await _unitOfWork.ReportRepository.GetAsync(id);
+
+        if (report == null)
+        {
+            return new ResponseDataModel<ReportModel>
+            {
+                Status = false,
+                Message = "Report not found"
+            };
+        }
+
+        _unitOfWork.ReportRepository.SoftDelete(report);
+
+        if (await _unitOfWork.SaveChangeAsync() > 0)
+        {
+            return new ResponseModel
+            {
+                Status = true,
+                Message = "Delete report successfully"
+            };
+        }
+
+        return new ResponseModel
+        {
+            Status = false,
+            Message = "Cannot delete report",
         };
     }
 }
