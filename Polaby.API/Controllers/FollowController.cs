@@ -37,7 +37,7 @@ namespace Polaby.API.Controllers
             }
         }
 
-        [HttpDelete("unfollow")]
+        [HttpDelete()]
         public async Task<IActionResult> Unfollow([FromBody] FollowModel followModel)
         {
             try

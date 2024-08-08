@@ -9,26 +9,26 @@ namespace Polaby.Repositories.Common
         private readonly ICommuntityPostRepository _communityPostRepository;
         private readonly ICommentRepostiory _commentRepository;
         private readonly IFollowRepository _followRepository;
+        private readonly IScheduleRepository _scheduleRepository;
         private readonly IReportRepository _reportRepository;
 
-        public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
-            ICommuntityPostRepository communityPostRepository,
-            ICommentRepostiory commentRepository, IFollowRepository followRepository,
-            IReportRepository reportRepository)
-        {
-            _dbContext = dbContext;
-            _accountRepository = accountRepository;
-            _communityPostRepository = communityPostRepository;
-            _commentRepository = commentRepository;
-            _followRepository = followRepository;
-            _reportRepository = reportRepository;
-        }
+        public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository, ICommuntityPostRepository communtityPostRepository,
+			ICommentRepostiory commentRepostiory, IFollowRepository followRepository, IScheduleRepository scheduleRepository)
+		{
+			_dbContext = dbContext;
+			_accountRepository = accountRepository;
+            _communityPostRepository = communtityPostRepository;
+            _commentRepository = commentRepostiory;
+			_followRepository = followRepository;
+			_scheduleRepository = scheduleRepository;
+		}
 
         public AppDbContext DbContext => _dbContext;
         public IAccountRepository AccountRepository => _accountRepository;
         public ICommuntityPostRepository CommunityPostRepository => _communityPostRepository;
         public ICommentRepostiory CommentRepository => _commentRepository;
         public IFollowRepository FollowRepository => _followRepository;
+        public IScheduleRepository ScheduleRepository => _scheduleRepository;
         public IReportRepository ReportRepository => _reportRepository;
 
         public async Task<int> SaveChangeAsync()

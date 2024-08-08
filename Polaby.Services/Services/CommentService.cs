@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
+using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.CommunityPostModels;
@@ -129,6 +130,60 @@ namespace Polaby.Services.Services
                 Status = false,
                 Message = "Comment not found"
             };
+        }
+
+        public async Task<Pagination<CommentModel>> GetAllCommunityPosts(CommentFilterModel commentFilterModel)
+        {
+            var commentList = await _unitOfWork.CommentRepository.GetAllAsync(
+            filter: x =>
+                x.IsDeleted == commentFilterModel.IsDeleted &&
+                (commentFilterModel.PostId == null || x.PostId == commentFilterModel.PostId) &&
+                (commentFilterModel.ParentCommentId == null || x.ParentCommentId == commentFilterModel.ParentCommentId) &&
+                (commentFilterModel.AccountId == null || x.AccountId == commentFilterModel.AccountId) &&
+                (string.IsNullOrEmpty(commentFilterModel.Search) ||
+                 x.Content.ToLower().Contains(commentFilterModel.Search.ToLower())),
+
+            orderBy: x =>
+            {
+                switch (commentFilterModel.Order.ToLower())
+                {
+                    case "like":
+                        return commentFilterModel.OrderByDescending
+                            ? x.OrderByDescending(x => x.LikesCount)
+                            : x.OrderBy(x => x.LikesCount);
+                    case "report":
+                        return commentFilterModel.OrderByDescending
+                            ? x.OrderByDescending(x => x.Reports.Count)
+                            : x.OrderBy(x => x.Reports.Count);
+                    default:
+                        return commentFilterModel.OrderByDescending
+                            ? x.OrderByDescending(x => x.CreationDate)
+                            : x.OrderBy(x => x.CreationDate);
+                }
+            },
+            pageIndex: commentFilterModel.PageIndex,
+            pageSize: commentFilterModel.PageSize,
+            include: "Reports,Account,CommentLikes"
+
+        );
+
+            if (commentList != null)
+            {
+                var commentDetailList = commentList.Data.Select(cp => new CommentModel
+                {
+                    Id = cp.Id,
+                    Content = cp.Content,
+                    LikesCount = cp.LikesCount,
+                    Attachments = cp.Attachments,
+                    UserId = cp.AccountId,
+                    UserName = cp.Account.FirstName + cp.Account.FirstName,
+                    ReportsCount = cp.Reports.Count,
+                    IsLiked = cp.CommentLikes.Any()
+                }).ToList();
+
+                return new Pagination<CommentModel>(commentDetailList, commentList.TotalCount, commentFilterModel.PageIndex, commentFilterModel.PageSize);
+            }
+            return null;
         }
     }
 }

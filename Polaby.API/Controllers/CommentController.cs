@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.CommunityPostModels;
+using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
 {
@@ -16,7 +18,8 @@ namespace Polaby.API.Controllers
             _commentService = commentService;
         }
 
-        [HttpPost("create")]
+        [HttpPost()]
+        //[Authorize(Roles = "User, Expert")]
         public async Task<IActionResult> Create([FromBody] CommentCreateModel commentCreateModel)
         {
             try
@@ -38,7 +41,8 @@ namespace Polaby.API.Controllers
             }
         }
 
-        [HttpPut("{id}/update")]
+        [HttpPut("{id}")]
+        //[Authorize(Roles = "User, Expert")]
         public async Task<IActionResult> Update(Guid id, [FromBody] CommentUpdateModel commentUpdateModel)
         {
             try
@@ -60,7 +64,8 @@ namespace Polaby.API.Controllers
             }
         }
 
-        [HttpDelete("{id}/delete")]
+        [HttpDelete("{id}")]
+        //[Authorize(Roles = "Admin, User, Expert")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
@@ -78,6 +83,30 @@ namespace Polaby.API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex);
+            }
+        }
+
+        [HttpGet]
+        //[Authorize(Roles = "Admin, User, Expert")]
+        public async Task<IActionResult> GetProjectByFilter([FromQuery] CommentFilterModel commentFilterModel)
+        {
+            try
+            {
+                var result = await _commentService.GetAllCommunityPosts(commentFilterModel);
+                var metadata = new
+                {
+                    result.PageSize,
+                    result.CurrentPage,
+                    result.TotalPages,
+                };
+
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

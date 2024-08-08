@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Polaby.Repositories.Enums;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.CommunityPostModels;
@@ -17,7 +18,8 @@ namespace Polaby.API.Controllers
             _communityPostService = communityPostService;
         }
 
-        [HttpPost("create")]
+        [HttpPost()]
+        //[Authorize(Roles = "User, Expert")]
         public async Task<IActionResult> Create([FromBody] CommunityPostCreateModel communityPostCreateModel)
         {
             try
@@ -39,7 +41,8 @@ namespace Polaby.API.Controllers
             }
         }
 
-        [HttpPut("{id}/update")]
+        [HttpPut("{id}")]
+        //[Authorize(Roles = "User, Expert")]
         public async Task<IActionResult> Update(Guid id, [FromBody] CommunityPostUpdateModel communityPostUpdateModel)
         {
             try
@@ -61,8 +64,9 @@ namespace Polaby.API.Controllers
             }
         }
 
-        [HttpDelete("{id}/delete")]
-        public async Task<IActionResult> DeleteProject(Guid id)
+        [HttpDelete("{id}")]
+        //[Authorize(Roles = "Admin, User, Expert")]
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
@@ -79,6 +83,30 @@ namespace Polaby.API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex);
+            }
+        }
+
+        [HttpGet]
+        //[Authorize(Roles = "Admin, User, Expert")]
+        public async Task<IActionResult> GetProjectByFilter([FromQuery] CommunityPostFilterModel communityFilterModel)
+        {
+            try
+            {
+                var result = await _communityPostService.GetAllCommunityPosts(communityFilterModel);
+                var metadata = new
+                {
+                    result.PageSize,
+                    result.CurrentPage,
+                    result.TotalPages,
+                };
+
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }
