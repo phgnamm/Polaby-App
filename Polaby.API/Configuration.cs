@@ -62,6 +62,10 @@ namespace Polaby.API
             services.AddScoped<IFollowService, FollowService>();
             services.AddScoped<IFollowRepository, FollowRepository>();
 
+            //Report
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IReportRepository, ReportRepository>();
+
             return services;
         }
     }

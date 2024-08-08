@@ -650,15 +650,15 @@ namespace Polaby.Services.Services
                 {
                     switch (accountFilterModel.Order.ToLower())
                     {
-                        case "first-name":
+                        case "firstName":
                             return accountFilterModel.OrderByDescending
                                 ? x.OrderByDescending(x => x.FirstName)
                                 : x.OrderBy(x => x.FirstName);
-                        case "last-name":
+                        case "lastName":
                             return accountFilterModel.OrderByDescending
                                 ? x.OrderByDescending(x => x.LastName)
                                 : x.OrderBy(x => x.LastName);
-                        case "date-of-birth":
+                        case "dateOfBirth":
                             return accountFilterModel.OrderByDescending
                                 ? x.OrderByDescending(x => x.DateOfBirth)
                                 : x.OrderBy(x => x.DateOfBirth);

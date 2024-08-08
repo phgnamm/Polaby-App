@@ -31,7 +31,7 @@ namespace Polaby.Services.Services
                 };
             }
 
-            var communityPost = await _unitOfWork.CommuntityPostRepository.GetAsync((Guid)commentCreateModel.PostId);
+            var communityPost = await _unitOfWork.CommunityPostRepository.GetAsync((Guid)commentCreateModel.PostId);
             if (communityPost == null)
             {
                 return new ResponseDataModel<CommentModel>()
@@ -43,7 +43,7 @@ namespace Polaby.Services.Services
 
             if(commentCreateModel.ParentCommentId != null)
             {
-                var parrentComment = await _unitOfWork.CommentRepostiory.GetAsync((Guid)commentCreateModel.ParentCommentId);
+                var parrentComment = await _unitOfWork.CommentRepository.GetAsync((Guid)commentCreateModel.ParentCommentId);
                 if (parrentComment == null)
                 {
                     return new ResponseDataModel<CommentModel>()
@@ -56,7 +56,7 @@ namespace Polaby.Services.Services
 
             Comment comment = _mapper.Map<Comment>(commentCreateModel);
 
-            await _unitOfWork.CommentRepostiory.AddAsync(comment);
+            await _unitOfWork.CommentRepository.AddAsync(comment);
             await _unitOfWork.SaveChangeAsync();
 
             var result = _mapper.Map<CommentModel>(comment);
@@ -70,7 +70,7 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseDataModel<CommentModel>> Update(Guid id, CommentUpdateModel commentUpdateModel)
         {
-            var existingComment = await _unitOfWork.CommentRepostiory.GetAsync(id);
+            var existingComment = await _unitOfWork.CommentRepository.GetAsync(id);
             if (existingComment == null)
             {
                 return new ResponseDataModel<CommentModel>()
@@ -81,7 +81,7 @@ namespace Polaby.Services.Services
             }
 
             existingComment = _mapper.Map(commentUpdateModel, existingComment);
-            _unitOfWork.CommentRepostiory.Update(existingComment);
+            _unitOfWork.CommentRepository.Update(existingComment);
             await _unitOfWork.SaveChangeAsync();
 
             var result = _mapper.Map<CommentModel>(existingComment);
@@ -103,11 +103,11 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseDataModel<CommentModel>> Delete(Guid id)
         {
-            var comment = await _unitOfWork.CommentRepostiory.GetAsync(id);
+            var comment = await _unitOfWork.CommentRepository.GetAsync(id);
             if (comment != null)
             {
                 var result = _mapper.Map<CommentModel>(comment);
-                _unitOfWork.CommentRepostiory.SoftDelete(comment);
+                _unitOfWork.CommentRepository.SoftDelete(comment);
                 await _unitOfWork.SaveChangeAsync();
                 if (result != null)
                 {

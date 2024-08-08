@@ -37,7 +37,7 @@ namespace Polaby.Services.Services
 
             CommunityPost communityPost = _mapper.Map<CommunityPost>(communityPostCreateModel);
 
-            await _unitOfWork.CommuntityPostRepository.AddAsync(communityPost);
+            await _unitOfWork.CommunityPostRepository.AddAsync(communityPost);
             await _unitOfWork.SaveChangeAsync();
 
             var result = _mapper.Map<CommunityPostModel>(communityPost);
@@ -51,7 +51,7 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseDataModel<CommunityPostModel>> Update(Guid id, CommunityPostUpdateModel communityPostUpdateModel)
         {
-            var existingCommunityPost = await _unitOfWork.CommuntityPostRepository.GetAsync(id);
+            var existingCommunityPost = await _unitOfWork.CommunityPostRepository.GetAsync(id);
             if (existingCommunityPost == null)
             {
                 return new ResponseDataModel<CommunityPostModel>()
@@ -62,7 +62,7 @@ namespace Polaby.Services.Services
             }
 
             existingCommunityPost = _mapper.Map(communityPostUpdateModel, existingCommunityPost);
-            _unitOfWork.CommuntityPostRepository.Update(existingCommunityPost);
+            _unitOfWork.CommunityPostRepository.Update(existingCommunityPost);
             await _unitOfWork.SaveChangeAsync();
 
             var result = _mapper.Map<CommunityPostModel>(existingCommunityPost);
@@ -84,11 +84,11 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseDataModel<CommunityPostModel>> Delete(Guid id)
         {
-            var communityPost = await _unitOfWork.CommuntityPostRepository.GetAsync(id);
+            var communityPost = await _unitOfWork.CommunityPostRepository.GetAsync(id);
             if (communityPost != null)
             {
                 var result = _mapper.Map<CommunityPostModel>(communityPost);
-                _unitOfWork.CommuntityPostRepository.SoftDelete(communityPost);
+                _unitOfWork.CommunityPostRepository.SoftDelete(communityPost);
                 await _unitOfWork.SaveChangeAsync();
                 if (result != null)
                 {
