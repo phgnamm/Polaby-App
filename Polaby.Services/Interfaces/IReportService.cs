@@ -11,4 +11,5 @@ public interface IReportService
     Task<ResponseDataModel<ReportModel>> GetReport(Guid id);
     Task<Pagination<ReportModel>> GetAllReports(ReportFilterModel reportFilterModel);
     Task<ResponseModel> UpdateReport(Guid id, ReportUpdateModel reportUpdateModel);
+    Task<ResponseModel> DeleteReport(Guid id);
 }
