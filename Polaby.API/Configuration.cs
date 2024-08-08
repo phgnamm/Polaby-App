@@ -81,6 +81,22 @@ namespace Polaby.API
             services.AddScoped<ICommunityPostService, CommunityPostService>();
             services.AddScoped<ICommuntityPostRepository, CommunityPostRepository>();
 
+            //Comment
+            services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<ICommentRepostiory, CommentRepository>();
+
+            //Follow
+            services.AddScoped<IFollowService, FollowService>();
+            services.AddScoped<IFollowRepository, FollowRepository>();
+
+            //Schedule
+            services.AddScoped<IScheduleService, ScheduleService>();
+            services.AddScoped<IScheduleRepository, ScheduleRepository>();
+
+            //Report
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IReportRepository, ReportRepository>();
+
             return services;
         }
     }

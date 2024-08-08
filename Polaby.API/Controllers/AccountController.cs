@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
@@ -17,6 +18,7 @@ namespace Polaby.API.Controllers
             _accountService = accountService;
         }
 
+        // [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddAccounts([FromBody] List<AccountRegisterModel> accountRegisterModels)
         {
@@ -55,6 +57,7 @@ namespace Polaby.API.Controllers
             }
         }
 
+        // [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllAccounts([FromQuery] AccountFilterModel accountFilterModel)
         {
@@ -78,7 +81,7 @@ namespace Polaby.API.Controllers
             }
         }
 
-        [HttpPut("user/{id}")]
+        [HttpPut("{id}/user")]
         public async Task<IActionResult> UpdateAccountUser(Guid id,
             [FromBody] AccountUserUpdateModel accountUserUpdateModel)
         {
@@ -98,7 +101,7 @@ namespace Polaby.API.Controllers
             }
         }
 
-        [HttpPut("expert/{id}")]
+        [HttpPut("{id}/expert")]
         public async Task<IActionResult> UpdateAccountExpert(Guid id,
             [FromBody] AccountExpertUpdateModel accountExpertUpdateModel)
         {
@@ -118,6 +121,7 @@ namespace Polaby.API.Controllers
             }
         }
 
+        // [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAccount(Guid id)
         {
@@ -137,6 +141,7 @@ namespace Polaby.API.Controllers
             }
         }
 
+        // [Authorize(Roles = "Admin")]
         [HttpPut("{id}/restore")]
         public async Task<IActionResult> RestoreAccount(Guid id)
         {

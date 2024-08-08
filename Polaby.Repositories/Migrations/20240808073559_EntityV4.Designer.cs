@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Polaby.Repositories;
 
@@ -11,9 +12,11 @@ using Polaby.Repositories;
 namespace Polaby.Repositories.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240808073559_EntityV4")]
+    partial class EntityV4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -840,13 +843,13 @@ namespace Polaby.Repositories.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<float?>("Alco")
+                    b.Property<float?>("Calcium")
                         .HasColumnType("real");
 
-                    b.Property<bool>("Animal")
-                        .HasColumnType("bit");
-
                     b.Property<float?>("Carbohydrates")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("Cholesterol")
                         .HasColumnType("real");
 
                     b.Property<Guid?>("CreatedBy")
@@ -865,26 +868,17 @@ namespace Polaby.Repositories.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<float?>("DisposalRate")
-                        .HasColumnType("real");
-
                     b.Property<float?>("Fat")
                         .HasColumnType("real");
 
-                    b.Property<string>("FoodGroup")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("FoodGroupId")
-                        .HasColumnType("int");
+                    b.Property<float?>("Fiber")
+                        .HasColumnType("real");
 
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Index")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("IndexFoodGroup")
-                        .HasColumnType("int");
+                    b.Property<float?>("Iron")
+                        .HasColumnType("real");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -892,7 +886,7 @@ namespace Polaby.Repositories.Migrations
                     b.Property<float?>("Kcal")
                         .HasColumnType("real");
 
-                    b.Property<float?>("KcalDefault")
+                    b.Property<float?>("Magnesium")
                         .HasColumnType("real");
 
                     b.Property<DateTime?>("ModificationDate")
@@ -901,14 +895,26 @@ namespace Polaby.Repositories.Migrations
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<float?>("MonounsaturatedFat")
+                        .HasColumnType("real");
+
                     b.Property<string>("Name")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<float?>("NumberOfDecimalPart")
+                    b.Property<float?>("PolyunsaturatedFat")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("Potassium")
                         .HasColumnType("real");
 
                     b.Property<float?>("Protein")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("SaturatedFat")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("Sodium")
                         .HasColumnType("real");
 
                     b.Property<string>("Source")
@@ -917,10 +923,16 @@ namespace Polaby.Repositories.Migrations
                     b.Property<string>("SourceUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Unit")
-                        .HasColumnType("int");
+                    b.Property<float?>("Starch")
+                        .HasColumnType("real");
 
-                    b.Property<float?>("Weight")
+                    b.Property<float?>("Sugar")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("Water")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("Zinc")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
@@ -1291,70 +1303,6 @@ namespace Polaby.Repositories.Migrations
                         .HasFilter("[NotificationId] IS NOT NULL");
 
                     b.ToTable("NotificationType");
-                });
-
-            modelBuilder.Entity("Polaby.Repositories.Entities.Nutrient", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<float?>("Amount")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("ConversionRate")
-                        .HasColumnType("real");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("FractionalQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("IngredientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("NutritionCode")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("NutritionId")
-                        .HasColumnType("int");
-
-                    b.Property<float?>("PostProcessingAmount")
-                        .HasColumnType("real");
-
-                    b.Property<string>("UnitCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UnitName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IngredientId");
-
-                    b.ToTable("Nutrient");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.Rating", b =>
@@ -1991,15 +1939,6 @@ namespace Polaby.Repositories.Migrations
                     b.Navigation("Notification");
                 });
 
-            modelBuilder.Entity("Polaby.Repositories.Entities.Nutrient", b =>
-                {
-                    b.HasOne("Polaby.Repositories.Entities.Ingredient", "ingredient")
-                        .WithMany("Nutrients")
-                        .HasForeignKey("IngredientId");
-
-                    b.Navigation("ingredient");
-                });
-
             modelBuilder.Entity("Polaby.Repositories.Entities.Rating", b =>
                 {
                     b.HasOne("Polaby.Repositories.Entities.Account", "Expert")
@@ -2122,8 +2061,6 @@ namespace Polaby.Repositories.Migrations
             modelBuilder.Entity("Polaby.Repositories.Entities.Ingredient", b =>
                 {
                     b.Navigation("DishIngredients");
-
-                    b.Navigation("Nutrients");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.Meal", b =>

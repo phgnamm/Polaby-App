@@ -1,26 +1,26 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Polaby.Repositories.Enums;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.CommunityPostModels;
+using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
 {
-    [Route("api/v1/community-posts")]
+    [Route("api/v1/comments")]
     [ApiController]
-    public class CommunityPostController : ControllerBase
+    public class CommentController : ControllerBase
     {
-        private readonly ICommunityPostService _communityPostService;
+        private readonly ICommentService _commentService;
 
-        public CommunityPostController(ICommunityPostService communityPostService)
+        public CommentController(ICommentService commentService)
         {
-            _communityPostService = communityPostService;
+            _commentService = commentService;
         }
 
         [HttpPost()]
         //[Authorize(Roles = "User, Expert")]
-        public async Task<IActionResult> Create([FromBody] CommunityPostCreateModel communityPostCreateModel)
+        public async Task<IActionResult> Create([FromBody] CommentCreateModel commentCreateModel)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace Polaby.API.Controllers
                 {
                     return ValidationProblem(ModelState);
                 }
-                var result = await _communityPostService.Create(communityPostCreateModel);
+                var result = await _commentService.Create(commentCreateModel);
                 if (result.Status)
                 {
                     return Ok(result);
@@ -43,11 +43,11 @@ namespace Polaby.API.Controllers
 
         [HttpPut("{id}")]
         //[Authorize(Roles = "User, Expert")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] CommunityPostUpdateModel communityPostUpdateModel)
+        public async Task<IActionResult> Update(Guid id, [FromBody] CommentUpdateModel commentUpdateModel)
         {
             try
             {
-                var result = await _communityPostService.Update(id, communityPostUpdateModel);
+                var result = await _commentService.Update(id, commentUpdateModel);
 
                 if (result.Status)
                 {
@@ -70,7 +70,7 @@ namespace Polaby.API.Controllers
         {
             try
             {
-                var result = await _communityPostService.Delete(id);
+                var result = await _commentService.Delete(id);
                 if (result.Status)
                 {
                     return Ok(result);
@@ -88,11 +88,11 @@ namespace Polaby.API.Controllers
 
         [HttpGet]
         //[Authorize(Roles = "Admin, User, Expert")]
-        public async Task<IActionResult> GetProjectByFilter([FromQuery] CommunityPostFilterModel communityFilterModel)
+        public async Task<IActionResult> GetProjectByFilter([FromQuery] CommentFilterModel commentFilterModel)
         {
             try
             {
-                var result = await _communityPostService.GetAllCommunityPosts(communityFilterModel);
+                var result = await _commentService.GetAllCommunityPosts(commentFilterModel);
                 var metadata = new
                 {
                     result.PageSize,

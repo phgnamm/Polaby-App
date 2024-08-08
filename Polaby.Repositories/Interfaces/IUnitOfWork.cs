@@ -13,6 +13,12 @@
 		IDishIngredientRepository DishIngredientRepository { get; }
 		IIngredientRepository IngredientRepository { get; }
 		INutrientRepository NutrientRepository { get; }
+        ICommuntityPostRepository CommunityPostRepository { get; }
+        ICommentRepostiory CommentRepository { get; }
+        IFollowRepository FollowRepository { get; }
+        IScheduleRepository ScheduleRepository { get; }
+        IReportRepository ReportRepository { get; }
+
         public Task<int> SaveChangeAsync();
 	}
 }
