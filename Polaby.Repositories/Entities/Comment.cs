@@ -7,7 +7,7 @@
         public string? Attachments { get; set; }
 
         // Foreign key
-        public Guid? UserId { get; set; }
+        public Guid? AccountId { get; set; }
         public Guid? PostId { get; set; }
         public Guid? ParentCommentId { get; set; }
 

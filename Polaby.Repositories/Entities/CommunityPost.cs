@@ -18,7 +18,7 @@ namespace Polaby.Repositories.Entities
         public PostVisibility? Visibility { get; set; }
 
         // Foreign key
-        public Guid? UserId { get; set; }
+        public Guid? AccountId { get; set; }
 
         // Relationship
         public virtual Account? Account { get; set; }
