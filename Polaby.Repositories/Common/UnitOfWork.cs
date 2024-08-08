@@ -17,23 +17,11 @@ namespace Polaby.Repositories.Common
 		{
 			_dbContext = dbContext;
 			_accountRepository = accountRepository;
-			_communtityPostRepository = communtityPostRepository;
-			_commentRepostiory = commentRepostiory;
+            _communityPostRepository = communtityPostRepository;
+            _commentRepository = commentRepostiory;
 			_followRepository = followRepository;
 			_scheduleRepository = scheduleRepository;
 		}
-        public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
-            ICommuntityPostRepository communityPostRepository,
-            ICommentRepostiory commentRepository, IFollowRepository followRepository,
-            IReportRepository reportRepository)
-        {
-            _dbContext = dbContext;
-            _accountRepository = accountRepository;
-            _communityPostRepository = communityPostRepository;
-            _commentRepository = commentRepository;
-            _followRepository = followRepository;
-            _reportRepository = reportRepository;
-        }
 
         public AppDbContext DbContext => _dbContext;
         public IAccountRepository AccountRepository => _accountRepository;

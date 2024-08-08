@@ -14,7 +14,7 @@ namespace Polaby.Services.Models.CommentModels
         public string Order { get; set; } = "creation-date";
         public bool OrderByDescending { get; set; } = true;
         public bool? IsDeleted { get; set; } = false;
-        public Guid? UserId { get; set; }
+        public Guid? AccountId { get; set; }
         public Guid? PostId { get; set; }
         public Guid? ParentCommentId { get; set; }
         public string? Search { get; set; }

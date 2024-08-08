@@ -134,12 +134,12 @@ namespace Polaby.Services.Services
 
         public async Task<Pagination<CommentModel>> GetAllCommunityPosts(CommentFilterModel commentFilterModel)
         {
-            var commentList = await _unitOfWork.CommentRepostiory.GetAllAsync(
+            var commentList = await _unitOfWork.CommentRepository.GetAllAsync(
             filter: x =>
                 x.IsDeleted == commentFilterModel.IsDeleted &&
                 (commentFilterModel.PostId == null || x.PostId == commentFilterModel.PostId) &&
                 (commentFilterModel.ParentCommentId == null || x.ParentCommentId == commentFilterModel.ParentCommentId) &&
-                (commentFilterModel.UserId == null || x.UserId == commentFilterModel.UserId) &&
+                (commentFilterModel.AccountId == null || x.AccountId == commentFilterModel.AccountId) &&
                 (string.IsNullOrEmpty(commentFilterModel.Search) ||
                  x.Content.ToLower().Contains(commentFilterModel.Search.ToLower())),
 
@@ -175,7 +175,7 @@ namespace Polaby.Services.Services
                     Content = cp.Content,
                     LikesCount = cp.LikesCount,
                     Attachments = cp.Attachments,
-                    UserId = cp.UserId,
+                    UserId = cp.AccountId,
                     UserName = cp.Account.FirstName + cp.Account.FirstName,
                     ReportsCount = cp.Reports.Count,
                     IsLiked = cp.CommentLikes.Any()

@@ -116,12 +116,12 @@ namespace Polaby.Services.Services
 
         public async Task<Pagination<CommunityPostModel>> GetAllCommunityPosts(CommunityPostFilterModel communityPostFilterModel)
         {
-            var communityPostList = await _unitOfWork.CommuntityPostRepository.GetAllAsync(
+            var communityPostList = await _unitOfWork.CommunityPostRepository.GetAllAsync(
             filter: x =>
                 x.IsDeleted == communityPostFilterModel.IsDeleted &&
                 (communityPostFilterModel.IsProfessional == null || x.IsProfessional == communityPostFilterModel.IsProfessional) &&
                 (communityPostFilterModel.Visibility == null || x.Visibility == communityPostFilterModel.Visibility) &&
-                (communityPostFilterModel.UserId == null || x.UserId == communityPostFilterModel.UserId) &&
+                (communityPostFilterModel.AccountId == null || x.AccountId == communityPostFilterModel.AccountId) &&
                 (string.IsNullOrEmpty(communityPostFilterModel.Search) ||
                  x.Title.ToLower().Contains(communityPostFilterModel.Search.ToLower()) ||
                  x.Content.ToLower().Contains(communityPostFilterModel.Search.ToLower())),
@@ -163,7 +163,7 @@ namespace Polaby.Services.Services
                     Attachments = cp.Attachments,
                     IsProfessional = cp.IsProfessional,
                     Visibility = cp.Visibility,
-                    UserId = cp.UserId,
+                    UserId = cp.AccountId,
                     UserName = cp.Account.FirstName + cp.Account.FirstName,
                     ReportsCount = cp.Reports.Count,
                     IsLiked = cp.CommunityPostLikes.Any()

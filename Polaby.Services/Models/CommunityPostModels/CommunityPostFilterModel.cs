@@ -16,7 +16,7 @@ namespace Polaby.Services.Models.CommunityPostModels
         public bool? IsDeleted { get; set; } = false;
         public bool? IsProfessional { get; set; }
         public PostVisibility? Visibility { get; set; }
-        public Guid? UserId { get; set; }
+        public Guid? AccountId { get; set; }
         public string? Search { get; set; }
         protected override int MinPageSize { get; set; } = PaginationConstant.DEFAULT_MIN_PAGE_SIZE;
         protected override int MaxPageSize { get; set; } = PaginationConstant.DEFAULT_MAX_PAGE_SIZE;
