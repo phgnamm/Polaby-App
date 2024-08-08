@@ -1,4 +1,5 @@
-﻿
+﻿using Polaby.Repositories.Models.NutrientModels;
+
 namespace Polaby.Repositories.Models.IngredientModels
 {
     public class IngredientModel
@@ -8,24 +9,19 @@ namespace Polaby.Repositories.Models.IngredientModels
         public string? Description { get; set; }
         public string? Image { get; set; }
         public float? Kcal { get; set; }
-        public float? Water { get; set; }
+        public float? Weight { get; set; } // Weight of the ingredient
+        public float? NumberOfDecimalPart { get; set; } // Number of decimal parts for the ingredient
+        public float? DisposalRate { get; set; } // Disposal rate
+        public int? FoodGroupId { get; set; } // Food group ID
+        public int? IndexFoodGroup { get; set; } // Index for the food group
+        public string? FoodGroup { get; set; } // Name or description of the food group
         public float? Protein { get; set; }
-        public float? Carbohydrates { get; set; } // Tổng lượng carbohydrate
-        public float? Starch { get; set; } // Lượng tinh bột     
+        public float? Carbohydrates { get; set; }
         public float? Fat { get; set; }
-        public float? Fiber { get; set; }
-        public float? Sugar { get; set; }
-        public float? SaturatedFat { get; set; }
-        public float? MonounsaturatedFat { get; set; }
-        public float? PolyunsaturatedFat { get; set; }
-        public float? Cholesterol { get; set; }
-        public float? Sodium { get; set; }
-        public float? Potassium { get; set; }
-        public float? Calcium { get; set; }
-        public float? Iron { get; set; }
-        public float? Magnesium { get; set; }
-        public float? Zinc { get; set; }
+        public float? Alco { get; set; } // Amount of alcohol
         public string? Source { get; set; }
         public string? SourceUrl { get; set; }
+        public int? Index { get; set; } // Index for the ingredient
+        public List<NutrientModel>? Nutrients { get; set; }
     }
 }

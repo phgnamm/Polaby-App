@@ -13,12 +13,14 @@ namespace Polaby.Repositories.Common
         private readonly IMealDishRepository _mealDishRepository;
         private readonly IDishIngredientRepository _dishIngredientRepository;
         private readonly IDishRepository _dishRepository;
+        private readonly IIngredientRepository _ingredientRepository;
+        private readonly INutrientRepository _nutrientRepository;
 
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
             ICommuntityPostRepository communtityPostRepository, IMealRepository mealRepository,
             IMealDishRepository mealDishRepository, IDishIngredientRepository dishIngredientRepository,
-            IDishRepository dishRepository
+            IDishRepository dishRepository, IIngredientRepository ingredientRepository, INutrientRepository nutrientRepository
             )
         {
             _dbContext = dbContext;
@@ -30,8 +32,8 @@ namespace Polaby.Repositories.Common
             _mealDishRepository = mealDishRepository;
             _dishRepository = dishRepository;
             _dishIngredientRepository = dishIngredientRepository;
-
-
+            _ingredientRepository = ingredientRepository;
+            _nutrientRepository = nutrientRepository;
         }
 
 
@@ -44,6 +46,8 @@ namespace Polaby.Repositories.Common
         public IMealDishRepository MealDishRepository => _mealDishRepository;
         public IDishRepository DishRepository => _dishRepository;
         public IDishIngredientRepository DishIngredientRepository => _dishIngredientRepository;
+        public IIngredientRepository IngredientRepository => _ingredientRepository;
+        public INutrientRepository NutrientRepository => _nutrientRepository;
 
         public async Task<int> SaveChangeAsync()
         {

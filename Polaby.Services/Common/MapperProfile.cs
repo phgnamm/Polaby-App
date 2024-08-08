@@ -10,6 +10,10 @@ using Polaby.Services.Models.MealModels;
 using Polaby.Repositories.Models.MealModels;
 using Polaby.Services.Models.DishModels;
 using Polaby.Repositories.Models.DishModels;
+using Polaby.Services.Models.IngredientModels;
+using Polaby.Repositories.Models.IngredientModels;
+using Polaby.Services.Models.NutrientModels;
+using Polaby.Repositories.Models.NutrientModels;
 
 namespace Polaby.Services.Common
 {
@@ -39,6 +43,16 @@ namespace Polaby.Services.Common
             CreateMap<DishImportModel, Dish>().ReverseMap();
             CreateMap<DishUpdateModel, Dish>();
             CreateMap<DishModel, Dish>().ReverseMap();
+
+            //Ingredient
+            CreateMap<IngredientImportModel, Ingredient>().ReverseMap();
+            CreateMap<IngredientUpdateModel, Ingredient>();
+            CreateMap<IngredientModel, Ingredient>().ReverseMap();
+
+            //Nutrient
+            CreateMap<NutrientImportModel, Nutrient>().ReverseMap();
+            CreateMap<NutrientUpdateModel, Nutrient>();
+            CreateMap<NutrientModel, Nutrient>().ReverseMap();
 
             //CommunityPost
             CreateMap<CommunityPostCreateModel, CommunityPost>();

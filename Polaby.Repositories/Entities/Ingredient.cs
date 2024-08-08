@@ -1,4 +1,6 @@
-﻿namespace Polaby.Repositories.Entities
+﻿using Polaby.Repositories.Enums;
+
+namespace Polaby.Repositories.Entities
 {
     public class Ingredient : BaseEntity
     {
@@ -7,27 +9,24 @@
         public string? Image { get; set; }
         public bool Animal { get; set; }
         public float? Kcal { get; set; }
-        public float? Water { get; set; }
-        public float? Protein { get; set; }
-        public float? Carbohydrates { get; set; } // Tổng lượng carbohydrate
-        public float? Starch { get; set; } // Lượng tinh bột     
-        public float? Fat { get; set; }
-        public float? Fiber { get; set; }
-        public float? Sugar { get; set; }
-        public float? SaturatedFat { get; set; }
-        public float? MonounsaturatedFat { get; set; }
-        public float? PolyunsaturatedFat { get; set; }
-        public float? Cholesterol { get; set; }
-        public float? Sodium { get; set; }
-        public float? Potassium { get; set; }
-        public float? Calcium { get; set; }
-        public float? Iron { get; set; }
-        public float? Magnesium { get; set; }
-        public float? Zinc { get; set; }
+        public float? KcalDefault { get; set; }
+        public float? Weight { get; set; }
+        public Unit? Unit { get; set; }
+        public float? NumberOfDecimalPart { get; set; }     //soLuongPhanThapPhan
+        public float? DisposalRate { get; set; }            //tyLeThaiBo
+        public int? FoodGroupId { get; set; }               //nhomThucPhamId
+        public int? IndexFoodGroup{ get; set; }             //sttNhomThucPham
+        public string? FoodGroup { get; set; }              //strNhomThucPham
+        public float? Protein { get; set; }                 //dinhDuong_Dam
+        public float? Carbohydrates { get; set; }           //dinhDuong_BotDuong    
+        public float? Fat { get; set; }                     //dinhDuong_Beo
+        public float? Alco { get; set; }                    //dinhDuong_Alco
         public string? Source { get; set; }
         public string? SourceUrl { get; set; }
+        public int? Index { get; set; }
 
         // Relationship
         public virtual ICollection<DishIngredient> DishIngredients { get; set; } = new List<DishIngredient>();
+        public virtual ICollection<Nutrient> Nutrients { get; set; } = new List<Nutrient>();
     }
 }

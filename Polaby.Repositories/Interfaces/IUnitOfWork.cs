@@ -11,6 +11,8 @@
 		IMealDishRepository MealDishRepository {get; }
 		IDishRepository DishRepository { get; }
 		IDishIngredientRepository DishIngredientRepository { get; }
+		IIngredientRepository IngredientRepository { get; }
+		INutrientRepository NutrientRepository { get; }
         public Task<int> SaveChangeAsync();
 	}
 }

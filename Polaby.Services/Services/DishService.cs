@@ -68,7 +68,7 @@ namespace Polaby.Services.Services
            DishId = group.Key,
            TotalKcal = group.Sum(di => di.Ingredient.Kcal),
            TotalProtein = group.Sum(di => di.Ingredient.Protein),
-           TotalStarch = group.Sum(di => di.Ingredient.Starch),
+           TotalStarch = group.Sum(di => di.Ingredient.Carbohydrates),
            TotalFat = group.Sum(di => di.Ingredient.Fat)
        }).ToList();
 
@@ -175,7 +175,7 @@ namespace Polaby.Services.Services
 
             var totalKcal = updatedDishIngredient.Data.Sum(di => di.Ingredient.Kcal);
             var totalProtein = updatedDishIngredient.Data.Sum(di => di.Ingredient.Protein);
-            var totalStarch = updatedDishIngredient.Data.Sum(di => di.Ingredient.Starch);
+            var totalStarch = updatedDishIngredient.Data.Sum(di => di.Ingredient.Carbohydrates);
             var totalFat = updatedDishIngredient.Data.Sum(di => di.Ingredient.Fat);
 
             existingDish.Kcal = totalKcal;
