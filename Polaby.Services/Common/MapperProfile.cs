@@ -6,6 +6,7 @@ using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.CommonModels;
 using Polaby.Services.Models.CommunityPostModels;
 using Polaby.Services.Models.FollowModels;
+using Polaby.Services.Models.ScheduleModels;
 
 namespace Polaby.Services.Common
 {
@@ -28,8 +29,10 @@ namespace Polaby.Services.Common
             CreateMap<Comment, CommentModel>();
             CreateMap<CommentUpdateModel, Comment>();
 
-            //Follow
-            //CreateMap<FollowModel, Follow>();
+            //Schedule
+            CreateMap<ScheduleCreateModel, Schedule>();
+            CreateMap<Schedule, ScheduleModel>();
+            CreateMap<ScheduleUpdateModel, Schedule>();
         }
 	}
 }

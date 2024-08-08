@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
+using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.AccountModels;
 using Polaby.Services.Models.CommunityPostModels;
 using Polaby.Services.Models.ResponseModels;
 using System;
@@ -36,7 +38,7 @@ namespace Polaby.Services.Services
             }
 
             CommunityPost communityPost = _mapper.Map<CommunityPost>(communityPostCreateModel);
-
+            communityPost.Account = account;
             await _unitOfWork.CommuntityPostRepository.AddAsync(communityPost);
             await _unitOfWork.SaveChangeAsync();
 
@@ -110,6 +112,66 @@ namespace Polaby.Services.Services
                 Status = false,
                 Message = "Post not found"
             };
+        }
+
+        public async Task<Pagination<CommunityPostModel>> GetAllCommunityPosts(CommunityPostFilterModel communityPostFilterModel)
+        {
+            var communityPostList = await _unitOfWork.CommuntityPostRepository.GetAllAsync(
+            filter: x =>
+                x.IsDeleted == communityPostFilterModel.IsDeleted &&
+                (communityPostFilterModel.IsProfessional == null || x.IsProfessional == communityPostFilterModel.IsProfessional) &&
+                (communityPostFilterModel.Visibility == null || x.Visibility == communityPostFilterModel.Visibility) &&
+                (communityPostFilterModel.UserId == null || x.UserId == communityPostFilterModel.UserId) &&
+                (string.IsNullOrEmpty(communityPostFilterModel.Search) ||
+                 x.Title.ToLower().Contains(communityPostFilterModel.Search.ToLower()) ||
+                 x.Content.ToLower().Contains(communityPostFilterModel.Search.ToLower())),
+
+            orderBy: x =>
+            {
+                switch (communityPostFilterModel.Order.ToLower())
+                {
+                    case "like":
+                        return communityPostFilterModel.OrderByDescending
+                            ? x.OrderByDescending(x => x.LikesCount)
+                            : x.OrderBy(x => x.LikesCount);
+                    case "comment":
+                        return communityPostFilterModel.OrderByDescending
+                            ? x.OrderByDescending(x => x.CommentsCount)
+                            : x.OrderBy(x => x.CommentsCount);
+                    default:
+                        return communityPostFilterModel.OrderByDescending
+                            ? x.OrderByDescending(x => x.CreationDate)
+                            : x.OrderBy(x => x.CreationDate);
+                }
+            },
+            pageIndex: communityPostFilterModel.PageIndex,
+            pageSize: communityPostFilterModel.PageSize,
+            include: "Reports,Account,CommunityPostLikes"
+
+        );
+
+            if (communityPostList != null)
+            {
+                var communityPostDetailList = communityPostList.Data.Select(cp => new CommunityPostModel
+                {
+                    Id = cp.Id,
+                    Title = cp.Title,
+                    Content = cp.Content,
+                    LikesCount = cp.LikesCount,
+                    CommentsCount = cp.CommentsCount,
+                    ImageUrl = cp.ImageUrl,
+                    Attachments = cp.Attachments,
+                    IsProfessional = cp.IsProfessional,
+                    Visibility = cp.Visibility,
+                    UserId = cp.UserId,
+                    UserName = cp.Account.FirstName + cp.Account.FirstName,
+                    ReportsCount = cp.Reports.Count,
+                    IsLiked = cp.CommunityPostLikes.Any()
+                }).ToList();
+
+                return new Pagination<CommunityPostModel>(communityPostDetailList, communityPostList.TotalCount, communityPostFilterModel.PageIndex, communityPostFilterModel.PageSize);
+            }
+            return null;
         }
     }
 }
