@@ -79,7 +79,7 @@ namespace Polaby.API
 
             //CommunityPost
             services.AddScoped<ICommunityPostService, CommunityPostService>();
-            services.AddScoped<ICommuntityPostRepository, CommunityPostRepository>();
+            services.AddScoped<ICommunityPostRepository, CommunityPostRepository>();
 
             //Comment
             services.AddScoped<ICommentService, CommentService>();

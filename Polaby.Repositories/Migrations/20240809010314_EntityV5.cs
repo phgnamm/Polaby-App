@@ -72,6 +72,13 @@ namespace Polaby.Repositories.Migrations
                 table: "Ingredient",
                 newName: "Alco");
 
+            migrationBuilder.AddColumn<bool>(
+                name: "Animal",
+                table: "Ingredient",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
             migrationBuilder.AddColumn<string>(
                 name: "FoodGroup",
                 table: "Ingredient",
@@ -146,6 +153,10 @@ namespace Polaby.Repositories.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Nutrient");
+
+            migrationBuilder.DropColumn(
+                name: "Animal",
+                table: "Ingredient");
 
             migrationBuilder.DropColumn(
                 name: "FoodGroup",

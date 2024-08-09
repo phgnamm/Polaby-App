@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Polaby.Repositories.Repositories
 {
-    public class CommunityPostRepository : GenericRepository<CommunityPost>, ICommuntityPostRepository
+    public class CommunityPostRepository : GenericRepository<CommunityPost>, ICommunityPostRepository
     {
         private readonly AppDbContext _dbContext;
 

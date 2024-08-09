@@ -1,4 +1,5 @@
 ﻿using Polaby.Repositories.Interfaces;
+using Polaby.Repositories.Repositories;
 
 namespace Polaby.Repositories.Common
 {
@@ -6,7 +7,7 @@ namespace Polaby.Repositories.Common
     {
         private readonly AppDbContext _dbContext;
         private readonly IAccountRepository _accountRepository;
-        private readonly ICommuntityPostRepository _communtityPostRepository;
+        private readonly ICommunityPostRepository _communityPostRepository;
         private readonly IMenuRepository _menuRepository;
         private readonly IMenuMealRepository _menuMealRepository;
         private readonly IMealRepository _mealRepository;
@@ -15,50 +16,39 @@ namespace Polaby.Repositories.Common
         private readonly IDishRepository _dishRepository;
         private readonly IIngredientRepository _ingredientRepository;
         private readonly INutrientRepository _nutrientRepository;
-    public class UnitOfWork : IUnitOfWork
-    {
-        private readonly AppDbContext _dbContext;
-        private readonly IAccountRepository _accountRepository;
-        private readonly ICommuntityPostRepository _communityPostRepository;
         private readonly ICommentRepostiory _commentRepository;
         private readonly IFollowRepository _followRepository;
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IReportRepository _reportRepository;
-
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
-            ICommuntityPostRepository communtityPostRepository, IMealRepository mealRepository,
+            ICommunityPostRepository communityPostRepository, IMealRepository mealRepository,
             IMealDishRepository mealDishRepository, IDishIngredientRepository dishIngredientRepository,
-            IDishRepository dishRepository, IIngredientRepository ingredientRepository, INutrientRepository nutrientRepository
+            IDishRepository dishRepository, IIngredientRepository ingredientRepository, INutrientRepository nutrientRepository,
+            ICommentRepostiory commentRepostiory, IFollowRepository followRepository, IScheduleRepository scheduleRepository, IReportRepository reportRepository
             )
         {
             _dbContext = dbContext;
             _accountRepository = accountRepository;
             _menuRepository = menuRepository;
             _menuMealRepository = menuMealRepository;
-            _communtityPostRepository = communtityPostRepository;
+            _communityPostRepository = communityPostRepository;
             _mealRepository = mealRepository;
             _mealDishRepository = mealDishRepository;
             _dishRepository = dishRepository;
             _dishIngredientRepository = dishIngredientRepository;
             _ingredientRepository = ingredientRepository;
             _nutrientRepository = nutrientRepository;
-        }
-        public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository, ICommuntityPostRepository communtityPostRepository,
-			ICommentRepostiory commentRepostiory, IFollowRepository followRepository, IScheduleRepository scheduleRepository)
-		{
-			_dbContext = dbContext;
-			_accountRepository = accountRepository;
-            _communityPostRepository = communtityPostRepository;
             _commentRepository = commentRepostiory;
-			_followRepository = followRepository;
-			_scheduleRepository = scheduleRepository;
-		}
+            _followRepository = followRepository;
+            _scheduleRepository = scheduleRepository;
+            _reportRepository = reportRepository;
+        }
 
 
         public AppDbContext DbContext => _dbContext;
         public IAccountRepository AccountRepository => _accountRepository;
-        public ICommuntityPostRepository CommuntityPostRepository => _communtityPostRepository;
+        public ICommunityPostRepository CommunityPostRepository => _communityPostRepository;
         public IMenuRepository MenuRepository => _menuRepository;
         public IMenuMealRepository MenuMealRepository => _menuMealRepository;
         public IMealRepository MealRepository => _mealRepository;
@@ -67,20 +57,12 @@ namespace Polaby.Repositories.Common
         public IDishIngredientRepository DishIngredientRepository => _dishIngredientRepository;
         public IIngredientRepository IngredientRepository => _ingredientRepository;
         public INutrientRepository NutrientRepository => _nutrientRepository;
-        public AppDbContext DbContext => _dbContext;
-        public IAccountRepository AccountRepository => _accountRepository;
-        public ICommuntityPostRepository CommunityPostRepository => _communityPostRepository;
         public ICommentRepostiory CommentRepository => _commentRepository;
         public IFollowRepository FollowRepository => _followRepository;
         public IScheduleRepository ScheduleRepository => _scheduleRepository;
         public IReportRepository ReportRepository => _reportRepository;
 
         public async Task<int> SaveChangeAsync()
-        {
-            return await _dbContext.SaveChangesAsync();
-        }
-    }
-}
         {
             return await _dbContext.SaveChangesAsync();
         }
