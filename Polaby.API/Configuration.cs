@@ -49,10 +49,37 @@ namespace Polaby.API
             // Account
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
+            //Menu
+            services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<IMenuRepository, MenuRepository>();
+
+            //MenuMeal
+            services.AddScoped<IMenuMealRepository, MenuMealRepository>();
+
+            //Meal
+            services.AddScoped<IMealService, MealService>();
+            services.AddScoped<IMealRepository, MealRepository>();
+
+            //MealDish
+            services.AddScoped<IMealDishRepository, MealDishRepository>();
+
+            //Dish
+            services.AddScoped<IDishService, DishService>();
+            services.AddScoped<IDishRepository, DishRepository>();
+
+            //DishIngredient
+            services.AddScoped<IDishIngredientRepository, DishIngredientRepository>();
+
+            //Ingredient
+            services.AddScoped<IIngredientService, IngredientService>();
+            services.AddScoped<IIngredientRepository, IngredientRepository>();
+
+            //Nutrient
+            services.AddScoped<INutrientRepository, NutrientRepository>();
 
             //CommunityPost
             services.AddScoped<ICommunityPostService, CommunityPostService>();
-            services.AddScoped<ICommuntityPostRepository, CommunityPostRepository>();
+            services.AddScoped<ICommunityPostRepository, CommunityPostRepository>();
 
             //Comment
             services.AddScoped<ICommentService, CommentService>();

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Polaby.Repositories.Interfaces
 {
-    public interface ICommuntityPostRepository : IGenericRepository<CommunityPost>
+    public interface ICommunityPostRepository : IGenericRepository<CommunityPost>
     {
     }
 }
