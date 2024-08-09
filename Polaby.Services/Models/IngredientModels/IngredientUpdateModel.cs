@@ -12,7 +12,6 @@ namespace Polaby.Services.Models.IngredientModels
 
         public string? Description { get; set; }
 
-        [Url(ErrorMessage = "Invalid image URL format.")]
         public string? Image { get; set; }
 
         [Range(0, float.MaxValue, ErrorMessage = "Kcal must be a non-negative value.")]
@@ -53,8 +52,6 @@ namespace Polaby.Services.Models.IngredientModels
         public float? Alco { get; set; }
 
         public string? Source { get; set; }
-
-        [Url(ErrorMessage = "Invalid source URL format.")]
         public string? SourceUrl { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Index must be a non-negative value.")]

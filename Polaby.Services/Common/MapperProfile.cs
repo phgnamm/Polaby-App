@@ -51,12 +51,13 @@ namespace Polaby.Services.Common
 
             //Ingredient
             CreateMap<IngredientImportModel, Ingredient>().ReverseMap();
-            CreateMap<IngredientUpdateModel, Ingredient>();
+            CreateMap<IngredientUpdateModel, Ingredient>().ForMember(dest => dest.Nutrients, opt => opt.Ignore());
             CreateMap<IngredientModel, Ingredient>().ReverseMap();
 
             //Nutrient
             CreateMap<NutrientImportModel, Nutrient>().ReverseMap();
-            CreateMap<NutrientUpdateModel, Nutrient>();
+            CreateMap<NutrientUpdateModel, Nutrient>().ForMember(dest => dest.Id, opt => opt.Ignore()).ReverseMap();
+                                                      //.ForMember(dest => dest.IngredientId, opt => opt.Ignore());
             CreateMap<NutrientModel, Nutrient>().ReverseMap();
 
             //Report

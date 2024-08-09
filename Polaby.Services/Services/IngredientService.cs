@@ -3,11 +3,9 @@ using AutoMapper;
 using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.IngredientModels;
-using Polaby.Repositories.Models.MealModels;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.IngredientModels;
-using Polaby.Services.Models.NutrientModels;
 using Polaby.Services.Models.ResponseModels;
 
 namespace Polaby.Services.Services
@@ -27,7 +25,6 @@ namespace Polaby.Services.Services
         public async Task<ResponseModel> AddRangeIngredient(List<IngredientImportModel> ingredients)
         {
             var ingredientList = _mapper.Map<List<Ingredient>>(ingredients);
-
             if (ingredientList == null || !ingredientList.Any())
             {
                 return new ResponseModel()
@@ -37,29 +34,29 @@ namespace Polaby.Services.Services
                 };
             }
 
+            var nutrientMapping = ingredients?
+                .SelectMany(i => i.Nutrients, (i, n) => new { IngredientName = i.Name, Nutrient = n })?
+                .GroupBy(x => x.IngredientName)?
+                .ToDictionary(g => g.Key, g => g.Select(x => x.Nutrient).ToList());
+
             foreach (var ingredient in ingredientList)
             {
-                var nutrientModels = ingredients
-                    .FirstOrDefault(i => i.Name == ingredient.Name)?
-                    .Nutrients;
-
-                if (nutrientModels != null)
+                if (nutrientMapping.TryGetValue(ingredient.Name, out var nutrientModels))
                 {
                     var nutrients = _mapper.Map<List<Nutrient>>(nutrientModels);
-                    foreach (var nutrient in nutrients)
-                    {
-                        ingredient.Nutrients.Add(nutrient);
-                    }
+                    ingredient.Nutrients = nutrients;
                 }
             }
             await _unitOfWork.IngredientRepository.AddRangeAsync(ingredientList);
             await _unitOfWork.SaveChangeAsync();
+
             return new ResponseModel()
             {
                 Status = true,
                 Message = "Ingredient created successfully"
             };
         }
+
 
 
         public async Task<Pagination<IngredientModel>> GetAllIngredient(IngredientFilterModel ingredientFilterModel)
@@ -90,7 +87,7 @@ namespace Polaby.Services.Services
                                 : x.OrderBy(i => i.CreationDate);
                     }
                 },
-                include: "DishIngredients.Ingredient,Nutrients"
+                include: "DishIngredients,Nutrients"
             );
 
             if (ingredientList != null)
@@ -124,17 +121,38 @@ namespace Polaby.Services.Services
             bool isProteinChanged = existingIngredient.Protein != updateModel.Protein;
             bool isCarbohydratesChanged = existingIngredient.Carbohydrates != updateModel.Carbohydrates;
 
-            _mapper.Map(updateModel, existingIngredient);
-            existingIngredient.Nutrients.Clear();
+
+            var existingNutrients = existingIngredient.Nutrients;
+            var nutrientToUpdate = new List<Nutrient>();
+
             if (updateModel.Nutrients != null && updateModel.Nutrients.Any())
             {
-                var updatedNutrients = _mapper.Map<List<Nutrient>>(updateModel.Nutrients);
-                foreach (var nutrient in updatedNutrients)
+                foreach (var nutrientUpdate in updateModel.Nutrients)
                 {
-                    existingIngredient.Nutrients.Add(nutrient);
+                    if (nutrientUpdate.Id.HasValue)
+                    {
+                        var existingNutrient = existingNutrients
+                            .FirstOrDefault(n => n.Id == nutrientUpdate.Id.Value);
+
+                        if (existingNutrient != null)
+                        {
+                            existingNutrient.IngredientId = existingIngredient.Id;
+                            _mapper.Map(nutrientUpdate, existingNutrient);
+                            nutrientToUpdate.Add(existingNutrient);
+                        }
+                    }
                 }
             }
-            await _unitOfWork.SaveChangeAsync();
+
+            // Cập nhật lại Ingredient
+            _mapper.Map(updateModel, existingIngredient);
+
+            if (nutrientToUpdate.Any())
+            {
+                _unitOfWork.NutrientRepository.UpdateRange(nutrientToUpdate);
+                await _unitOfWork.SaveChangeAsync();
+            }
+
 
             if (isKcalChanged || isFatChanged || isProteinChanged || isCarbohydratesChanged)
             {
@@ -199,9 +217,10 @@ namespace Polaby.Services.Services
             };
         }
 
+
         public async Task<ResponseModel> DeleteIngredient(Guid id)
         {
-            var existingIngredient = await _unitOfWork.IngredientRepository.GetAsync(id, "DishIngredients");
+            var existingIngredient = await _unitOfWork.IngredientRepository.GetAsync(id, "DishIngredients,Nutrients");
             if (existingIngredient == null)
             {
                 return new ResponseModel()
@@ -211,8 +230,10 @@ namespace Polaby.Services.Services
                 };
             }
 
-            _unitOfWork.NutrientRepository.HardDeleteRange(existingIngredient.Nutrients.ToList());
             _unitOfWork.DishIngredientRepository.HardDeleteRange(existingIngredient.DishIngredients.ToList());
+            await _unitOfWork.SaveChangeAsync();
+            _unitOfWork.NutrientRepository.HardDeleteRange(existingIngredient.Nutrients.ToList());
+            await _unitOfWork.SaveChangeAsync();
             _unitOfWork.IngredientRepository.HardDelete(existingIngredient);
             await _unitOfWork.SaveChangeAsync();
 
