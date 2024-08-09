@@ -7,6 +7,7 @@
         ICommuntityPostRepository CommuntityPostRepository { get; }
         ICommentRepostiory CommentRepostiory { get; }
         IFollowRepository FollowRepository { get; }
+		IRatingRepository RatingRepository { get; }	
 
         public Task<int> SaveChangeAsync();
 	}
