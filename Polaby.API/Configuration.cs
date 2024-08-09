@@ -97,6 +97,10 @@ namespace Polaby.API
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IReportRepository, ReportRepository>();
 
+            //Rating
+            services.AddScoped<IRatingService, RatingService>();
+            services.AddScoped<IRatingRepository,RatingRepository>();
+
             return services;
         }
     }

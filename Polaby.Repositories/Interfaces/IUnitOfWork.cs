@@ -17,6 +17,7 @@
         IFollowRepository FollowRepository { get; }
         IScheduleRepository ScheduleRepository { get; }
         IReportRepository ReportRepository { get; }
+		IRatingRepository RatingRepository { get; }	
 
         public Task<int> SaveChangeAsync();
 	}
