@@ -115,13 +115,6 @@ namespace Polaby.Services.Services
                     Message = "Ingredient not found!"
                 };
             }
-
-            bool isKcalChanged = existingIngredient.Kcal != updateModel.Kcal;
-            bool isFatChanged = existingIngredient.Fat != updateModel.Fat;
-            bool isProteinChanged = existingIngredient.Protein != updateModel.Protein;
-            bool isCarbohydratesChanged = existingIngredient.Carbohydrates != updateModel.Carbohydrates;
-
-
             var existingNutrients = existingIngredient.Nutrients;
             var nutrientToUpdate = new List<Nutrient>();
 
@@ -144,79 +137,18 @@ namespace Polaby.Services.Services
                 }
             }
 
-            // Cập nhật lại Ingredient
             _mapper.Map(updateModel, existingIngredient);
-
             if (nutrientToUpdate.Any())
             {
                 _unitOfWork.NutrientRepository.UpdateRange(nutrientToUpdate);
                 await _unitOfWork.SaveChangeAsync();
             }
-
-
-            if (isKcalChanged || isFatChanged || isProteinChanged || isCarbohydratesChanged)
-            {
-                // Get affected dishes
-                var affectedDishes = await _unitOfWork.DishRepository.GetAllAsync(
-                    filter: dish => dish.DishIngredients.Any(di => di.IngredientId == id),
-                    include: "DishIngredients.Ingredient"
-                );
-
-                // Update dishes
-                var updatedDishes = affectedDishes.Data.Select(dish =>
-                {
-                    dish.Kcal = dish.DishIngredients.Sum(di => di.Ingredient.Kcal);
-                    dish.Protein = dish.DishIngredients.Sum(di => di.Ingredient.Protein);
-                    dish.Starch = dish.DishIngredients.Sum(di => di.Ingredient.Carbohydrates);
-                    dish.Fat = dish.DishIngredients.Sum(di => di.Ingredient.Fat);
-                    return dish;
-                }).ToList();
-
-                _unitOfWork.DishRepository.UpdateRange(updatedDishes);
-                await _unitOfWork.SaveChangeAsync();
-
-                // Get affected meals
-                var affectedMealIds = updatedDishes.SelectMany(dish => dish.MealDishes.Select(md => md.MealId)).Distinct();
-                var affectedMeals = await _unitOfWork.MealRepository.GetAllAsync(
-                    filter: meal => affectedMealIds.Contains(meal.Id),
-                    include: "MealDishes.Dish"
-                );
-
-                // Update meals
-                var updatedMeals = affectedMeals.Data.Select(meal =>
-                {
-                    meal.Kcal = meal.MealDishes.Sum(md => md.Dish.Kcal);
-                    return meal;
-                }).ToList();
-
-                _unitOfWork.MealRepository.UpdateRange(updatedMeals);
-                await _unitOfWork.SaveChangeAsync();
-
-                // Get affected menus
-                var affectedMenuIds = updatedMeals.SelectMany(meal => meal.MenuMeals.Select(mm => mm.MenuId)).Distinct();
-                var affectedMenus = await _unitOfWork.MenuRepository.GetAllAsync(
-                    filter: menu => affectedMenuIds.Contains(menu.Id),
-                    include: "MenuMeals.Meal"
-                );
-
-                // Update menus
-                var updatedMenus = affectedMenus.Data.Select(menu =>
-                {
-                    menu.Kcal = menu.MenuMeals.Sum(mm => mm.Meal.Kcal);
-                    return menu;
-                }).ToList();
-
-                _unitOfWork.MenuRepository.UpdateRange(updatedMenus);
-                await _unitOfWork.SaveChangeAsync();
-            }
-
             return new ResponseModel()
             {
                 Status = true,
                 Message = "Ingredient and related entities updated successfully"
             };
         }
-
 
         public async Task<ResponseModel> DeleteIngredient(Guid id)
         {
@@ -231,9 +163,7 @@ namespace Polaby.Services.Services
             }
 
             _unitOfWork.DishIngredientRepository.HardDeleteRange(existingIngredient.DishIngredients.ToList());
-            await _unitOfWork.SaveChangeAsync();
             _unitOfWork.NutrientRepository.HardDeleteRange(existingIngredient.Nutrients.ToList());
-            await _unitOfWork.SaveChangeAsync();
             _unitOfWork.IngredientRepository.HardDelete(existingIngredient);
             await _unitOfWork.SaveChangeAsync();
 

@@ -15,8 +15,10 @@ namespace Polaby.Repositories.Entities
 
         //Foreign key
         public Guid? IngredientId { get; set; }
+        public Guid? DishId { get; set; }
 
         //Relationship
         public virtual Ingredient? ingredient { get; set; }
+        public virtual Dish? dish { get; set; }
     }
 }
