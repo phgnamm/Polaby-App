@@ -10,6 +10,6 @@ namespace Polaby.Services.Interfaces
         Task<ResponseDataModel<CommentModel>> Create(CommentCreateModel commentCreateModel);
         Task<ResponseDataModel<CommentModel>> Update(Guid id, CommentUpdateModel commentUpdateModel);
         Task<ResponseDataModel<CommentModel>> Delete(Guid id);
-        Task<Pagination<CommentModel>> GetAllCommunityPosts(CommentFilterModel commentFilterModel);
+        Task<Pagination<CommentModel>> GetAllComments(CommentFilterModel commentFilterModel);
     }
 }

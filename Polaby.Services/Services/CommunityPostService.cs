@@ -4,6 +4,7 @@ using Polaby.Repositories.Interfaces;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.AccountModels;
+using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.CommunityPostModels;
 using Polaby.Services.Models.ResponseModels;
 
@@ -133,6 +134,10 @@ namespace Polaby.Services.Services
                         return communityPostFilterModel.OrderByDescending
                             ? x.OrderByDescending(x => x.CommentsCount)
                             : x.OrderBy(x => x.CommentsCount);
+                    case "report":
+                        return communityPostFilterModel.OrderByDescending
+                            ? x.OrderByDescending(x => x.Reports.Count)
+                            : x.OrderBy(x => x.Reports.Count);
                     default:
                         return communityPostFilterModel.OrderByDescending
                             ? x.OrderByDescending(x => x.CreationDate)
@@ -141,7 +146,7 @@ namespace Polaby.Services.Services
             },
             pageIndex: communityPostFilterModel.PageIndex,
             pageSize: communityPostFilterModel.PageSize,
-            include: "Reports,Account,CommunityPostLikes"
+            include: "Reports,Account,CommunityPostLikes,Comments"
 
         );
 
@@ -153,7 +158,7 @@ namespace Polaby.Services.Services
                     Title = cp.Title,
                     Content = cp.Content,
                     LikesCount = cp.LikesCount,
-                    CommentsCount = cp.CommentsCount,
+                    CommentsCount = cp.Comments.Count(c => !c.IsDeleted),
                     ImageUrl = cp.ImageUrl,
                     Attachments = cp.Attachments,
                     IsProfessional = cp.IsProfessional,

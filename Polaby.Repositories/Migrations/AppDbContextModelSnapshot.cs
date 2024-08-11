@@ -1801,7 +1801,7 @@ namespace Polaby.Repositories.Migrations
                         .HasForeignKey("AccountId");
 
                     b.HasOne("Polaby.Repositories.Entities.Comment", "ParentComment")
-                        .WithMany()
+                        .WithMany("CommentReplies")
                         .HasForeignKey("ParentCommentId");
 
                     b.HasOne("Polaby.Repositories.Entities.CommunityPost", "Post")
@@ -2115,6 +2115,8 @@ namespace Polaby.Repositories.Migrations
             modelBuilder.Entity("Polaby.Repositories.Entities.Comment", b =>
                 {
                     b.Navigation("CommentLikes");
+
+                    b.Navigation("CommentReplies");
 
                     b.Navigation("Reports");
                 });

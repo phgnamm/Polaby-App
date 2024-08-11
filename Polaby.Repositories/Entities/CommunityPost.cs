@@ -23,6 +23,7 @@ namespace Polaby.Repositories.Entities
         // Relationship
         public virtual Account? Account { get; set; }
         public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
+        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public virtual ICollection<CommunityPostLike> CommunityPostLikes { get; set; } = new List<CommunityPostLike>();
 
     }
