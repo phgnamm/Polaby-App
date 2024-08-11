@@ -22,7 +22,7 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseDataModel<CommentModel>> Create(CommentCreateModel commentCreateModel)
         {
-            var account = await _unitOfWork.AccountRepository.GetAccountById((Guid)commentCreateModel.UserId);
+            var account = await _unitOfWork.AccountRepository.GetAccountById((Guid)commentCreateModel.AccountId);
             if (account == null)
             {
                 return new ResponseDataModel<CommentModel>()
@@ -32,14 +32,19 @@ namespace Polaby.Services.Services
                 };
             }
 
-            var communityPost = await _unitOfWork.CommunityPostRepository.GetAsync((Guid)commentCreateModel.PostId);
-            if (communityPost == null)
+            if (commentCreateModel.PostId != null)
             {
-                return new ResponseDataModel<CommentModel>()
+                var communityPost = await _unitOfWork.CommunityPostRepository.GetAsync((Guid)commentCreateModel.PostId);
+                if (communityPost == null)
                 {
-                    Message = "Post not found",
-                    Status = false
-                };
+                    return new ResponseDataModel<CommentModel>()
+                    {
+                        Message = "Post not found",
+                        Status = false
+                    };
+                }
+                communityPost.CommentsCount += 1;
+                _unitOfWork.CommunityPostRepository.Update(communityPost);
             }
 
             if(commentCreateModel.ParentCommentId != null)
@@ -53,6 +58,8 @@ namespace Polaby.Services.Services
                         Status = false
                     };
                 }
+                //parrentComment.CommentsCount += 1;
+                //_unitOfWork.CommentRepository.Update(parrentComment);
             }
 
             Comment comment = _mapper.Map<Comment>(commentCreateModel);
@@ -132,7 +139,7 @@ namespace Polaby.Services.Services
             };
         }
 
-        public async Task<Pagination<CommentModel>> GetAllCommunityPosts(CommentFilterModel commentFilterModel)
+        public async Task<Pagination<CommentModel>> GetAllComments(CommentFilterModel commentFilterModel)
         {
             var commentList = await _unitOfWork.CommentRepository.GetAllAsync(
             filter: x =>
@@ -151,6 +158,10 @@ namespace Polaby.Services.Services
                         return commentFilterModel.OrderByDescending
                             ? x.OrderByDescending(x => x.LikesCount)
                             : x.OrderBy(x => x.LikesCount);
+                    case "comment":
+                        return commentFilterModel.OrderByDescending
+                            ? x.OrderByDescending(x => x.CommentReplies.Count)
+                            : x.OrderBy(x => x.CommentReplies.Count);
                     case "report":
                         return commentFilterModel.OrderByDescending
                             ? x.OrderByDescending(x => x.Reports.Count)
@@ -163,22 +174,23 @@ namespace Polaby.Services.Services
             },
             pageIndex: commentFilterModel.PageIndex,
             pageSize: commentFilterModel.PageSize,
-            include: "Reports,Account,CommentLikes"
+            include: "Reports,Account,CommentLikes,CommentReplies"
 
         );
 
             if (commentList != null)
             {
-                var commentDetailList = commentList.Data.Select(cp => new CommentModel
+                var commentDetailList = commentList.Data.Select(c => new CommentModel
                 {
-                    Id = cp.Id,
-                    Content = cp.Content,
-                    LikesCount = cp.LikesCount,
-                    Attachments = cp.Attachments,
-                    UserId = cp.AccountId,
-                    UserName = cp.Account.FirstName + cp.Account.FirstName,
-                    ReportsCount = cp.Reports.Count,
-                    IsLiked = cp.CommentLikes.Any()
+                    Id = c.Id,
+                    Content = c.Content,
+                    LikesCount = c.LikesCount,
+                    CommentsCount = c.CommentReplies.Count(c => !c.IsDeleted),
+                    Attachments = c.Attachments,
+                    UserId = c.AccountId,
+                    UserName = c.Account.FirstName + c.Account.FirstName,
+                    ReportsCount = c.Reports.Count,
+                    IsLiked = c.CommentLikes.Any()
                 }).ToList();
 
                 return new Pagination<CommentModel>(commentDetailList, commentList.TotalCount, commentFilterModel.PageIndex, commentFilterModel.PageSize);

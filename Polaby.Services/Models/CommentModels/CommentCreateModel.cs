@@ -10,8 +10,8 @@ namespace Polaby.Services.Models.CommentModels
     {
         public string Content { get; set; }
         public string? Attachments { get; set; }
-        public Guid UserId { get; set; }
-        public Guid PostId { get; set; }
+        public Guid AccountId { get; set; }
+        public Guid? PostId { get; set; }
         public Guid? ParentCommentId { get; set; }
     }
 }
