@@ -25,17 +25,16 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseModel> AddRangeDish(List<DishImportModel> dishes)
         {
-            var dishList = _mapper.Map<List<Dish>>(dishes);
-
-            if (dishList == null)
+            if (dishes == null || !dishes.Any())
             {
-                return new ResponseModel()
+                return new ResponseModel
                 {
                     Status = false,
-                    Message = "Cannot create Dish!"
+                    Message = "No dishes provided!"
                 };
             }
 
+            var dishList = _mapper.Map<List<Dish>>(dishes);
             await _unitOfWork.DishRepository.AddRangeAsync(dishList);
             await _unitOfWork.SaveChangeAsync();
 
@@ -44,57 +43,39 @@ namespace Polaby.Services.Services
             );
 
             var dishIngredients = dishes
-                .SelectMany(dishImportModel =>
-                    dishImportModel.IngredientIds.Select(IngredientId => new DishIngredient
-                    {
-                        DishId = addedDishes.Data.First(dish => dish.Name == dishImportModel.Name).Id,
-                        IngredientId = IngredientId
-                    })
-                ).ToList();
+                .SelectMany(dishImportModel => dishImportModel.IngredientIds.Select(ingredientId => new DishIngredient
+                {
+                    DishId = addedDishes.Data.First(dish => dish.Name == dishImportModel.Name).Id,
+                    IngredientId = ingredientId
+                })).ToList();
 
-            await _unitOfWork.DishIngredientRepository.AddRangeAsync(dishIngredients);
+            var dishNutrients = dishes
+                .Where(dishImportModel => dishImportModel.Nutrients != null && dishImportModel.Nutrients.Any())
+                .SelectMany(dishImportModel => _mapper.Map<List<Nutrient>>(dishImportModel.Nutrients)
+                    .Select(nutrient =>
+                    {
+                        nutrient.DishId = addedDishes.Data.First(dish => dish.Name == dishImportModel.Name).Id;
+                        return nutrient;
+                    })).ToList();
+
+            if (dishIngredients.Any())
+            {
+                await _unitOfWork.DishIngredientRepository.AddRangeAsync(dishIngredients);
+            }
+
+            if (dishNutrients.Any())
+            {
+                await _unitOfWork.NutrientRepository.AddRangeAsync(dishNutrients);
+            }
+
             await _unitOfWork.SaveChangeAsync();
 
-            var dishIds = addedDishes.Data.Select(dish => dish.Id).ToList();
-            var dishIngredientsGrouped = await _unitOfWork.DishIngredientRepository.GetAllAsync(
-                filter: di => dishIds.Contains((Guid)di.DishId),
-                include: "DishIngredients.Ingredient"
-            );
-
-            var kcalUpdates = dishIngredientsGrouped.Data
-       .GroupBy(di => di.DishId)
-       .Select(group => new
-       {
-           DishId = group.Key,
-           TotalKcal = group.Sum(di => di.Ingredient.Kcal),
-           TotalProtein = group.Sum(di => di.Ingredient.Protein),
-           TotalStarch = group.Sum(di => di.Ingredient.Carbohydrates),
-           TotalFat = group.Sum(di => di.Ingredient.Fat)
-       }).ToList();
-
-            var updatedDishes = addedDishes.Data
-                .Join(kcalUpdates,
-                    dish => dish.Id,
-                    update => update.DishId,
-                    (dish, update) =>
-                    {
-                        dish.Kcal = update.TotalKcal;
-                        dish.Protein = update.TotalProtein;
-                        dish.Starch = update.TotalStarch;
-                        dish.Fat = update.TotalFat;
-                        return dish;
-                    }).ToList();
-
-            _unitOfWork.DishRepository.UpdateRange(updatedDishes);
-            await _unitOfWork.SaveChangeAsync();
-
-            return new ResponseModel()
+            return new ResponseModel
             {
                 Status = true,
-                Message = "Dish created successfully with associated Ingredients and updated Kcal"
+                Message = "Dishes created successfully with associated Ingredients and Nutrients"
             };
         }
-
 
         public async Task<Pagination<DishModel>> GetAllDish(DishFilterModel dishFilterModel)
         {
@@ -124,7 +105,7 @@ namespace Polaby.Services.Services
                                 : x.OrderBy(x => x.CreationDate);
                     }
                 },
-                include: "DishIngredients"
+                include: "DishIngredients,Nutrients"
             );
             if (dishList != null)
             {
@@ -137,7 +118,7 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseModel> UpdateDish(Guid id, DishUpdateModel updateModel)
         {
-            var existingDish = await _unitOfWork.DishRepository.GetAsync(id, "DishIngredients");
+            var existingDish = await _unitOfWork.DishRepository.GetAsync(id, "DishIngredients,Nutrients");
             if (existingDish == null)
             {
                 return new ResponseModel()
@@ -170,19 +151,8 @@ namespace Polaby.Services.Services
 
             var updatedDishIngredient = await _unitOfWork.DishIngredientRepository.GetAllAsync(
                 filter: di => di.IngredientId == id,
-                include: "DishIngredients.Ingredient"
+                include: "DishIngredients,Ingredient,Nutrient"
             );
-
-            var totalKcal = updatedDishIngredient.Data.Sum(di => di.Ingredient.Kcal);
-            var totalProtein = updatedDishIngredient.Data.Sum(di => di.Ingredient.Protein);
-            var totalStarch = updatedDishIngredient.Data.Sum(di => di.Ingredient.Carbohydrates);
-            var totalFat = updatedDishIngredient.Data.Sum(di => di.Ingredient.Fat);
-
-            existingDish.Kcal = totalKcal;
-            existingDish.Protein = totalProtein;
-            existingDish.Starch = totalStarch;
-            existingDish.Fat = totalFat;
-
             _unitOfWork.DishRepository.Update(existingDish);
             await _unitOfWork.SaveChangeAsync();
 
@@ -196,7 +166,7 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseModel> DeleteDish(Guid id)
         {
-            var existingDish = await _unitOfWork.DishRepository.GetAsync(id, "DishIngredients");
+            var existingDish = await _unitOfWork.DishRepository.GetAsync(id, "DishIngredients,Nutrients");
             if (existingDish == null)
             {
                 return new ResponseModel()
@@ -208,6 +178,7 @@ namespace Polaby.Services.Services
 
             var dishIngredientToRemove = existingDish.DishIngredients.ToList();
             _unitOfWork.DishIngredientRepository.HardDeleteRange(dishIngredientToRemove);
+            _unitOfWork.NutrientRepository.HardDeleteRange(existingDish.Nutrients.ToList());
             _unitOfWork.DishRepository.HardDelete(existingDish);
             await _unitOfWork.SaveChangeAsync();
 

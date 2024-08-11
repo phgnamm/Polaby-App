@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Polaby.Repositories;
 
@@ -11,9 +12,11 @@ using Polaby.Repositories;
 namespace Polaby.Repositories.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240810041606_EntityV6")]
+    partial class EntityV6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1801,7 +1804,7 @@ namespace Polaby.Repositories.Migrations
                         .HasForeignKey("AccountId");
 
                     b.HasOne("Polaby.Repositories.Entities.Comment", "ParentComment")
-                        .WithMany("CommentReplies")
+                        .WithMany()
                         .HasForeignKey("ParentCommentId");
 
                     b.HasOne("Polaby.Repositories.Entities.CommunityPost", "Post")
@@ -2115,8 +2118,6 @@ namespace Polaby.Repositories.Migrations
             modelBuilder.Entity("Polaby.Repositories.Entities.Comment", b =>
                 {
                     b.Navigation("CommentLikes");
-
-                    b.Navigation("CommentReplies");
 
                     b.Navigation("Reports");
                 });

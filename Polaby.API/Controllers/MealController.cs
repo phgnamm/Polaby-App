@@ -20,7 +20,7 @@ namespace Polaby.API.Controllers
 
         [HttpPost()]
         //[Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateMeal(List<MealImportModel> meals)
+        public async Task<IActionResult> CreateMeal([FromBody] List<MealImportModel> meals)
         {
             try
             {

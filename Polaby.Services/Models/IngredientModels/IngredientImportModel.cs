@@ -11,7 +11,6 @@ namespace Polaby.Services.Models.IngredientModels
 
         public string? Description { get; set; }
 
-        [Url(ErrorMessage = "Invalid image URL format.")]
         public string? Image { get; set; }
 
         public bool Animal { get; set; }
@@ -55,7 +54,6 @@ namespace Polaby.Services.Models.IngredientModels
 
         public string? Source { get; set; }
 
-        [Url(ErrorMessage = "Invalid source URL format.")]
         public string? SourceUrl { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Index must be a non-negative value.")]
