@@ -66,6 +66,8 @@ namespace Polaby.Repositories.Common
 
         public IRatingRepository RatingRepository => _ratingRepository;
 
+        public IRatingRepository RatingRepository => _ratingRepository;
+
         public async Task<int> SaveChangeAsync()
         {
             return await _dbContext.SaveChangesAsync();
