@@ -5,6 +5,7 @@ using Polaby.Repositories.Interfaces;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.CommunityPostModels;
+using Polaby.Services.Models.NewFolder;
 using Polaby.Services.Models.NotificationModels;
 using Polaby.Services.Models.NotificationSettingModels;
 using Polaby.Services.Models.ResponseModels;
@@ -56,8 +57,9 @@ namespace Polaby.Services.Services
             }
             else
             {
-                _unitOfWork.DbContext.Entry(existingNotificationSetting).State = EntityState.Detached;
-                notificationSetting = _mapper.Map<NotificationSetting>(notificationUpdateModel);
+                //_unitOfWork.DbContext.Entry(existingNotificationSetting).State = EntityState.Detached;
+                notificationSetting = _mapper.Map(notificationUpdateModel, existingNotificationSetting);
+                //notificationSetting = _mapper.Map<NotificationSetting>(notificationUpdateModel);
                 _unitOfWork.NotificationSettingRepository.Update(notificationSetting);
             }
          
