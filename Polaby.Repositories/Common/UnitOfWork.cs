@@ -1,5 +1,4 @@
 ﻿using Polaby.Repositories.Interfaces;
-using Polaby.Repositories.Repositories;
 
 namespace Polaby.Repositories.Common
 {
@@ -21,6 +20,9 @@ namespace Polaby.Repositories.Common
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IReportRepository _reportRepository;
         private readonly IWeeklyPostRepository _weeklyPostRepository;
+        private readonly INotificationRepository _notificationRepository;
+        private readonly INotificationSettingRepository _notificationSettingRepository;
+        private readonly INotificationTypeRepository _notificationTypeRepository;
         private readonly IUserMenuRepository _userMenuRepository;
 
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
@@ -31,6 +33,10 @@ namespace Polaby.Repositories.Common
             INutrientRepository nutrientRepository,
             ICommentRepostiory commentRepostiory, IFollowRepository followRepository,
             IScheduleRepository scheduleRepository, IReportRepository reportRepository,
+            IWeeklyPostRepository weeklyPostRepository,
+            INotificationRepository notificationRepository,
+            INotificationTypeRepository notificationTypeRepository,
+            INotificationSettingRepository notificationSettingRepository
             IWeeklyPostRepository weeklyPostRepository, IUserMenuRepository userMenuRepository
         )
         {
@@ -50,6 +56,9 @@ namespace Polaby.Repositories.Common
             _scheduleRepository = scheduleRepository;
             _reportRepository = reportRepository;
             _weeklyPostRepository = weeklyPostRepository;
+            _notificationRepository = notificationRepository;
+            _notificationTypeRepository = notificationTypeRepository;
+            _notificationSettingRepository = notificationSettingRepository;
             _userMenuRepository = userMenuRepository;
         }
 
@@ -70,6 +79,9 @@ namespace Polaby.Repositories.Common
         public IScheduleRepository ScheduleRepository => _scheduleRepository;
         public IReportRepository ReportRepository => _reportRepository;
         public IWeeklyPostRepository WeeklyPostRepository => _weeklyPostRepository;
+        public INotificationRepository NotificationRepository => _notificationRepository;
+        public INotificationSettingRepository NotificationSettingRepository => _notificationSettingRepository;
+        public INotificationTypeRepository NotificationTypeRepository => _notificationTypeRepository;
         public IUserMenuRepository UserMenuRepository => _userMenuRepository;
 
         public async Task<int> SaveChangeAsync()

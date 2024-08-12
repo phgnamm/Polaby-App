@@ -105,6 +105,18 @@ namespace Polaby.API
             //UserMenu
             services.AddScoped<IUserMenuRepository, UserMenuRepository>();
 
+            //Notification
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+
+            //NotificationSetting
+            services.AddScoped<INotificationSettingService, NotificationSettingService>();
+            services.AddScoped<INotificationSettingRepository, NotificationSettingRepository>();
+
+            //NotificationType
+            services.AddScoped<INotificationTypeService, NotificationTypeService>();
+            services.AddScoped<INotificationTypeRepository, NotificationTypeRepository>();
+
             return services;
         }
     }

@@ -188,7 +188,7 @@ namespace Polaby.Services.Services
                     CommentsCount = c.CommentReplies.Count(c => !c.IsDeleted),
                     Attachments = c.Attachments,
                     UserId = c.AccountId,
-                    UserName = c.Account.FirstName + c.Account.FirstName,
+                    UserName = c.Account.FirstName + " " + c.Account.FirstName,
                     ReportsCount = c.Reports.Count,
                     IsLiked = c.CommentLikes.Any()
                 }).ToList();

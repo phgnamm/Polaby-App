@@ -137,7 +137,7 @@ namespace Polaby.Services.Services
                     Note = cp.Note,
                     Date = cp.Date,
                     UserId = cp.UserId,
-                    UserName = cp.User.FirstName + cp.User.FirstName
+                    UserName = cp.User.FirstName + " " + cp.User.FirstName
                 }).ToList();
 
                 return new Pagination<ScheduleModel>(scheduleDetailList, scheduleList.TotalCount, scheduleFilterModel.PageIndex, scheduleFilterModel.PageSize);

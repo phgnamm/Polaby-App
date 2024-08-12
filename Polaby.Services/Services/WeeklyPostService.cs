@@ -124,7 +124,7 @@ public class WeeklyPostService : IWeeklyPostService
                 {
                     case "week":
                         return weeklyPostFilterModel.OrderByDescending
-                            ? x.OrderByDescending(x => x.Weight)
+                            ? x.OrderByDescending(x => x.Week)
                             : x.OrderBy(x => x.Week);
                     case "size":
                         return weeklyPostFilterModel.OrderByDescending

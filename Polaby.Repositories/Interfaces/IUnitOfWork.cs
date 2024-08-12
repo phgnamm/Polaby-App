@@ -18,6 +18,9 @@
         IScheduleRepository ScheduleRepository { get; }
         IReportRepository ReportRepository { get; }
         IWeeklyPostRepository WeeklyPostRepository { get; }
+        INotificationRepository NotificationRepository { get; }
+        INotificationTypeRepository NotificationTypeRepository { get; }
+        INotificationSettingRepository NotificationSettingRepository { get; }
         IUserMenuRepository UserMenuRepository { get; }
 
         public Task<int> SaveChangeAsync();
