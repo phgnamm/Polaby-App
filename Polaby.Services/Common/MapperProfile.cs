@@ -19,6 +19,8 @@ using Polaby.Repositories.Models.NutrientModels;
 using Polaby.Services.Models.FollowModels;
 using Polaby.Services.Models.ScheduleModels;
 using Polaby.Services.Models.ReportModels;
+using Polaby.Repositories.Models.RatingModel;
+using Polaby.Repositories.Models.EmotionModels;
 
 namespace Polaby.Services.Common
 {
@@ -77,6 +79,12 @@ namespace Polaby.Services.Common
             CreateMap<ScheduleCreateModel, Schedule>();
             CreateMap<Schedule, ScheduleModel>();
             CreateMap<ScheduleUpdateModel, Schedule>();
+
+            //Rating
+            CreateMap<RatingModel, Rating>().ReverseMap();
+
+            //Emotion
+            CreateMap<EmotionModel, Emotion>().ReverseMap();
         }
     }
 }

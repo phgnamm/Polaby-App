@@ -21,12 +21,13 @@ namespace Polaby.Repositories.Common
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IReportRepository _reportRepository;
         private readonly IRatingRepository _ratingRepository;
+        private readonly IEmotionRepository _emmotionRepository;
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
             ICommunityPostRepository communityPostRepository, IMealRepository mealRepository,
             IMealDishRepository mealDishRepository, IDishIngredientRepository dishIngredientRepository,
             IDishRepository dishRepository, IIngredientRepository ingredientRepository, INutrientRepository nutrientRepository,
-            ICommentRepostiory commentRepostiory, IFollowRepository followRepository, IScheduleRepository scheduleRepository, IReportRepository reportRepository,IRatingRepository ratingRepository
+            ICommentRepostiory commentRepostiory, IFollowRepository followRepository, IScheduleRepository scheduleRepository, IReportRepository reportRepository, IRatingRepository ratingRepository, IEmotionRepository emotionRepository
             )
         {
             _dbContext = dbContext;
@@ -45,6 +46,7 @@ namespace Polaby.Repositories.Common
             _scheduleRepository = scheduleRepository;
             _reportRepository = reportRepository;
             _ratingRepository = ratingRepository;
+            _emmotionRepository = emotionRepository;
         }
 
 
@@ -64,6 +66,8 @@ namespace Polaby.Repositories.Common
         public IScheduleRepository ScheduleRepository => _scheduleRepository;
         public IReportRepository ReportRepository => _reportRepository;
         public IRatingRepository RatingRepository => _ratingRepository;
+        public IEmotionRepository EmotionRepository => _emmotionRepository;
+
         public async Task<int> SaveChangeAsync()
         {
             return await _dbContext.SaveChangesAsync();

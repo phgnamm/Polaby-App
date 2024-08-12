@@ -101,6 +101,9 @@ namespace Polaby.API
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IRatingRepository,RatingRepository>();
 
+            //Emotion
+            services.AddScoped<IEmotionRepository, EmotionRepository>();
+            services.AddScoped<IEmotionService, EmotionService>();
             return services;
         }
     }

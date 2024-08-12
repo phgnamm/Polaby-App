@@ -99,7 +99,7 @@ namespace Polaby.Services.Services
             var response = await _unitOfWork.RatingRepository.GetAsync(id);
             if (response == null)
             {
-                throw new Exception("Account not found");
+                throw new Exception("User not found");
             }
             var queryResult = await _unitOfWork.RatingRepository.GetAllAsync(
                 pageIndex: model.PageIndex,

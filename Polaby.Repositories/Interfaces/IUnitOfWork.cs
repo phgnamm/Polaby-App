@@ -18,6 +18,7 @@
         IScheduleRepository ScheduleRepository { get; }
         IReportRepository ReportRepository { get; }
 		IRatingRepository RatingRepository { get; }	
+		IEmotionRepository EmotionRepository { get; }
 
         public Task<int> SaveChangeAsync();
 	}
