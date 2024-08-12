@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.MenuModels;
+using Polaby.Services.Models.UserMenuModels;
 using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
@@ -123,11 +124,49 @@ namespace Polaby.API.Controllers
 
         [HttpDelete("menu-meals/{menuId}/{mealId}")]
         //[Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteDishIngredient(Guid menuId, Guid mealId)
+        public async Task<IActionResult> DeleteMenuMeal(Guid menuId, Guid mealId)
         {
             try
             {
                 var result = await _menuService.DeleteMenuMeal(menuId, mealId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("user-menus")]
+        //[Authorize(Roles = "User")]
+        public async Task<IActionResult> CreateUserMenu(List<UserMenuMCreateModel> models)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return ValidationProblem(ModelState);
+                }
+                var result = await _menuService.AddRangeUserMenu(models);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("user-menus/{userId}/{menuId}")]
+        //[Authorize(Roles = "User")]
+        public async Task<IActionResult> DeleteUserMenu(Guid userId, Guid menuId)
+        {
+            try
+            {
+                var result = await _menuService.DeleteUserMenu(userId,menuId);
                 return Ok(result);
             }
             catch (Exception ex)

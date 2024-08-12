@@ -13,6 +13,8 @@ namespace Polaby.Services.Models.MenuModels
 
         [Required(ErrorMessage = "Image is required!")]
         public string? Image { get; set; }
+        [Range(0, float.MaxValue, ErrorMessage = "Kcal must be a non-negative value.")]
+        public float? Kcal { get; set; }
 
         [Range(0, float.MaxValue, ErrorMessage = "Protein must be a non-negative value.")]
         public float? Protein { get; set; }
