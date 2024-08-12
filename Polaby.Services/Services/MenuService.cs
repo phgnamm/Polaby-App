@@ -293,6 +293,31 @@ namespace Polaby.Services.Services
             }
         }
 
+        public async Task<ResponseDataModel<List<Menu>>> GetAllUserMenuAsync(Guid userId)
+        {
+            var userMenus = await _unitOfWork.UserMenuRepository.GetAllAsync(
+                filter: um => um.UserId == userId,
+                include: "Menu"
+            );
+
+            if (userMenus == null || !userMenus.Data.Any())
+            {
+                return new ResponseDataModel<List<Menu>>()
+                {
+                    Status = false,
+                    Message = "No menus found for this user."
+                };
+            }
+
+            var menus = userMenus.Data.Select(um => um.Menu).ToList();
+
+            return new ResponseDataModel<List<Menu>>()
+            {
+                Status = true,
+                Data = menus
+            };
+        }
+
         public async Task<ResponseModel> DeleteUserMenu(Guid userId, Guid menuId)
         {
             var existingUserMenu = await _unitOfWork.UserMenuRepository.GetUserMenusAsync(userId, menuId);
@@ -329,24 +354,40 @@ namespace Polaby.Services.Services
             int maxCalories = totalCaloriesRequired + 50;
 
             var queryResult = await _unitOfWork.MenuRepository.GetAllAsync(
-              pageIndex: model.PageIndex,
+                pageIndex: model.PageIndex,
                 pageSize: model.PageSize,
                 filter: menu =>
                     menu.Kcal >= minCalories &&
-                    menu.Kcal <= maxCalories &&
-                    menu.MenuMeals.All(menuMeal =>
-                        menuMeal.Meal.MealDishes.All(mealDish => IsDietSuitable(mealDish.Dish, account.Diet))),
+                    menu.Kcal <= maxCalories,
                 orderBy: menus => menus.OrderBy(menu => menu.Name),
-                include: "MenuMeals,Meal,MealDishes,Dish,DishIngredients,Ingredient"
-            );
-            var menus = _mapper.Map<List<MenuModel>>(queryResult.Data);
+                include: "MenuMeals,MenuMeals.Meal,MenuMeals.Meal.MealDishes,MenuMeals.Meal.MealDishes.Dish,MenuMeals.Meal.MealDishes.Dish.DishIngredients,MenuMeals.Meal.MealDishes.Dish.DishIngredients.Ingredient"
+ );
+
+
+            var filteredMenus = queryResult.Data
+                .Where(menu =>
+                    menu.MenuMeals.All(menuMeal =>
+                        menuMeal.Meal.MealDishes.All(mealDish =>
+                            IsDietSuitable(mealDish.Dish, account.Diet)
+                        )
+                    )
+                )
+                .ToList();
+
+            var menus = _mapper.Map<List<MenuModel>>(filteredMenus);
             return new Pagination<MenuModel>(menus, queryResult.TotalCount, model.PageIndex, model.PageSize);
         }
+
+
 
         private int CalculateTotalCaloriesRequired(AccountModel account)
         {
             int baseCalories = 0;
-            int currentWeek = 41 - ((DateTime.Now.Date - account.DueDate.Value.ToDateTime(TimeOnly.MinValue)).Days / 7);
+            DateTime dueDate = account.DueDate.Value.ToDateTime(TimeOnly.MinValue);
+            DateTime startOfPregnancy = dueDate.AddDays(-280);
+            DateTime currentDate = DateTime.Now.Date;
+            int currentWeek = (int)((currentDate - startOfPregnancy).TotalDays / 7);
+
             switch (account.BMI)
             {
                 case BMI.Underweight:

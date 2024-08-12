@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Polaby.Repositories.Entities;
+using Polaby.Repositories.Enums;
 using Polaby.Repositories.Interfaces;
 
 namespace Polaby.Repositories.Repositories
