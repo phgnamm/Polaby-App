@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.DishModels;
+using Polaby.Services.Models.MenuModels;
+using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
 {
@@ -29,6 +31,29 @@ namespace Polaby.API.Controllers
                     return ValidationProblem(ModelState);
                 }
                 var result = await _dishService.AddRangeDish(dishes);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("dish-ingredients")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateDishIngredient(DishIngredientCreateModel dishIngredient)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return ValidationProblem(ModelState);
+                }
+                var result = await _dishService.AddDishIngredient(dishIngredient);
                 if (result.Status)
                 {
                     return Ok(result);
@@ -88,6 +113,21 @@ namespace Polaby.API.Controllers
             try
             {
                 var result = await _dishService.DeleteDish(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("dish-ingredients/{dishId}/{ingredientId}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteDishIngredient(Guid dishId, Guid ingredientId)
+        {
+            try
+            {
+                var result = await _dishService.DeleteDishIngredient(dishId, ingredientId);
                 return Ok(result);
             }
             catch (Exception ex)
