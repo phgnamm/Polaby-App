@@ -145,8 +145,12 @@ namespace Polaby.Services.Services
             pageIndex: communityPostFilterModel.PageIndex,
             pageSize: communityPostFilterModel.PageSize,
             include: "Reports,Account,CommunityPostLikes,Comments"
-
         );
+            //if ((bool)communityPostFilterModel.IsFollowing)
+            //{
+            //    communityPostList = communityPostList.
+            //}
+            
 
             if (communityPostList != null)
             {
