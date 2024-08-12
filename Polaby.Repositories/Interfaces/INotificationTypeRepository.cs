@@ -2,7 +2,7 @@
 
 namespace Polaby.Repositories.Interfaces
 {
-    public interface ICommunityPostRepository : IGenericRepository<CommunityPost>
+    public interface INotificationTypeRepository : IGenericRepository<NotificationType>
     {
     }
 }
