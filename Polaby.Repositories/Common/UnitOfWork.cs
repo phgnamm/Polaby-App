@@ -36,8 +36,8 @@ namespace Polaby.Repositories.Common
             IWeeklyPostRepository weeklyPostRepository,
             INotificationRepository notificationRepository,
             INotificationTypeRepository notificationTypeRepository,
-            INotificationSettingRepository notificationSettingRepository
-            IWeeklyPostRepository weeklyPostRepository, IUserMenuRepository userMenuRepository
+            INotificationSettingRepository notificationSettingRepository,
+            IUserMenuRepository userMenuRepository
         )
         {
             _dbContext = dbContext;
