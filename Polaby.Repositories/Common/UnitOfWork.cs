@@ -22,12 +22,13 @@ namespace Polaby.Repositories.Common
         private readonly IReportRepository _reportRepository;
         private readonly IRatingRepository _ratingRepository;
         private readonly IEmotionRepository _emmotionRepository;
+        private readonly INoteRepository _noteRepository;
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
             ICommunityPostRepository communityPostRepository, IMealRepository mealRepository,
             IMealDishRepository mealDishRepository, IDishIngredientRepository dishIngredientRepository,
             IDishRepository dishRepository, IIngredientRepository ingredientRepository, INutrientRepository nutrientRepository,
-            ICommentRepostiory commentRepostiory, IFollowRepository followRepository, IScheduleRepository scheduleRepository, IReportRepository reportRepository, IRatingRepository ratingRepository, IEmotionRepository emotionRepository
+            ICommentRepostiory commentRepostiory, IFollowRepository followRepository, IScheduleRepository scheduleRepository, IReportRepository reportRepository, IRatingRepository ratingRepository, IEmotionRepository emotionRepository,INoteRepository noteRepository
             )
         {
             _dbContext = dbContext;
@@ -47,6 +48,7 @@ namespace Polaby.Repositories.Common
             _reportRepository = reportRepository;
             _ratingRepository = ratingRepository;
             _emmotionRepository = emotionRepository;
+            _noteRepository = noteRepository;
         }
 
 
@@ -67,6 +69,7 @@ namespace Polaby.Repositories.Common
         public IReportRepository ReportRepository => _reportRepository;
         public IRatingRepository RatingRepository => _ratingRepository;
         public IEmotionRepository EmotionRepository => _emmotionRepository;
+        public INoteRepository NoteRepository => _noteRepository;
 
         public async Task<int> SaveChangeAsync()
         {

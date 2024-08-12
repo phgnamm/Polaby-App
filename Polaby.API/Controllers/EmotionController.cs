@@ -14,6 +14,7 @@ namespace Polaby.API.Controllers
             _emotionService = emotionService;
         }
         [HttpPost]
+        //[Authorize("User")]
         public async Task<IActionResult> AddEmotion([FromBody] EmotionRequestModel model)
         {
             var result = await _emotionService.AddEmotionAsync(model);
@@ -25,6 +26,7 @@ namespace Polaby.API.Controllers
             return Ok(result);
         }
         [HttpDelete]
+        //[Authorize("User")]
         public async Task<IActionResult> DeleteEmotion([FromBody] EmotionRequestModel model)
         {
             var result = await _emotionService.DeleteEmotionAsync(model);

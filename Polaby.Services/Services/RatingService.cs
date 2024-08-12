@@ -94,9 +94,9 @@ namespace Polaby.Services.Services
             return response;
         }
 
-        public async Task<Pagination<RatingModel>> GetRatingsByFilterAsync(Guid id, RatingFilterModel model)
+        public async Task<Pagination<RatingModel>> GetRatingsByFilterAsync(RatingFilterModel model)
         {
-            var response = await _unitOfWork.RatingRepository.GetAsync(id);
+            var response = await _unitOfWork.RatingRepository.GetAsync(model.AccountId.Value);
             if (response == null)
             {
                 throw new Exception("User not found");

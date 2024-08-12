@@ -21,6 +21,8 @@ using Polaby.Services.Models.ScheduleModels;
 using Polaby.Services.Models.ReportModels;
 using Polaby.Repositories.Models.RatingModel;
 using Polaby.Repositories.Models.EmotionModels;
+using Polaby.Repositories.Models.NoteModels;
+using Polaby.Services.Models.NoteModels;
 
 namespace Polaby.Services.Common
 {
@@ -85,6 +87,11 @@ namespace Polaby.Services.Common
 
             //Emotion
             CreateMap<EmotionModel, Emotion>().ReverseMap();
+
+            //Note
+            CreateMap<NoteModel, Note>().ReverseMap();
+            CreateMap<Note, NoteRequestModel>().ReverseMap();
+
         }
     }
 }

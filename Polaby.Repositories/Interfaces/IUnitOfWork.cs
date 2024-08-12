@@ -19,6 +19,7 @@
         IReportRepository ReportRepository { get; }
 		IRatingRepository RatingRepository { get; }	
 		IEmotionRepository EmotionRepository { get; }
+		INoteRepository NoteRepository { get; }
 
         public Task<int> SaveChangeAsync();
 	}

@@ -51,12 +51,13 @@ namespace Polaby.API.Controllers
 
             return Ok(response.Message);
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetRatingsByFilterAsync(Guid id, [FromQuery] RatingFilterModel model)
+        [HttpGet]
+        //[Authorize("User")]
+        public async Task<IActionResult> GetRatingsByFilterAsync([FromQuery] RatingFilterModel model)
         {
             try
             {
-                var result = await _ratingService.GetRatingsByFilterAsync(id, model);
+                var result = await _ratingService.GetRatingsByFilterAsync(model);
                 var metadata = new
                 {
                     result.PageSize,
