@@ -20,13 +20,18 @@ namespace Polaby.Repositories.Common
         private readonly IFollowRepository _followRepository;
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IReportRepository _reportRepository;
+        private readonly IWeeklyPostRepository _weeklyPostRepository;
+
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
             ICommunityPostRepository communityPostRepository, IMealRepository mealRepository,
             IMealDishRepository mealDishRepository, IDishIngredientRepository dishIngredientRepository,
-            IDishRepository dishRepository, IIngredientRepository ingredientRepository, INutrientRepository nutrientRepository,
-            ICommentRepostiory commentRepostiory, IFollowRepository followRepository, IScheduleRepository scheduleRepository, IReportRepository reportRepository
-            )
+            IDishRepository dishRepository, IIngredientRepository ingredientRepository,
+            INutrientRepository nutrientRepository,
+            ICommentRepostiory commentRepostiory, IFollowRepository followRepository,
+            IScheduleRepository scheduleRepository, IReportRepository reportRepository,
+            IWeeklyPostRepository weeklyPostRepository
+        )
         {
             _dbContext = dbContext;
             _accountRepository = accountRepository;
@@ -43,6 +48,7 @@ namespace Polaby.Repositories.Common
             _followRepository = followRepository;
             _scheduleRepository = scheduleRepository;
             _reportRepository = reportRepository;
+            _weeklyPostRepository = weeklyPostRepository;
         }
 
 
@@ -61,6 +67,7 @@ namespace Polaby.Repositories.Common
         public IFollowRepository FollowRepository => _followRepository;
         public IScheduleRepository ScheduleRepository => _scheduleRepository;
         public IReportRepository ReportRepository => _reportRepository;
+        public IWeeklyPostRepository WeeklyPostRepository => _weeklyPostRepository;
 
         public async Task<int> SaveChangeAsync()
         {

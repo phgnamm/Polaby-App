@@ -8,7 +8,7 @@
         public Guid? ReceiverId { get; set; }
         public Guid? SenderId { get; set; }
         public Guid? CommunityPostId { get; set; }
-        public Guid? TypeId { get; set; }
+        public Guid? NotificationTypeId { get; set; }
 
         // Relationship
         public virtual Account? Receiver { get; set; }
