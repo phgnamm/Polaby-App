@@ -49,6 +49,11 @@ namespace Polaby.API
             // Account
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
+
+            // WeeklyPost
+            services.AddScoped<IWeeklyPostService, WeeklyPostService>();
+            services.AddScoped<IWeeklyPostRepository, WeeklyPostRepository>();
+
             //Menu
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IMenuRepository, MenuRepository>();
@@ -96,6 +101,21 @@ namespace Polaby.API
             //Report
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IReportRepository, ReportRepository>();
+
+            //UserMenu
+            services.AddScoped<IUserMenuRepository, UserMenuRepository>();
+
+            //Notification
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+
+            //NotificationSetting
+            services.AddScoped<INotificationSettingService, NotificationSettingService>();
+            services.AddScoped<INotificationSettingRepository, NotificationSettingRepository>();
+
+            //NotificationType
+            services.AddScoped<INotificationTypeService, NotificationTypeService>();
+            services.AddScoped<INotificationTypeRepository, NotificationTypeRepository>();
 
             //Rating
             services.AddScoped<IRatingService, RatingService>();

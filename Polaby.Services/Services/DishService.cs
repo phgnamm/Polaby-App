@@ -6,6 +6,7 @@ using Polaby.Repositories.Models.DishModels;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.DishModels;
+using Polaby.Services.Models.MenuModels;
 using Polaby.Services.Models.ResponseModels;
 
 namespace Polaby.Services.Services
@@ -77,6 +78,34 @@ namespace Polaby.Services.Services
             };
         }
 
+        public async Task<ResponseModel> AddDishIngredient(DishIngredientCreateModel model)
+        {
+            var distinctIngredientIds = model.IngredientIds.Distinct().ToList();
+            if (!distinctIngredientIds.Any())
+            {
+                return new ResponseModel()
+                {
+                    Status = false,
+                    Message = "No valid ingredients provided!"
+                };
+            }
+
+            var dishIngredients = distinctIngredientIds.Select(ingredientId => new DishIngredient
+            {
+                DishId = model.DishId,
+                IngredientId = ingredientId
+            }).ToList();
+
+            await _unitOfWork.DishIngredientRepository.AddRangeAsync(dishIngredients);
+            await _unitOfWork.SaveChangeAsync();
+
+            return new ResponseModel()
+            {
+                Status = true,
+                Message = "DishIngredients created successfully"
+            };
+        }
+
         public async Task<Pagination<DishModel>> GetAllDish(DishFilterModel dishFilterModel)
         {
             var dishList = await _unitOfWork.DishRepository.GetAllAsync(pageIndex: dishFilterModel.PageIndex,
@@ -128,33 +157,34 @@ namespace Polaby.Services.Services
                 };
             }
 
-            _mapper.Map(updateModel, existingDish);
+            var existingNutrients = existingDish.Nutrients;
+            var nutrientToUpdate = new List<Nutrient>();
 
-            var existingIngredientIds = existingDish.MealDishes.Select(md => md.DishId).ToList();
-            var newIngredientIds = updateModel.IngredientIds.Where(id => !existingIngredientIds.Contains(id)).ToList();
-            var removedIngredients = existingIngredientIds.Where(id => !updateModel.IngredientIds.Contains((Guid)id)).ToList();
-
-            foreach (var ingredientId in newIngredientIds)
+            if (updateModel.Nutrients != null && updateModel.Nutrients.Any())
             {
-                existingDish.DishIngredients.Add(new DishIngredient { DishId = id, IngredientId = ingredientId });
-            }
-
-            foreach (var ingredientId in removedIngredients)
-            {
-                var dishIngredient = existingDish.DishIngredients.FirstOrDefault(di => di.IngredientId == ingredientId);
-                if (dishIngredient != null)
+                foreach (var nutrientUpdate in updateModel.Nutrients)
                 {
-                    existingDish.DishIngredients.Remove(dishIngredient);
-                }
-            }
-            await _unitOfWork.SaveChangeAsync();
+                    if (nutrientUpdate.Id.HasValue)
+                    {
+                        var existingNutrient = existingNutrients
+                            .FirstOrDefault(n => n.Id == nutrientUpdate.Id.Value);
 
-            var updatedDishIngredient = await _unitOfWork.DishIngredientRepository.GetAllAsync(
-                filter: di => di.IngredientId == id,
-                include: "DishIngredients,Ingredient,Nutrient"
-            );
-            _unitOfWork.DishRepository.Update(existingDish);
-            await _unitOfWork.SaveChangeAsync();
+                        if (existingNutrient != null)
+                        {
+                            existingNutrient.DishId = existingDish.Id;
+                            _mapper.Map(nutrientUpdate, existingNutrient);
+                            nutrientToUpdate.Add(existingNutrient);
+                        }
+                    }
+                }
+            } 
+
+            _mapper.Map(updateModel, existingDish);
+            if (nutrientToUpdate.Any())
+            {
+                _unitOfWork.NutrientRepository.UpdateRange(nutrientToUpdate);
+                await _unitOfWork.SaveChangeAsync();
+            }
 
             return new ResponseModel()
             {
@@ -186,6 +216,28 @@ namespace Polaby.Services.Services
             {
                 Status = true,
                 Message = "Dish deleted successfully"
+            };
+        }
+
+        public async Task<ResponseModel> DeleteDishIngredient(Guid dishId, Guid ingredientId)
+        {
+            var existingDishIngredient = await _unitOfWork.DishIngredientRepository.GetDishIngredientsAsync(dishId,ingredientId);
+            if (existingDishIngredient == null)
+            {
+                return new ResponseModel()
+                {
+                    Status = false,
+                    Message = "DishIngredient not found!"
+                };
+            }
+
+            _unitOfWork.DishIngredientRepository.HardDeleteRange(existingDishIngredient);
+            await _unitOfWork.SaveChangeAsync();
+
+            return new ResponseModel()
+            {
+                Status = true,
+                Message = "DishIngredient deleted successfully"
             };
         }
     }

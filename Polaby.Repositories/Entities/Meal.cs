@@ -6,6 +6,7 @@ namespace Polaby.Repositories.Entities
     {
         public MealName? Name { get; set; }
         public float? Kcal { get; set; }
+      
 
         // Relationship
         public virtual ICollection<MenuMeal> MenuMeals { get; set; } = new List<MenuMeal>();

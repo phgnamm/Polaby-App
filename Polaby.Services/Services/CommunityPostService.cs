@@ -3,8 +3,6 @@ using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
-using Polaby.Services.Models.AccountModels;
-using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.CommunityPostModels;
 using Polaby.Services.Models.ResponseModels;
 
@@ -147,8 +145,12 @@ namespace Polaby.Services.Services
             pageIndex: communityPostFilterModel.PageIndex,
             pageSize: communityPostFilterModel.PageSize,
             include: "Reports,Account,CommunityPostLikes,Comments"
-
         );
+            //if ((bool)communityPostFilterModel.IsFollowing)
+            //{
+            //    communityPostList = communityPostList.
+            //}
+            
 
             if (communityPostList != null)
             {
@@ -164,7 +166,7 @@ namespace Polaby.Services.Services
                     IsProfessional = cp.IsProfessional,
                     Visibility = cp.Visibility,
                     UserId = cp.AccountId,
-                    UserName = cp.Account.FirstName + cp.Account.FirstName,
+                    UserName = cp.Account.FirstName + " " + cp.Account.LastName,
                     ReportsCount = cp.Reports.Count,
                     IsLiked = cp.CommunityPostLikes.Any()
                 }).ToList();

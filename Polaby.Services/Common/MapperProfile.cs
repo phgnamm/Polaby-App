@@ -16,9 +16,12 @@ using Polaby.Services.Models.IngredientModels;
 using Polaby.Repositories.Models.IngredientModels;
 using Polaby.Services.Models.NutrientModels;
 using Polaby.Repositories.Models.NutrientModels;
-using Polaby.Services.Models.FollowModels;
+using Polaby.Repositories.Models.WeeklyPostModels;
 using Polaby.Services.Models.ScheduleModels;
 using Polaby.Services.Models.ReportModels;
+using Polaby.Services.Models.WeeklyPostModels;
+using Polaby.Services.Models.NotificationModels;
+using Polaby.Services.Models.NotificationTypeModels;
 using Polaby.Repositories.Models.RatingModel;
 using Polaby.Repositories.Models.EmotionModels;
 using Polaby.Repositories.Models.NoteModels;
@@ -34,10 +37,14 @@ namespace Polaby.Services.Common
             CreateMap<AccountRegisterModel, Account>();
             CreateMap<GoogleUserInformationModel, Account>();
             CreateMap<AccountModel, Account>().ReverseMap();
+            
+            //WeeklyPost
+            CreateMap<WeeklyPostModel, WeeklyPost>().ReverseMap();
+            CreateMap<WeeklyPostCreateModel, WeeklyPost>();
 
 			//Menu
 			CreateMap<MenuImportModel, Menu>().ReverseMap();
-            CreateMap<MenuUpdateModel, Menu>();
+            CreateMap<MenuUpdateModel, Menu>().ForMember(dest => dest.Nutrients, opt => opt.Ignore());
             CreateMap<MenuModel, Menu>().ReverseMap();
 
             //MenuMeal
@@ -52,6 +59,9 @@ namespace Polaby.Services.Common
             CreateMap<DishImportModel, Dish>().ReverseMap();
             CreateMap<DishUpdateModel, Dish>().ForMember(dest => dest.Nutrients, opt => opt.Ignore());
             CreateMap<DishModel, Dish>().ReverseMap();
+
+            //DishIngredient
+            CreateMap<DishIngredientCreateModel, DishIngredient>().ReverseMap();
 
             //Ingredient
             CreateMap<IngredientImportModel, Ingredient>().ReverseMap();
@@ -81,6 +91,14 @@ namespace Polaby.Services.Common
             CreateMap<ScheduleCreateModel, Schedule>();
             CreateMap<Schedule, ScheduleModel>();
             CreateMap<ScheduleUpdateModel, Schedule>();
+
+            //NotificationSetting
+            CreateMap<NotificationSettingUpdateModel, NotificationSetting>();
+            CreateMap<NotificationSetting, NotificationSettingModel>();
+
+            //NotificationType
+            CreateMap<NotificationTypeModel, NotificationType>();
+            CreateMap<NotificationType, NotificationTypeModel>();
 
             //Rating
             CreateMap<RatingModel, Rating>().ReverseMap();

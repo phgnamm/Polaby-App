@@ -20,6 +20,12 @@ namespace Polaby.Repositories.Common
         private readonly IFollowRepository _followRepository;
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IReportRepository _reportRepository;
+        private readonly IWeeklyPostRepository _weeklyPostRepository;
+        private readonly INotificationRepository _notificationRepository;
+        private readonly INotificationSettingRepository _notificationSettingRepository;
+        private readonly INotificationTypeRepository _notificationTypeRepository;
+        private readonly IUserMenuRepository _userMenuRepository;
+
         private readonly IRatingRepository _ratingRepository;
         private readonly IEmotionRepository _emmotionRepository;
         private readonly INoteRepository _noteRepository;
@@ -27,6 +33,16 @@ namespace Polaby.Repositories.Common
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
             ICommunityPostRepository communityPostRepository, IMealRepository mealRepository,
             IMealDishRepository mealDishRepository, IDishIngredientRepository dishIngredientRepository,
+            IDishRepository dishRepository, IIngredientRepository ingredientRepository,
+            INutrientRepository nutrientRepository,
+            ICommentRepostiory commentRepostiory, IFollowRepository followRepository,
+            IScheduleRepository scheduleRepository, IReportRepository reportRepository,
+            IWeeklyPostRepository weeklyPostRepository,
+            INotificationRepository notificationRepository,
+            INotificationTypeRepository notificationTypeRepository,
+            INotificationSettingRepository notificationSettingRepository,
+            IUserMenuRepository userMenuRepository
+        )
             IDishRepository dishRepository, IIngredientRepository ingredientRepository, INutrientRepository nutrientRepository,
             ICommentRepostiory commentRepostiory, IFollowRepository followRepository, IScheduleRepository scheduleRepository, IReportRepository reportRepository, IRatingRepository ratingRepository, IEmotionRepository emotionRepository,INoteRepository noteRepository
             )
@@ -46,6 +62,11 @@ namespace Polaby.Repositories.Common
             _followRepository = followRepository;
             _scheduleRepository = scheduleRepository;
             _reportRepository = reportRepository;
+            _weeklyPostRepository = weeklyPostRepository;
+            _notificationRepository = notificationRepository;
+            _notificationTypeRepository = notificationTypeRepository;
+            _notificationSettingRepository = notificationSettingRepository;
+            _userMenuRepository = userMenuRepository;
             _ratingRepository = ratingRepository;
             _emmotionRepository = emotionRepository;
             _noteRepository = noteRepository;
@@ -67,6 +88,11 @@ namespace Polaby.Repositories.Common
         public IFollowRepository FollowRepository => _followRepository;
         public IScheduleRepository ScheduleRepository => _scheduleRepository;
         public IReportRepository ReportRepository => _reportRepository;
+        public IWeeklyPostRepository WeeklyPostRepository => _weeklyPostRepository;
+        public INotificationRepository NotificationRepository => _notificationRepository;
+        public INotificationSettingRepository NotificationSettingRepository => _notificationSettingRepository;
+        public INotificationTypeRepository NotificationTypeRepository => _notificationTypeRepository;
+        public IUserMenuRepository UserMenuRepository => _userMenuRepository;
         public IRatingRepository RatingRepository => _ratingRepository;
         public IEmotionRepository EmotionRepository => _emmotionRepository;
         public INoteRepository NoteRepository => _noteRepository;

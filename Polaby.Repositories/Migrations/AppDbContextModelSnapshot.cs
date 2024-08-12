@@ -1018,6 +1018,12 @@ namespace Polaby.Repositories.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<float?>("Alco")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("Carbohydrates")
+                        .HasColumnType("real");
+
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -1033,6 +1039,12 @@ namespace Polaby.Repositories.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<float?>("Fat")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("Fiber")
+                        .HasColumnType("real");
 
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
@@ -1053,7 +1065,7 @@ namespace Polaby.Repositories.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<float?>("Water")
+                    b.Property<float?>("Protein")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
@@ -1182,18 +1194,20 @@ namespace Polaby.Repositories.Migrations
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("NotificationTypeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("ReceiverId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("SenderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TypeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CommunityPostId");
+
+                    b.HasIndex("NotificationTypeId");
 
                     b.HasIndex("ReceiverId");
 
@@ -1236,9 +1250,6 @@ namespace Polaby.Repositories.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("NotificationTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("TypeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -1284,14 +1295,7 @@ namespace Polaby.Repositories.Migrations
                         .HasMaxLength(156)
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("NotificationId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("NotificationId")
-                        .IsUnique()
-                        .HasFilter("[NotificationId] IS NOT NULL");
 
                     b.ToTable("NotificationType");
                 });
@@ -1332,6 +1336,9 @@ namespace Polaby.Repositories.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("MenuId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
@@ -1361,6 +1368,8 @@ namespace Polaby.Repositories.Migrations
                     b.HasIndex("DishId");
 
                     b.HasIndex("IngredientId");
+
+                    b.HasIndex("MenuId");
 
                     b.ToTable("Nutrient");
                 });
@@ -1805,7 +1814,7 @@ namespace Polaby.Repositories.Migrations
                         .HasForeignKey("ParentCommentId");
 
                     b.HasOne("Polaby.Repositories.Entities.CommunityPost", "Post")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("PostId");
 
                     b.Navigation("Account");
@@ -1958,6 +1967,10 @@ namespace Polaby.Repositories.Migrations
                         .WithMany()
                         .HasForeignKey("CommunityPostId");
 
+                    b.HasOne("Polaby.Repositories.Entities.NotificationType", "NotificationType")
+                        .WithMany()
+                        .HasForeignKey("NotificationTypeId");
+
                     b.HasOne("Polaby.Repositories.Entities.Account", "Receiver")
                         .WithMany("Notifications")
                         .HasForeignKey("ReceiverId")
@@ -1967,6 +1980,8 @@ namespace Polaby.Repositories.Migrations
                         .WithMany()
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("NotificationType");
 
                     b.Navigation("Post");
 
@@ -1990,28 +2005,25 @@ namespace Polaby.Repositories.Migrations
                     b.Navigation("NotificationType");
                 });
 
-            modelBuilder.Entity("Polaby.Repositories.Entities.NotificationType", b =>
-                {
-                    b.HasOne("Polaby.Repositories.Entities.Notification", "Notification")
-                        .WithOne("NotificationType")
-                        .HasForeignKey("Polaby.Repositories.Entities.NotificationType", "NotificationId");
-
-                    b.Navigation("Notification");
-                });
-
             modelBuilder.Entity("Polaby.Repositories.Entities.Nutrient", b =>
                 {
-                    b.HasOne("Polaby.Repositories.Entities.Dish", "dish")
+                    b.HasOne("Polaby.Repositories.Entities.Dish", "Dish")
                         .WithMany("Nutrients")
                         .HasForeignKey("DishId");
 
-                    b.HasOne("Polaby.Repositories.Entities.Ingredient", "ingredient")
+                    b.HasOne("Polaby.Repositories.Entities.Ingredient", "Ingredient")
                         .WithMany("Nutrients")
                         .HasForeignKey("IngredientId");
 
-                    b.Navigation("dish");
+                    b.HasOne("Polaby.Repositories.Entities.Menu", "Menu")
+                        .WithMany("Nutrients")
+                        .HasForeignKey("MenuId");
 
-                    b.Navigation("ingredient");
+                    b.Navigation("Dish");
+
+                    b.Navigation("Ingredient");
+
+                    b.Navigation("Menu");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.Rating", b =>
@@ -2123,6 +2135,8 @@ namespace Polaby.Repositories.Migrations
 
             modelBuilder.Entity("Polaby.Repositories.Entities.CommunityPost", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("CommunityPostLikes");
 
                     b.Navigation("Reports");
@@ -2155,12 +2169,9 @@ namespace Polaby.Repositories.Migrations
                 {
                     b.Navigation("MenuMeals");
 
-                    b.Navigation("UserMenus");
-                });
+                    b.Navigation("Nutrients");
 
-            modelBuilder.Entity("Polaby.Repositories.Entities.Notification", b =>
-                {
-                    b.Navigation("NotificationType");
+                    b.Navigation("UserMenus");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.NotificationType", b =>
