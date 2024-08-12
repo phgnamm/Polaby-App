@@ -21,6 +21,7 @@ namespace Polaby.Repositories.Common
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IReportRepository _reportRepository;
         private readonly IWeeklyPostRepository _weeklyPostRepository;
+        private readonly IUserMenuRepository _userMenuRepository;
 
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
@@ -30,7 +31,7 @@ namespace Polaby.Repositories.Common
             INutrientRepository nutrientRepository,
             ICommentRepostiory commentRepostiory, IFollowRepository followRepository,
             IScheduleRepository scheduleRepository, IReportRepository reportRepository,
-            IWeeklyPostRepository weeklyPostRepository
+            IWeeklyPostRepository weeklyPostRepository, IUserMenuRepository userMenuRepository
         )
         {
             _dbContext = dbContext;
@@ -49,6 +50,7 @@ namespace Polaby.Repositories.Common
             _scheduleRepository = scheduleRepository;
             _reportRepository = reportRepository;
             _weeklyPostRepository = weeklyPostRepository;
+            _userMenuRepository = userMenuRepository;
         }
 
 
@@ -68,6 +70,7 @@ namespace Polaby.Repositories.Common
         public IScheduleRepository ScheduleRepository => _scheduleRepository;
         public IReportRepository ReportRepository => _reportRepository;
         public IWeeklyPostRepository WeeklyPostRepository => _weeklyPostRepository;
+        public IUserMenuRepository UserMenuRepository => _userMenuRepository;
 
         public async Task<int> SaveChangeAsync()
         {

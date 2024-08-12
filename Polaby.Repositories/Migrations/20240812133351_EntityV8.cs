@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Polaby.Repositories.Migrations
 {
     /// <inheritdoc />
-    public partial class EntityV7 : Migration
+    public partial class EntityV8 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
