@@ -102,6 +102,18 @@ namespace Polaby.API
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IReportRepository, ReportRepository>();
 
+            //Notification
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+
+            //NotificationSetting
+            services.AddScoped<INotificationSettingService, NotificationSettingService>();
+            services.AddScoped<INotificationSettingRepository, NotificationSettingRepository>();
+
+            //NotificationType
+            services.AddScoped<INotificationTypeService, NotificationTypeService>();
+            services.AddScoped<INotificationTypeRepository, NotificationTypeRepository>();
+
             return services;
         }
     }
