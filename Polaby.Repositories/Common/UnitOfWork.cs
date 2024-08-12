@@ -23,6 +23,7 @@ namespace Polaby.Repositories.Common
         private readonly INotificationRepository _notificationRepository;
         private readonly INotificationSettingRepository _notificationSettingRepository;
         private readonly INotificationTypeRepository _notificationTypeRepository;
+        private readonly IUserMenuRepository _userMenuRepository;
 
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
@@ -35,7 +36,8 @@ namespace Polaby.Repositories.Common
             IWeeklyPostRepository weeklyPostRepository,
             INotificationRepository notificationRepository,
             INotificationTypeRepository notificationTypeRepository,
-            INotificationSettingRepository notificationSettingRepository
+            INotificationSettingRepository notificationSettingRepository,
+            IUserMenuRepository userMenuRepository
         )
         {
             _dbContext = dbContext;
@@ -57,6 +59,7 @@ namespace Polaby.Repositories.Common
             _notificationRepository = notificationRepository;
             _notificationTypeRepository = notificationTypeRepository;
             _notificationSettingRepository = notificationSettingRepository;
+            _userMenuRepository = userMenuRepository;
         }
 
 
@@ -79,6 +82,7 @@ namespace Polaby.Repositories.Common
         public INotificationRepository NotificationRepository => _notificationRepository;
         public INotificationSettingRepository NotificationSettingRepository => _notificationSettingRepository;
         public INotificationTypeRepository NotificationTypeRepository => _notificationTypeRepository;
+        public IUserMenuRepository UserMenuRepository => _userMenuRepository;
 
         public async Task<int> SaveChangeAsync()
         {

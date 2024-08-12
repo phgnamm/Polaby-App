@@ -2,6 +2,7 @@
 using Polaby.Repositories.Models.MenuModels;
 using Polaby.Services.Models.MenuModels;
 using Polaby.Services.Models.ResponseModels;
+using Polaby.Services.Models.UserMenuModels;
 
 namespace Polaby.Services.Interfaces
 {
@@ -14,5 +15,7 @@ namespace Polaby.Services.Interfaces
         Task<Pagination<MenuModel>> GetAllMenu(MenuFilterModel menuFilterModel);
         Task<ResponseModel> AddRangeMenuMeal(List<MenuMealCreateModel> menuMeals);
         Task<Pagination<MenuModel>> GetMenuRecommendations(MenuRecommentFilterModel model);
+        Task<ResponseModel> DeleteUserMenu(Guid userId, Guid menuId);
+        Task<ResponseModel> AddRangeUserMenu(List<UserMenuMCreateModel> models);
     }
 }

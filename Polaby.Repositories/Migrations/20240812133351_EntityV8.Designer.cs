@@ -12,8 +12,8 @@ using Polaby.Repositories;
 namespace Polaby.Repositories.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240812085956_EntityV7")]
-    partial class EntityV7
+    [Migration("20240812133351_EntityV8")]
+    partial class EntityV8
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1197,18 +1197,20 @@ namespace Polaby.Repositories.Migrations
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("NotificationTypeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("ReceiverId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("SenderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TypeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CommunityPostId");
+
+                    b.HasIndex("NotificationTypeId");
 
                     b.HasIndex("ReceiverId");
 
@@ -1251,9 +1253,6 @@ namespace Polaby.Repositories.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("NotificationTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("TypeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -1299,14 +1298,7 @@ namespace Polaby.Repositories.Migrations
                         .HasMaxLength(156)
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("NotificationId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("NotificationId")
-                        .IsUnique()
-                        .HasFilter("[NotificationId] IS NOT NULL");
 
                     b.ToTable("NotificationType");
                 });
@@ -1821,11 +1813,11 @@ namespace Polaby.Repositories.Migrations
                         .HasForeignKey("AccountId");
 
                     b.HasOne("Polaby.Repositories.Entities.Comment", "ParentComment")
-                        .WithMany()
+                        .WithMany("CommentReplies")
                         .HasForeignKey("ParentCommentId");
 
                     b.HasOne("Polaby.Repositories.Entities.CommunityPost", "Post")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("PostId");
 
                     b.Navigation("Account");
@@ -1978,6 +1970,10 @@ namespace Polaby.Repositories.Migrations
                         .WithMany()
                         .HasForeignKey("CommunityPostId");
 
+                    b.HasOne("Polaby.Repositories.Entities.NotificationType", "NotificationType")
+                        .WithMany()
+                        .HasForeignKey("NotificationTypeId");
+
                     b.HasOne("Polaby.Repositories.Entities.Account", "Receiver")
                         .WithMany("Notifications")
                         .HasForeignKey("ReceiverId")
@@ -1987,6 +1983,8 @@ namespace Polaby.Repositories.Migrations
                         .WithMany()
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("NotificationType");
 
                     b.Navigation("Post");
 
@@ -2008,15 +2006,6 @@ namespace Polaby.Repositories.Migrations
                     b.Navigation("Account");
 
                     b.Navigation("NotificationType");
-                });
-
-            modelBuilder.Entity("Polaby.Repositories.Entities.NotificationType", b =>
-                {
-                    b.HasOne("Polaby.Repositories.Entities.Notification", "Notification")
-                        .WithOne("NotificationType")
-                        .HasForeignKey("Polaby.Repositories.Entities.NotificationType", "NotificationId");
-
-                    b.Navigation("Notification");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.Nutrient", b =>
@@ -2142,11 +2131,15 @@ namespace Polaby.Repositories.Migrations
                 {
                     b.Navigation("CommentLikes");
 
+                    b.Navigation("CommentReplies");
+
                     b.Navigation("Reports");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.CommunityPost", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("CommunityPostLikes");
 
                     b.Navigation("Reports");
@@ -2182,11 +2175,6 @@ namespace Polaby.Repositories.Migrations
                     b.Navigation("Nutrients");
 
                     b.Navigation("UserMenus");
-                });
-
-            modelBuilder.Entity("Polaby.Repositories.Entities.Notification", b =>
-                {
-                    b.Navigation("NotificationType");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.NotificationType", b =>

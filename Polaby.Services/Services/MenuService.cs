@@ -8,6 +8,7 @@ using Polaby.Services.Interfaces;
 using Polaby.Services.Models.MenuModels;
 using Polaby.Repositories.Models.MenuModels;
 using Polaby.Services.Models.ResponseModels;
+using Polaby.Services.Models.UserMenuModels;
 
 namespace Polaby.Services.Services
 {
@@ -251,6 +252,69 @@ namespace Polaby.Services.Services
             };
         }
 
+        public async Task<ResponseModel> AddRangeUserMenu(List<UserMenuMCreateModel> models)
+        {
+            if (models == null || !models.Any())
+            {
+                return new ResponseModel()
+                {
+                    Status = false,
+                    Message = "No UserMenus provided!"
+                };
+            }
+
+            var userMenuList = models
+                .Where(model => model.UserId.HasValue && model.MenuIds != null && model.MenuIds.Any())
+                .SelectMany(model => model.MenuIds.Select(menuId => new UserMenu
+                {
+                    UserId = model.UserId.Value,
+                    MenuId = menuId
+                }))
+                .ToList();
+
+            if (userMenuList.Any())
+            {
+                await _unitOfWork.UserMenuRepository.AddRangeAsync(userMenuList);
+                await _unitOfWork.SaveChangeAsync();
+
+                return new ResponseModel()
+                {
+                    Status = true,
+                    Message = "Menus saved successfully!"
+                };
+            }
+            else
+            {
+                return new ResponseModel()
+                {
+                    Status = false,
+                    Message = "No valid UserMenus to save!"
+                };
+            }
+        }
+
+        public async Task<ResponseModel> DeleteUserMenu(Guid userId, Guid menuId)
+        {
+            var existingUserMenu = await _unitOfWork.UserMenuRepository.GetUserMenusAsync(userId, menuId);
+            if (existingUserMenu == null)
+            {
+                return new ResponseModel()
+                {
+                    Status = false,
+                    Message = "UserMenu not found!"
+                };
+            }
+
+            _unitOfWork.UserMenuRepository.HardDeleteRange(existingUserMenu);
+            await _unitOfWork.SaveChangeAsync();
+
+            return new ResponseModel()
+            {
+                Status = true,
+                Message = "UserMenu deleted successfully"
+            };
+        }
+
         public async Task<Pagination<MenuModel>> GetMenuRecommendations(MenuRecommentFilterModel model)
         {
             var accountResponse = await _accountService.GetAccount(model.AccountId.Value);
@@ -273,13 +337,11 @@ namespace Polaby.Services.Services
                     menu.MenuMeals.All(menuMeal =>
                         menuMeal.Meal.MealDishes.All(mealDish => IsDietSuitable(mealDish.Dish, account.Diet))),
                 orderBy: menus => menus.OrderBy(menu => menu.Name),
-                include: "MenuMeals.Meal.MealDishes.Dish.DishIngredients.Ingredient"
+                include: "MenuMeals,Meal,MealDishes,Dish,DishIngredients,Ingredient"
             );
             var menus = _mapper.Map<List<MenuModel>>(queryResult.Data);
             return new Pagination<MenuModel>(menus, queryResult.TotalCount, model.PageIndex, model.PageSize);
         }
-
-
 
         private int CalculateTotalCaloriesRequired(AccountModel account)
         {
