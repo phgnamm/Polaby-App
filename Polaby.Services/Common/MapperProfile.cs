@@ -33,7 +33,7 @@ namespace Polaby.Services.Common
 
 			//Menu
 			CreateMap<MenuImportModel, Menu>().ReverseMap();
-            CreateMap<MenuUpdateModel, Menu>();
+            CreateMap<MenuUpdateModel, Menu>().ForMember(dest => dest.Nutrients, opt => opt.Ignore());
             CreateMap<MenuModel, Menu>().ReverseMap();
 
             //MenuMeal
@@ -48,6 +48,9 @@ namespace Polaby.Services.Common
             CreateMap<DishImportModel, Dish>().ReverseMap();
             CreateMap<DishUpdateModel, Dish>().ForMember(dest => dest.Nutrients, opt => opt.Ignore());
             CreateMap<DishModel, Dish>().ReverseMap();
+
+            //DishIngredient
+            CreateMap<DishIngredientCreateModel, DishIngredient>().ReverseMap();
 
             //Ingredient
             CreateMap<IngredientImportModel, Ingredient>().ReverseMap();
