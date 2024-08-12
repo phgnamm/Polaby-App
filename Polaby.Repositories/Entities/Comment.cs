@@ -4,6 +4,7 @@
     {
         public string? Content { get; set; }
         public int LikesCount { get; set; }
+        //public int CommentsCount { get; set; }
         public string? Attachments { get; set; }
 
         // Foreign key
@@ -17,5 +18,7 @@
         public virtual Comment? ParentComment { get; set; }
         public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
         public virtual ICollection<CommentLike> CommentLikes { get; set; } = new List<CommentLike>();
+        public virtual ICollection<Comment> CommentReplies { get; set; } = new List<Comment>();
+
     }
 }

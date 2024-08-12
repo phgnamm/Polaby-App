@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
+using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.CommunityPostModels;
 using Polaby.Services.Models.ResponseModels;
@@ -88,7 +89,7 @@ namespace Polaby.Services.Services
                 await _unitOfWork.SaveChangeAsync();
                 if (result != null)
                 {
-                    return new ResponseModel ()
+                    return new ResponseModel()
                     {
                         Status = true,
                         Message = "Delete post successfully"
@@ -105,6 +106,43 @@ namespace Polaby.Services.Services
                 Status = false,
                 Message = "Post not found"
             };
+        }
+
+        public async Task<Pagination<ScheduleModel>> GetAllSchedules(ScheduleFilterModel scheduleFilterModel)
+        {
+            var scheduleList = await _unitOfWork.ScheduleRepository.GetAllAsync(
+            filter: x =>
+                x.IsDeleted == scheduleFilterModel.IsDeleted &&
+                (scheduleFilterModel.UserId == null || x.UserId == scheduleFilterModel.UserId) &&
+                (scheduleFilterModel.Date == null || x.Date == scheduleFilterModel.Date),
+
+            orderBy: x =>
+            {
+                return scheduleFilterModel.OrderByDescending
+                    ? x.OrderByDescending(x => x.CreationDate)
+                    : x.OrderBy(x => x.CreationDate);
+            },
+            pageIndex: scheduleFilterModel.PageIndex,
+            pageSize: scheduleFilterModel.PageSize,
+            include: "User"
+        );
+
+            if (scheduleList != null)
+            {
+                var scheduleDetailList = scheduleList.Data.Select(cp => new ScheduleModel
+                {
+                    Id = cp.Id,
+                    Title = cp.Title,
+                    Location = cp.Location,
+                    Note = cp.Note,
+                    Date = cp.Date,
+                    UserId = cp.UserId,
+                    UserName = cp.User.FirstName + cp.User.FirstName
+                }).ToList();
+
+                return new Pagination<ScheduleModel>(scheduleDetailList, scheduleList.TotalCount, scheduleFilterModel.PageIndex, scheduleFilterModel.PageSize);
+            }
+            return null;
         }
     }
 }

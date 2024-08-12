@@ -21,7 +21,7 @@ namespace Polaby.API.Controllers
 
         [HttpPost()]
         //[Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateMenu(List<MenuImportModel> menus)
+        public async Task<IActionResult> CreateMenu([FromBody] List<MenuImportModel> menus)
         {
             try
             {
