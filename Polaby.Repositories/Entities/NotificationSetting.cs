@@ -6,7 +6,7 @@
 
         // Foreign key
         public Guid? AccountId { get; set; }
-        public Guid? TypeId { get; set; }
+        public Guid? NotificationTypeId { get; set; }
 
         // Relationship
         public virtual Account? Account { get; set; }

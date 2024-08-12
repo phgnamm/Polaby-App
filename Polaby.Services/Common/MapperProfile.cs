@@ -16,9 +16,11 @@ using Polaby.Services.Models.IngredientModels;
 using Polaby.Repositories.Models.IngredientModels;
 using Polaby.Services.Models.NutrientModels;
 using Polaby.Repositories.Models.NutrientModels;
+using Polaby.Repositories.Models.WeeklyPostModels;
 using Polaby.Services.Models.FollowModels;
 using Polaby.Services.Models.ScheduleModels;
 using Polaby.Services.Models.ReportModels;
+using Polaby.Services.Models.WeeklyPostModels;
 
 namespace Polaby.Services.Common
 {
@@ -30,6 +32,10 @@ namespace Polaby.Services.Common
             CreateMap<AccountRegisterModel, Account>();
             CreateMap<GoogleUserInformationModel, Account>();
             CreateMap<AccountModel, Account>().ReverseMap();
+            
+            //WeeklyPost
+            CreateMap<WeeklyPostModel, WeeklyPost>().ReverseMap();
+            CreateMap<WeeklyPostCreateModel, WeeklyPost>();
 
 			//Menu
 			CreateMap<MenuImportModel, Menu>().ReverseMap();

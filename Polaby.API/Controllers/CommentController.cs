@@ -92,7 +92,7 @@ namespace Polaby.API.Controllers
         {
             try
             {
-                var result = await _commentService.GetAllCommunityPosts(commentFilterModel);
+                var result = await _commentService.GetAllComments(commentFilterModel);
                 var metadata = new
                 {
                     result.PageSize,

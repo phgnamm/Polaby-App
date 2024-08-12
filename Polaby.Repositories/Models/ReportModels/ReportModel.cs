@@ -1,8 +1,9 @@
-﻿using Polaby.Repositories.Enums;
+﻿using Polaby.Repositories.Entities;
+using Polaby.Repositories.Enums;
 
 namespace Polaby.Repositories.Models.ReportModels;
 
-public class ReportModel
+public class ReportModel : BaseEntity
 {
     public string? Note { get; set; }
     public ReportReason Reason { get; set; }

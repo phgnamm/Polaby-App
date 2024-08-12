@@ -1,4 +1,5 @@
-﻿using Polaby.Services.Models.ResponseModels;
+﻿using Polaby.Services.Common;
+using Polaby.Services.Models.ResponseModels;
 using Polaby.Services.Models.ScheduleModels;
 
 namespace Polaby.Services.Interfaces
@@ -8,5 +9,6 @@ namespace Polaby.Services.Interfaces
         Task<ResponseDataModel<ScheduleModel>> Create(ScheduleCreateModel scheduleCreateModel);
         Task<ResponseDataModel<ScheduleModel>> Update(Guid id, ScheduleUpdateModel scheduleUpdateModel);
         Task<ResponseModel> Delete(Guid id);
+        Task<Pagination<ScheduleModel>> GetAllSchedules(ScheduleFilterModel scheduleFilterModel);
     }
 }
