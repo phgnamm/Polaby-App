@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.MealModels;
+using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
 {
@@ -88,6 +89,21 @@ namespace Polaby.API.Controllers
             try
             {
                 var result = await _mealService.DeleteMeal(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("meal-dish/{mealId}/{dishId}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteMealDish(Guid mealId, Guid dishId)
+        {
+            try
+            {
+                var result = await _mealService.DeleteMealDish(mealId, dishId);
                 return Ok(result);
             }
             catch (Exception ex)

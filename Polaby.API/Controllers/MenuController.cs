@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.MenuModels;
+using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
 {
@@ -97,7 +98,7 @@ namespace Polaby.API.Controllers
             }
         }
 
-        [HttpPost("menu-meal")]
+        [HttpPost("menu-meals")]
         //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateMenuMeal(List<MenuMealCreateModel> menuMeals)
         {
@@ -113,6 +114,21 @@ namespace Polaby.API.Controllers
                     return Ok(result);
                 }
                 return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("menu-meals/{menuId}/{mealId}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteDishIngredient(Guid menuId, Guid mealId)
+        {
+            try
+            {
+                var result = await _menuService.DeleteMenuMeal(menuId, mealId);
+                return Ok(result);
             }
             catch (Exception ex)
             {

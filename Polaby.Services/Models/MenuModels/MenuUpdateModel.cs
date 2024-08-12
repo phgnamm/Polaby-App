@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Polaby.Services.Models.NutrientModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace Polaby.Services.Models.MenuModels
 {
@@ -13,9 +14,16 @@ namespace Polaby.Services.Models.MenuModels
         [Required(ErrorMessage = "Image is required!")]
         public string? Image { get; set; }
 
-        [Range(1, 5000, ErrorMessage = "Water must be greater than 0 and less than 5000")]
-        public float? Water { get; set; }
-
-        public List<Guid> MealIds { get; set; } = new List<Guid>();
+        [Range(0, float.MaxValue, ErrorMessage = "Protein must be a non-negative value.")]
+        public float? Protein { get; set; }
+        [Range(0, float.MaxValue, ErrorMessage = "Carbohydrates must be a non-negative value.")]
+        public float? Carbohydrates { get; set; }
+        [Range(0, float.MaxValue, ErrorMessage = "Fat must be a non-negative value.")]
+        public float? Fat { get; set; }
+        public float? Alco { get; set; }
+        [Range(0, float.MaxValue, ErrorMessage = "Fiber must be a non-negative value.")]
+        public float? Fiber { get; set; }
+        public List<NutrientUpdateModel>? Nutrients { get; set; }
+        public List<Guid> MealIds { get; set; }
     }
 }

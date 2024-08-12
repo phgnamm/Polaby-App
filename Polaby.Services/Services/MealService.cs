@@ -56,7 +56,7 @@ namespace Polaby.Services.Services
             var mealIds = addedMeals.Data.Select(meal => meal.Id).ToList();
             var mealDishesGrouped = await _unitOfWork.MealDishRepository.GetAllAsync(
                 filter: md => mealIds.Contains((Guid)md.MealId),
-                include: "MealDishes.Dish"
+                include: "MealDishes,Dish"
             );
 
             var kcalUpdates = mealDishesGrouped.Data
@@ -140,34 +140,22 @@ namespace Polaby.Services.Services
             }
 
             _mapper.Map(updateModel, existingMeal);
-
             var existingDishIds = existingMeal.MealDishes.Select(md => md.DishId).ToList();
-            var newDishIds = updateModel.DishIds.Where(id => !existingDishIds.Contains(id)).ToList();
-            var removedDishes = existingDishIds.Where(id => !updateModel.DishIds.Contains((Guid)id)).ToList();
-
-            foreach (var dishId in newDishIds)
+            foreach (var dishId in updateModel.DishIds)
             {
-                existingMeal.MealDishes.Add(new MealDish { MealId = id, DishId = dishId });
-            }
-
-            foreach (var dishId in removedDishes)
-            {
-                var mealDish = existingMeal.MealDishes.FirstOrDefault(md => md.DishId == dishId);
-                if (mealDish != null)
+                if (!existingDishIds.Contains(dishId))
                 {
-                    existingMeal.MealDishes.Remove(mealDish);
+                    existingMeal.MealDishes.Add(new MealDish { MealId = id, DishId = dishId });
                 }
             }
             await _unitOfWork.SaveChangeAsync();
 
             var updatedMealDishes = await _unitOfWork.MealDishRepository.GetAllAsync(
                 filter: md => md.MealId == id,
-                include: "MealDishes.Dish"
+                include: "Dish"
             );
-
             var totalKcal = updatedMealDishes.Data.Sum(md => md.Dish.Kcal);
             existingMeal.Kcal = totalKcal;
-
             _unitOfWork.MealRepository.Update(existingMeal);
             await _unitOfWork.SaveChangeAsync();
 
@@ -177,6 +165,7 @@ namespace Polaby.Services.Services
                 Message = "Meal updated successfully with updated Kcal"
             };
         }
+
 
 
         public async Task<ResponseModel> DeleteMeal(Guid id)
@@ -200,6 +189,27 @@ namespace Polaby.Services.Services
             {
                 Status = true,
                 Message = "Meal deleted successfully"
+            };
+        }
+        public async Task<ResponseModel> DeleteMealDish(Guid mealId, Guid dishId)
+        {
+            var existingMealDish = await _unitOfWork.MealDishRepository.GetMealDishesAsync(mealId, dishId);
+            if (existingMealDish == null)
+            {
+                return new ResponseModel()
+                {
+                    Status = false,
+                    Message = "MealDish not found!"
+                };
+            }
+
+            _unitOfWork.MealDishRepository.HardDeleteRange(existingMealDish);
+            await _unitOfWork.SaveChangeAsync();
+
+            return new ResponseModel()
+            {
+                Status = true,
+                Message = "MealDish deleted successfully"
             };
         }
     }

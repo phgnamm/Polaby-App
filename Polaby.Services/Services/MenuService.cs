@@ -28,15 +28,16 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseModel> AddRangeMenu(List<MenuImportModel> menus)
         {
-            var menuList = _mapper.Map<List<Menu>>(menus);
-            if (menuList == null)
+            if (menus == null || !menus.Any())
             {
-                return new ResponseModel()
+                return new ResponseModel
                 {
                     Status = false,
-                    Message = "Cannot create Menu!"
+                    Message = "No menus provided!"
                 };
             }
+
+            var menuList = _mapper.Map<List<Menu>>(menus);
             await _unitOfWork.MenuRepository.AddRangeAsync(menuList);
             await _unitOfWork.SaveChangeAsync();
 
@@ -48,47 +49,39 @@ namespace Polaby.Services.Services
                 .SelectMany(menuImportModel =>
                     menuImportModel.MealIds.Select(mealId => new MenuMeal
                     {
-                        MenuId = addedMenus.Data.First(menu => menu.Name == menuImportModel.Name).Id,
+                        MenuId = addedMenus.Data.FirstOrDefault(menu => menu.Name == menuImportModel.Name)?.Id,
                         MealId = mealId
                     })
                 ).ToList();
 
-            await _unitOfWork.MenuMealRepository.AddRangeAsync(menuMeals);
-            await _unitOfWork.SaveChangeAsync();
-
-            var menuIds = addedMenus.Data.Select(menu => menu.Id).ToList();
-            var menuMealsGrouped = await _unitOfWork.MenuMealRepository.GetAllAsync(
-                filter: mm => menuIds.Contains((Guid)mm.MenuId),
-                include: "MenuMeals.Meal" 
-            );
-
-            var kcalUpdates = menuMealsGrouped.Data
-                .GroupBy(mm => mm.MenuId)
-                .Select(group => new
-                {
-                    MenuId = group.Key,
-                    TotalKcal = group.Sum(mm => mm.Meal.Kcal)
-                }).ToList();
-
-            var updatedMenus = addedMenus.Data
-                .Join(kcalUpdates,
-                    menu => menu.Id,
-                    update => update.MenuId,
-                    (menu, update) =>
+            var menuNutrients = menus
+                .Where(menuImportModel => menuImportModel.Nutrients != null && menuImportModel.Nutrients.Any())
+                .SelectMany(menuImportModel => _mapper.Map<List<Nutrient>>(menuImportModel.Nutrients)
+                    .Select(nutrient =>
                     {
-                        menu.Kcal = update.TotalKcal;
-                        return menu;
-                    }).ToList();
+                        nutrient.MenuId = addedMenus.Data.FirstOrDefault(menu => menu.Name == menuImportModel.Name)?.Id;
+                        return nutrient;
+                    })).ToList();
 
-            _unitOfWork.MenuRepository.UpdateRange(updatedMenus);
+            if (menuMeals.Any())
+            {
+                await _unitOfWork.MenuMealRepository.AddRangeAsync(menuMeals);
+            }
+
+            if (menuNutrients.Any())
+            {
+                await _unitOfWork.NutrientRepository.AddRangeAsync(menuNutrients);
+            }
+
             await _unitOfWork.SaveChangeAsync();
 
-            return new ResponseModel()
+            return new ResponseModel
             {
                 Status = true,
-                Message = "Menu created successfully with associated meals and updated Kcal"
+                Message = "Menu created successfully with associated meals and nutrients"
             };
         }
+
 
 
 
@@ -101,7 +94,6 @@ namespace Polaby.Services.Services
                     menuFilterModel.KcalValues.Any(kcalValue => x.Kcal >= kcalValue - 50 && x.Kcal <= kcalValue + 50) &&
                     (string.IsNullOrEmpty(menuFilterModel.Search) ||
                      x.Kcal.Equals(menuFilterModel.Search) ||
-                     x.Water.Equals(menuFilterModel.Search) ||
                      x.Description.ToLower().Contains(menuFilterModel.Search.ToLower()) ||
                      x.Name.ToLower().Contains(menuFilterModel.Search.ToLower()))),
                 orderBy: x =>
@@ -116,10 +108,6 @@ namespace Polaby.Services.Services
                             return menuFilterModel.OrderByDescending
                                 ? x.OrderByDescending(x => x.Kcal)
                                 : x.OrderBy(x => x.Kcal);
-                        case "water":
-                            return menuFilterModel.OrderByDescending
-                                ? x.OrderByDescending(x => x.Water)
-                                : x.OrderBy(x => x.Water);
                         default:
                             return menuFilterModel.OrderByDescending
                                 ? x.OrderByDescending(x => x.CreationDate)
@@ -138,52 +126,64 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseModel> UpdateMenu(Guid id, MenuUpdateModel updateModel)
         {
-            var existingMenu = await _unitOfWork.MenuRepository.GetAsync(id, "MenuMeals");
+            var existingMenu = await _unitOfWork.MenuRepository.GetAsync(id, "MenuMeals,Nutrients");
             if (existingMenu == null)
             {
-                return new ResponseModel()
+                return new ResponseModel
                 {
                     Status = false,
                     Message = "Menu not found!"
                 };
             }
+
             _mapper.Map(updateModel, existingMenu);
-
-            var existingMealIds = existingMenu.MenuMeals.Select(mm => mm.MealId.Value).ToList();
-            var newMealIds = updateModel.MealIds.Where(id => !existingMealIds.Contains(id)).ToList();
-            var removedMealIds = existingMealIds.Where(id => !updateModel.MealIds.Contains(id)).ToList();
-
-            foreach (var mealId in newMealIds)
+            var existingMealIds = existingMenu.MenuMeals.Select(mm => mm.MealId).ToList();
+            foreach (var mealId in updateModel.MealIds)
             {
-                existingMenu.MenuMeals.Add(new MenuMeal { MealId = mealId });
-            }
-
-            foreach (var mealId in removedMealIds)
-            {
-                var menuMeal = existingMenu.MenuMeals.FirstOrDefault(mm => mm.MealId == mealId);
-                if (menuMeal != null)
+                if (!existingMealIds.Contains(mealId))
                 {
-                    existingMenu.MenuMeals.Remove(menuMeal);
+                    existingMenu.MenuMeals.Add(new MenuMeal { MenuId = id, MealId = mealId });
                 }
             }
 
-            var updatedMenuMeals = await _unitOfWork.MenuMealRepository.GetAllAsync(
-                filter: mm => mm.MenuId == id,
-                include: "MenuMeals.Meal"
-            );
+            var existingNutrients = existingMenu.Nutrients;
+            var nutrientsToUpdate = new List<Nutrient>();
 
-            var totalKcal = updatedMenuMeals.Data.Sum(mm => mm.Meal.Kcal);
-            existingMenu.Kcal = totalKcal;
+            if (updateModel.Nutrients != null && updateModel.Nutrients.Any())
+            {
+                foreach (var nutrientUpdate in updateModel.Nutrients)
+                {
+                    if (nutrientUpdate.Id.HasValue)
+                    {
+                        var existingNutrient = existingNutrients
+                            .FirstOrDefault(n => n.Id == nutrientUpdate.Id.Value);
+
+                        if (existingNutrient != null)
+                        {
+                            _mapper.Map(nutrientUpdate, existingNutrient);
+                            nutrientsToUpdate.Add(existingNutrient);
+                        }
+                    }
+                    else
+                    {
+                        var newNutrient = _mapper.Map<Nutrient>(nutrientUpdate);
+                        newNutrient.MenuId = id;
+                        existingMenu.Nutrients.Add(newNutrient);
+                    }
+                }
+            }
 
             _unitOfWork.MenuRepository.Update(existingMenu);
             await _unitOfWork.SaveChangeAsync();
 
-            return new ResponseModel()
+            return new ResponseModel
             {
                 Status = true,
-                Message = "Menu updated successfully"
+                Message = "Menu updated successfully with associated Nutrients"
             };
         }
+
+
 
         public async Task<ResponseModel> DeleteMenu(Guid id)
         {
@@ -228,6 +228,29 @@ namespace Polaby.Services.Services
                 Message = "Can not create MenuMeal !"
             };
         }
+
+        public async Task<ResponseModel> DeleteMenuMeal(Guid menuId, Guid mealId)
+        {
+            var existingMenuMeal = await _unitOfWork.MenuMealRepository.GetMenuMealsAsync(menuId, mealId);
+            if (existingMenuMeal == null)
+            {
+                return new ResponseModel()
+                {
+                    Status = false,
+                    Message = "MenuMeal not found!"
+                };
+            }
+
+            _unitOfWork.MenuMealRepository.HardDeleteRange(existingMenuMeal);
+            await _unitOfWork.SaveChangeAsync();
+
+            return new ResponseModel()
+            {
+                Status = true,
+                Message = "MenuMeal deleted successfully"
+            };
+        }
+
         public async Task<Pagination<MenuModel>> GetMenuRecommendations(MenuRecommentFilterModel model)
         {
             var accountResponse = await _accountService.GetAccount(model.AccountId.Value);

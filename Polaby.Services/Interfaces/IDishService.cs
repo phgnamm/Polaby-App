@@ -11,5 +11,7 @@ namespace Polaby.Services.Interfaces
         Task<ResponseModel> UpdateDish(Guid id, DishUpdateModel updateModel);
         Task<ResponseModel> DeleteDish(Guid id);
         Task<Pagination<DishModel>> GetAllDish(DishFilterModel dishFilterModel);
+        Task<ResponseModel> AddDishIngredient(DishIngredientCreateModel model);
+        Task<ResponseModel> DeleteDishIngredient(Guid dishId, Guid ingredientId);
     }
 }
