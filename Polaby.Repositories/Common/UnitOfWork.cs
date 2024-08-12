@@ -63,11 +63,7 @@ namespace Polaby.Repositories.Common
         public IFollowRepository FollowRepository => _followRepository;
         public IScheduleRepository ScheduleRepository => _scheduleRepository;
         public IReportRepository ReportRepository => _reportRepository;
-
         public IRatingRepository RatingRepository => _ratingRepository;
-
-        public IRatingRepository RatingRepository => _ratingRepository;
-
         public async Task<int> SaveChangeAsync()
         {
             return await _dbContext.SaveChangesAsync();
