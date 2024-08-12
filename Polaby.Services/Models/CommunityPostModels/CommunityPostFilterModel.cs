@@ -1,12 +1,6 @@
 ﻿using Polaby.Repositories.Common;
 using Polaby.Repositories.Enums;
 using Polaby.Services.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Polaby.Services.Models.CommunityPostModels
 {
     public class CommunityPostFilterModel : PaginationParameter
@@ -15,6 +9,7 @@ namespace Polaby.Services.Models.CommunityPostModels
         public bool OrderByDescending { get; set; } = true;
         public bool? IsDeleted { get; set; } = false;
         public bool? IsProfessional { get; set; }
+        public bool? IsFollowing { get; set; } //filter bài viết chuyên gia đang follow
         public PostVisibility? Visibility { get; set; }
         public Guid? AccountId { get; set; }
         public string? Search { get; set; }
