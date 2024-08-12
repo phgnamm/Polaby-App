@@ -17,10 +17,8 @@ public class WeeklyPostRepository : GenericRepository<WeeklyPost>, IWeeklyPostRe
 
     public async Task<List<int>?> GetValidWeeks(List<int> weeks)
     {
-        var query = weeks.AsQueryable();
-        var existingWeeks = _dbSet.Select(x => x.Week!.Value);
-        var result = query.Where(x => !existingWeeks.Any(w => w == x));
-        List<int> list = await result.ToListAsync();
-        return list;
+        var existingWeeks = await _dbSet.Select(x => x.Week!.Value).Distinct().ToListAsync();
+        var result = weeks.Except(existingWeeks);
+        return result.ToList();
     }
 }
