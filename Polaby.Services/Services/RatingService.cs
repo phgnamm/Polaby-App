@@ -2,16 +2,12 @@
 using Azure;
 using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
+using Polaby.Repositories.Models.RatingModel;
 using Polaby.Repositories.Repositories;
+using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.RatingModel;
 using Polaby.Services.Models.ResponseModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Polaby.Services.Services
 {
     public class RatingService: IRatingService
@@ -90,6 +86,22 @@ namespace Polaby.Services.Services
             response.Status = true;
             response.Message = "Rating deleted successfully.";
             return response;
+        }
+
+        public async Task<Pagination<RatingModel>> GetRatingsByFilterAsync(Guid id, RatingFilterModel model)
+        {
+            var response = await _unitOfWork.RatingRepository.GetAsync(id);
+            if (response == null)
+            {
+                throw new Exception("Account not found");
+            }
+            var queryResult = await _unitOfWork.RatingRepository.GetAllAsync(
+                pageIndex: model.PageIndex,
+                pageSize: model.PageSize
+            );
+
+            var ratings = _mapper.Map<List<RatingModel>>(queryResult.Data);
+            return new Pagination<RatingModel>(ratings, queryResult.TotalCount, model.PageIndex, model.PageSize);
         }
 
         public async Task<ResponseDataModel<Rating?>> UpdateRatingAsync(CreateRatingModel model)

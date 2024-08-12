@@ -1,4 +1,5 @@
 ﻿using Polaby.Repositories.Entities;
+using Polaby.Repositories.Models.QueryModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

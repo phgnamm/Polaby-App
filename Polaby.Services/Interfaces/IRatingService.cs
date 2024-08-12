@@ -1,4 +1,8 @@
 ﻿using Polaby.Repositories.Entities;
+using Polaby.Repositories.Models.MenuModels;
+using Polaby.Repositories.Models.RatingModel;
+using Polaby.Services.Common;
+using Polaby.Services.Models.MenuModels;
 using Polaby.Services.Models.RatingModel;
 using Polaby.Services.Models.ResponseModels;
 using System;
@@ -14,6 +18,8 @@ namespace Polaby.Services.Interfaces
         Task<ResponseDataModel<Rating>> CreateRatingAsync(CreateRatingModel model);
         Task<ResponseDataModel<Rating?>> UpdateRatingAsync(CreateRatingModel model);
         Task<ResponseModel> DeleteRatingAsync(Guid userId, Guid expertId);
+        Task<Pagination<RatingModel>> GetRatingsByFilterAsync(Guid id, RatingFilterModel model);
+
 
     }
 }

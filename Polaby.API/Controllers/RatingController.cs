@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.RatingModel;
 
@@ -49,6 +50,27 @@ namespace Polaby.API.Controllers
             }
 
             return Ok(response.Message);
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetRatingsByFilterAsync(Guid id, [FromQuery] RatingFilterModel model)
+        {
+            try
+            {
+                var result = await _ratingService.GetRatingsByFilterAsync(id, model);
+                var metadata = new
+                {
+                    result.PageSize,
+                    result.CurrentPage,
+                    result.TotalPages,
+                };
+                Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 
