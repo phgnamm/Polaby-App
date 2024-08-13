@@ -26,6 +26,8 @@ using Polaby.Repositories.Models.RatingModel;
 using Polaby.Repositories.Models.EmotionModels;
 using Polaby.Repositories.Models.NoteModels;
 using Polaby.Services.Models.NoteModels;
+using Polaby.Services.Models.HealthModels;
+using Polaby.Repositories.Models.HealthModels;
 
 namespace Polaby.Services.Common
 {
@@ -110,6 +112,11 @@ namespace Polaby.Services.Common
             CreateMap<NoteModel, Note>().ReverseMap();
             CreateMap<Note, NoteRequestModel>().ReverseMap();
 
+
+            //Health
+            CreateMap<HealthCreateModel, Health>();
+            CreateMap<HealthUpdateModel, Health>();
+            CreateMap<Health, HealthModel>();
         }
     }
 }

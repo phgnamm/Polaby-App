@@ -9,7 +9,7 @@ namespace Polaby.Services.Models.CommunityPostModels
         public bool OrderByDescending { get; set; } = true;
         public bool? IsDeleted { get; set; } = false;
         public bool? IsProfessional { get; set; }
-        public bool? IsFollowing { get; set; } //filter bài viết chuyên gia đang follow
+        public bool? IsFollowing { get; set; } = false; //filter bài viết chuyên gia đang follow
         public PostVisibility? Visibility { get; set; }
         public Guid? AccountId { get; set; }
         public string? Search { get; set; }
