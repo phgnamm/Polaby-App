@@ -22,7 +22,7 @@
         INotificationTypeRepository NotificationTypeRepository { get; }
         INotificationSettingRepository NotificationSettingRepository { get; }
         IUserMenuRepository UserMenuRepository { get; }
-		IRatingRepository RatingRepository { get; }	
+        IRatingRepository RatingRepository { get; }	
 		IEmotionRepository EmotionRepository { get; }
 		INoteRepository NoteRepository { get; }
 

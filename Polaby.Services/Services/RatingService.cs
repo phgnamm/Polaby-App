@@ -96,11 +96,6 @@ namespace Polaby.Services.Services
 
         public async Task<Pagination<RatingModel>> GetRatingsByFilterAsync(RatingFilterModel model)
         {
-            var response = await _unitOfWork.RatingRepository.GetAsync(model.AccountId.Value);
-            if (response == null)
-            {
-                throw new Exception("User not found");
-            }
             var queryResult = await _unitOfWork.RatingRepository.GetAllAsync(
                 pageIndex: model.PageIndex,
                 pageSize: model.PageSize

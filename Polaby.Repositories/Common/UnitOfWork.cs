@@ -25,10 +25,10 @@ namespace Polaby.Repositories.Common
         private readonly INotificationSettingRepository _notificationSettingRepository;
         private readonly INotificationTypeRepository _notificationTypeRepository;
         private readonly IUserMenuRepository _userMenuRepository;
-
         private readonly IRatingRepository _ratingRepository;
-        private readonly IEmotionRepository _emmotionRepository;
+        private readonly IEmotionRepository _motionRepository;
         private readonly INoteRepository _noteRepository;
+
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
             ICommunityPostRepository communityPostRepository, IMealRepository mealRepository,
@@ -41,11 +41,13 @@ namespace Polaby.Repositories.Common
             INotificationRepository notificationRepository,
             INotificationTypeRepository notificationTypeRepository,
             INotificationSettingRepository notificationSettingRepository,
-            IUserMenuRepository userMenuRepository
+            IUserMenuRepository userMenuRepository,
+            IRatingRepository ratingRepository,
+            IEmotionRepository motionRepository,
+            INoteRepository noteRepository
+
+
         )
-            IDishRepository dishRepository, IIngredientRepository ingredientRepository, INutrientRepository nutrientRepository,
-            ICommentRepostiory commentRepostiory, IFollowRepository followRepository, IScheduleRepository scheduleRepository, IReportRepository reportRepository, IRatingRepository ratingRepository, IEmotionRepository emotionRepository,INoteRepository noteRepository
-            )
         {
             _dbContext = dbContext;
             _accountRepository = accountRepository;
@@ -68,7 +70,7 @@ namespace Polaby.Repositories.Common
             _notificationSettingRepository = notificationSettingRepository;
             _userMenuRepository = userMenuRepository;
             _ratingRepository = ratingRepository;
-            _emmotionRepository = emotionRepository;
+            _motionRepository = motionRepository;
             _noteRepository = noteRepository;
         }
 
@@ -93,8 +95,11 @@ namespace Polaby.Repositories.Common
         public INotificationSettingRepository NotificationSettingRepository => _notificationSettingRepository;
         public INotificationTypeRepository NotificationTypeRepository => _notificationTypeRepository;
         public IUserMenuRepository UserMenuRepository => _userMenuRepository;
+
         public IRatingRepository RatingRepository => _ratingRepository;
-        public IEmotionRepository EmotionRepository => _emmotionRepository;
+
+        public IEmotionRepository EmotionRepository => _motionRepository;
+
         public INoteRepository NoteRepository => _noteRepository;
 
         public async Task<int> SaveChangeAsync()
