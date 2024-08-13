@@ -22,6 +22,8 @@ using Polaby.Services.Models.ReportModels;
 using Polaby.Services.Models.WeeklyPostModels;
 using Polaby.Services.Models.NotificationModels;
 using Polaby.Services.Models.NotificationTypeModels;
+using Polaby.Services.Models.HealthModels;
+using Polaby.Repositories.Models.HealthModels;
 
 namespace Polaby.Services.Common
 {
@@ -95,6 +97,11 @@ namespace Polaby.Services.Common
             //NotificationType
             CreateMap<NotificationTypeModel, NotificationType>();
             CreateMap<NotificationType, NotificationTypeModel>();
+
+            //Health
+            CreateMap<HealthCreateModel, Health>();
+            CreateMap<HealthUpdateModel, Health>();
+            CreateMap<Health, HealthModel>();
         }
     }
 }

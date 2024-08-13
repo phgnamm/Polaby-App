@@ -44,7 +44,7 @@ namespace Polaby.API
             services.AddScoped<IClaimsService, ClaimsService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IEmailService, EmailService>();
-
+           
             // Dependency Injection
             // Account
             services.AddScoped<IAccountService, AccountService>();
@@ -116,6 +116,10 @@ namespace Polaby.API
             //NotificationType
             services.AddScoped<INotificationTypeService, NotificationTypeService>();
             services.AddScoped<INotificationTypeRepository, NotificationTypeRepository>();
+
+            //Health
+            services.AddScoped<IHealthService, HealthService>();
+            services.AddScoped<IHealthRepository, HealthRepository>();
 
             return services;
         }
