@@ -45,7 +45,7 @@ namespace Polaby.API.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "User")]
         public async Task<IActionResult> GetAllMenuByFilter([FromQuery] MenuFilterModel menuFilterModel)
         {
             try
