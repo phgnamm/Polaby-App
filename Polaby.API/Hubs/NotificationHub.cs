@@ -11,10 +11,16 @@ namespace Polaby.API.Hubs
             _logger = logger;
         }
 
-        public override async Task OnConnectedAsync()
+        //public override async Task OnConnectedAsync(string message)
+        //{
+        //    //_logger.LogInformation("Client connected: {ConnectionId}", Context.ConnectionId);
+        //    await Clients.All.SendAsync("ReceiveMessage", message);
+        //    //await Clients.All.SendAsync("ReceiveNotification", message);
+        //}
+
+        public async Task SendNotification(string message)
         {
-            _logger.LogInformation("Client connected: {ConnectionId}", Context.ConnectionId);
-            await Clients.All.SendAsync("ReceiveMessage", $"{Context.ConnectionId}");
+            await Clients.All.SendAsync("ReceiveNotification", message);
         }
         //public async Task SendNotification(string message)
         //{
