@@ -5,6 +5,7 @@ using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.CommunityPostModels;
 using Polaby.Services.Models.ResponseModels;
+using System.Linq.Expressions;
 
 namespace Polaby.Services.Services
 {
@@ -110,7 +111,7 @@ namespace Polaby.Services.Services
 
         public async Task<Pagination<CommunityPostModel>> GetAllCommunityPosts(CommunityPostFilterModel communityPostFilterModel)
         {
-            var communityPostList = await _unitOfWork.CommunityPostRepository.GetAllAsync(
+            var communityPostList = await _unitOfWork.CommunityPostRepository.GetAllPostWithFollowingCondition(
             filter: x =>
                 x.IsDeleted == communityPostFilterModel.IsDeleted &&
                 (communityPostFilterModel.IsProfessional == null || x.IsProfessional == communityPostFilterModel.IsProfessional) &&
@@ -144,7 +145,9 @@ namespace Polaby.Services.Services
             },
             pageIndex: communityPostFilterModel.PageIndex,
             pageSize: communityPostFilterModel.PageSize,
-            include: "Reports,Account,CommunityPostLikes,Comments"
+            include: "Reports,Account,CommunityPostLikes,Comments",
+            currentUserId: communityPostFilterModel.AccountId.HasValue ? communityPostFilterModel.AccountId : null,
+            isFollowing: communityPostFilterModel.IsFollowing.HasValue ? communityPostFilterModel.IsFollowing : null
         );
             //if ((bool)communityPostFilterModel.IsFollowing)
             //{
