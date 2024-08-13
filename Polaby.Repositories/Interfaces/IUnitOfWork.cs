@@ -23,6 +23,7 @@
         INotificationSettingRepository NotificationSettingRepository { get; }
         IUserMenuRepository UserMenuRepository { get; }
         IHealthRepository HealthRepository { get; }
+        ISafeFoodRepository SafeFoodRepository { get; }
 
         public Task<int> SaveChangeAsync();
     }
