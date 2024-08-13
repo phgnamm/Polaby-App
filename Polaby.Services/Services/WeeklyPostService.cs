@@ -194,7 +194,7 @@ public class WeeklyPostService : IWeeklyPostService
             };
         }
 
-        return new ResponseDataModel<WeeklyPostModel>
+        return new ResponseModel
         {
             Status = false,
             Message = "Cannot update weekly post"
@@ -225,7 +225,7 @@ public class WeeklyPostService : IWeeklyPostService
             };
         }
 
-        return new ResponseDataModel<WeeklyPostModel>
+        return new ResponseModel
         {
             Status = false,
             Message = "Cannot delete weekly post"

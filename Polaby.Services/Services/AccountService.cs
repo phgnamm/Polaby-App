@@ -89,8 +89,8 @@ namespace Polaby.Services.Services
 
         private async Task SendVerificationEmail(Account account)
         {
-            await _emailService.SendEmailAsync(account.Email!, "Verify your email",
-                $"Your verification code is {account.VerificationCode}. The code will expire in 15 minutes.", true);
+            await _emailService.SendEmailAsync(account.Email!, "Polaby - Xác nhận tạo tài khoản",
+                $"Mã xác nhận của bạn là {account.VerificationCode}. Mã sẽ hết hạn sau 15 phút.", true);
         }
 
         public async Task<ResponseDataModel<TokenModel>> Login(AccountLoginModel accountLoginModel)
@@ -390,8 +390,8 @@ namespace Polaby.Services.Services
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             // todo modify this Email body to send a URL redirect to the frontend page and contain the token as a parameter in the URL
-            await _emailService.SendEmailAsync(user.Email!, "Reset your Password",
-                $"Your token is {token}. The token will expire in 15 minutes.", true);
+            await _emailService.SendEmailAsync(user.Email!, "Polaby - Khôi phục mật khẩu",
+                $"Truy cập vào liên kết {token} để khôi phục mật khẩu cho tài khoản. Liên kết sẽ hết hạn sau 15 phút.", true);
 
             return new ResponseModel
             {
