@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.MenuModels;
 using Polaby.Services.Models.UserMenuModels;
-using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
 {
@@ -45,7 +44,7 @@ namespace Polaby.API.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "User")]
         public async Task<IActionResult> GetAllMenuByFilter([FromQuery] MenuFilterModel menuFilterModel)
         {
             try

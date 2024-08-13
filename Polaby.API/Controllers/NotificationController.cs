@@ -2,8 +2,6 @@
 using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.NotificationModels;
-using Polaby.Services.Models.NotificationSettingModels;
-using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
 {
