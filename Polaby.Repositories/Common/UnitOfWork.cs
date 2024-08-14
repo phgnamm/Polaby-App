@@ -47,7 +47,6 @@ namespace Polaby.Repositories.Common
             IRatingRepository ratingRepository,
             IEmotionRepository motionRepository,
             INoteRepository noteRepository,
-            IHealthRepository healthRepository
             IHealthRepository healthRepository,
             ISafeFoodRepository safeFoodRepository
         )
