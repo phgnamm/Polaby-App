@@ -45,10 +45,7 @@ namespace Polaby.Repositories.Common
             IUserMenuRepository userMenuRepository,
             IRatingRepository ratingRepository,
             IEmotionRepository motionRepository,
-            INoteRepository noteRepository
-
-
-            IUserMenuRepository userMenuRepository,
+            INoteRepository noteRepository,
             IHealthRepository healthRepository
         )
         {
