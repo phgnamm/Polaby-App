@@ -36,22 +36,11 @@ namespace Polaby.Services.Services
                     Data = null
                 };
             }
-            var existingEmotion = await _unitOfWork.EmotionRepository.GetEmotionByDateAsync(model.UserId, model.Date);
-            if (existingEmotion != null)
-            {
-                return new ResponseDataModel<EmotionModel>
-                {
-                    Status = false,
-                    Message = "Emotion already exists for this date.",
-                    Data = null
-                };
-            }
-
             var emotion = new Emotion
             {
                 UserId = model.UserId,
                 Type = model.Type,
-                Date = model.Date,
+                Date = DateOnly.FromDateTime(DateTime.Now)
             };
 
             await _unitOfWork.EmotionRepository.AddAsync(emotion);
@@ -65,40 +54,21 @@ namespace Polaby.Services.Services
                 Data = emotionModel
             };
         }
-
-        public async Task<ResponseDataModel<EmotionModel>> DeleteEmotionAsync(EmotionRequestModel model)
+        public async Task<ResponseDataModel<EmotionModel>> DeleteEmotionAsync(Guid emotionId)
         {
-            var user = await _unitOfWork.AccountRepository.GetAccountById(model.UserId);
-            if (user == null)
-            {
-                return new ResponseDataModel<EmotionModel>
-                {
-                    Status = false,
-                    Message = "User does not exist.",
-                    Data = null
-                };
-            }
-            var emotion = await _unitOfWork.EmotionRepository.GetEmotionByDateAsync(model.UserId, model.Date);
+            // Tìm Emotion theo ID
+            var emotion = await _unitOfWork.EmotionRepository.GetAsync(emotionId);
             if (emotion == null)
             {
                 return new ResponseDataModel<EmotionModel>
                 {
                     Status = false,
-                    Message = "Emotion not found for this date.",
+                    Message = "Emotion not found.",
                     Data = null
                 };
             }
 
-            if (emotion.Type != model.Type)
-            {
-                return new ResponseDataModel<EmotionModel>
-                {
-                    Status = false,
-                    Message = "Emotion type does not match.",
-                    Data = null
-                };
-            }
-
+            // Xóa Emotion
             _unitOfWork.EmotionRepository.HardDelete(emotion);
             await _unitOfWork.SaveChangeAsync();
 

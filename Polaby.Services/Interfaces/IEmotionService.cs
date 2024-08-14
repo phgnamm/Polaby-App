@@ -12,6 +12,6 @@ namespace Polaby.Services.Interfaces
     public interface IEmotionService
     {
         Task<ResponseDataModel<EmotionModel>> AddEmotionAsync(EmotionRequestModel model);
-        Task<ResponseDataModel<EmotionModel>> DeleteEmotionAsync(EmotionRequestModel model);
+        Task<ResponseDataModel<EmotionModel>> DeleteEmotionAsync(Guid id);
     }
 }

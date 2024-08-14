@@ -22,6 +22,7 @@ namespace Polaby.Services.Services
         public async Task<ResponseDataModel<NoteModel>> CreateNoteAsync(NoteRequestModel model)
         {
             var note = _mapper.Map<Note>(model);
+            note.Date = DateOnly.FromDateTime(DateTime.Now);
             await _unitOfWork.NoteRepository.AddAsync(note);
             await _unitOfWork.SaveChangeAsync();
             var noteModel = _mapper.Map<NoteModel>(note);
@@ -31,8 +32,6 @@ namespace Polaby.Services.Services
                 Message = "Note created successfully",
                 Data = noteModel
             };
-
-
         }
 
         public async Task<ResponseModel> DeleteNoteAsync(Guid id)
@@ -80,7 +79,7 @@ namespace Polaby.Services.Services
         public async Task<ResponseDataModel<NoteModel>> UpdateNoteAsync(Guid id, NoteRequestModel model)
         {
             var note = await _unitOfWork.NoteRepository.GetAsync(id);
-            if (model == null)
+            if (note == null)
             {
                 return new ResponseDataModel<NoteModel>
                 {
@@ -88,10 +87,15 @@ namespace Polaby.Services.Services
                     Message = "Note not found"
                 };
             }
-            _mapper.Map<Note>(note);
+
+            _mapper.Map(model, note);
+
+            note.Date = DateOnly.FromDateTime(DateTime.Now);
+
             _unitOfWork.NoteRepository.Update(note);
             await _unitOfWork.SaveChangeAsync();
-            var updatedNoteModel = _mapper.Map<NoteModel>(model);
+
+            var updatedNoteModel = _mapper.Map<NoteModel>(note);
             return new ResponseDataModel<NoteModel>
             {
                 Status = true,

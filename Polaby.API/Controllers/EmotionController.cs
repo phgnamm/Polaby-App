@@ -25,11 +25,11 @@ namespace Polaby.API.Controllers
 
             return Ok(result);
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         //[Authorize("User")]
-        public async Task<IActionResult> DeleteEmotion([FromBody] EmotionRequestModel model)
+        public async Task<IActionResult> DeleteEmotion(Guid id)
         {
-            var result = await _emotionService.DeleteEmotionAsync(model);
+            var result = await _emotionService.DeleteEmotionAsync(id);
             if (!result.Status)
             {
                 return BadRequest(new { result.Message });
