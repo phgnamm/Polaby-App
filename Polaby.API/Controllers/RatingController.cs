@@ -26,11 +26,11 @@ namespace Polaby.API.Controllers
             }
             return Ok(response);
         }
-        [HttpPut]
+        [HttpPut("{id}")]
         //[Authorize("User")]
-        public async Task<IActionResult> UpdateRating([FromBody] CreateRatingModel model)
+        public async Task<IActionResult> UpdateRating(Guid id,[FromBody] CreateRatingModel model)
         {
-            var response = await _ratingService.UpdateRatingAsync(model);
+            var response = await _ratingService.UpdateRatingAsync(id,model);
             if (!response.Status)
             {
                 return BadRequest(response.Message);
@@ -39,11 +39,11 @@ namespace Polaby.API.Controllers
             return Ok(response);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         //[Authorize("User")]
-        public async Task<IActionResult> DeleteRating([FromQuery] Guid userId, [FromQuery] Guid expertId)
+        public async Task<IActionResult> DeleteRating(Guid id)
         {
-            var response = await _ratingService.DeleteRatingAsync(userId, expertId);
+            var response = await _ratingService.DeleteRatingAsync(id);
             if (!response.Status)
             {
                 return BadRequest(response.Message);

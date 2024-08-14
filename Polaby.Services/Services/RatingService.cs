@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Polaby.Services.Services
 {
-    public class RatingService: IRatingService
+    public class RatingService : IRatingService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -30,9 +30,9 @@ namespace Polaby.Services.Services
         {
             //Thấp nhất 1 sao, tối đa 5 sao
             var response = new ResponseDataModel<Rating>();
-            if(model.Star < 1 || model.Star > 5)
+            if (model.Star < 1 || model.Star > 5)
             {
-                response.Status =false;
+                response.Status = false;
                 response.Message = "Rating must be between 1 and 5  starts";
                 return response;
             }
@@ -55,7 +55,7 @@ namespace Polaby.Services.Services
             }
             //check User chỉ được đánh giá 1 expert 1 lần duy nhất
             var existingRating = await _unitOfWork.RatingRepository.GetByUserAndExpertIdAsync(model.UserId, model.ExpertId);
-            if(existingRating != null)
+            if (existingRating != null)
             {
                 response.Status = true;
                 response.Message = "User has already rated this expert";
@@ -70,16 +70,16 @@ namespace Polaby.Services.Services
             };
             await _unitOfWork.RatingRepository.AddAsync(rating);
             await _unitOfWork.SaveChangeAsync();
-            
+
             response.Status = true;
             response.Message = "Rating create successfully";
             return response;
         }
 
-        public async Task<ResponseModel> DeleteRatingAsync(Guid userId, Guid expertId)
+        public async Task<ResponseModel> DeleteRatingAsync(Guid ratingId)
         {
             var response = new ResponseModel();
-            var rating = await _unitOfWork.RatingRepository.GetByUserAndExpertIdAsync(userId, expertId);
+            var rating = await _unitOfWork.RatingRepository.GetAsync(ratingId);
             if (rating == null)
             {
                 response.Status = false;
@@ -87,8 +87,10 @@ namespace Polaby.Services.Services
                 return response;
             }
 
+            // Xóa Rating
             _unitOfWork.RatingRepository.HardDelete(rating);
             await _unitOfWork.SaveChangeAsync();
+
             response.Status = true;
             response.Message = "Rating deleted successfully.";
             return response;
@@ -105,10 +107,19 @@ namespace Polaby.Services.Services
             return new Pagination<RatingModel>(ratings, queryResult.TotalCount, model.PageIndex, model.PageSize);
         }
 
-        public async Task<ResponseDataModel<Rating?>> UpdateRatingAsync(CreateRatingModel model)
+        public async Task<ResponseDataModel<Rating?>> UpdateRatingAsync(Guid id, CreateRatingModel model)
         {
             var response = new ResponseDataModel<Rating?>();
-            // Check if the User exists
+
+            // Tìm Rating theo ID
+            var rating = await _unitOfWork.RatingRepository.GetAsync(id);
+            if (rating == null)
+            {
+                response.Status = false;
+                response.Message = "Rating not found.";
+                response.Data = null;
+                return response;
+            }
             var user = await _unitOfWork.AccountRepository.GetAccountById(model.UserId);
             if (user == null)
             {
@@ -117,7 +128,6 @@ namespace Polaby.Services.Services
                 return response;
             }
 
-            // Check if the Expert exists
             var expert = await _unitOfWork.AccountRepository.GetAccountById(model.ExpertId);
             if (expert == null)
             {
@@ -126,19 +136,10 @@ namespace Polaby.Services.Services
                 return response;
             }
 
-            //Thấp nhất 1 sao, tối đa 5 sao
             if (model.Star < 1 || model.Star > 5)
             {
                 response.Status = false;
                 response.Message = "Rating must be between 1 and 5 stars.";
-                return response;
-            }
-            var rating = await _unitOfWork.RatingRepository.GetByUserAndExpertIdAsync(model.UserId, model.ExpertId);
-            if (rating == null)
-            {
-                response.Status = false;
-                response.Message = "Rating not found.";
-                response.Data = null;
                 return response;
             }
 
