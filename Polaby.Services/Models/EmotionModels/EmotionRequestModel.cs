@@ -11,6 +11,5 @@ namespace Polaby.Services.Models.EmotionModels
     {
         public Guid UserId { get; set; }
         public EmotionType Type { get; set; }
-        public DateOnly Date { get; set; }
     }
 }
