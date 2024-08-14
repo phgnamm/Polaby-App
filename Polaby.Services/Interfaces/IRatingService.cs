@@ -16,8 +16,8 @@ namespace Polaby.Services.Interfaces
     public interface IRatingService
     {
         Task<ResponseDataModel<Rating>> CreateRatingAsync(CreateRatingModel model);
-        Task<ResponseDataModel<Rating?>> UpdateRatingAsync(CreateRatingModel model);
-        Task<ResponseModel> DeleteRatingAsync(Guid userId, Guid expertId);
+        Task<ResponseDataModel<Rating?>> UpdateRatingAsync(Guid id,CreateRatingModel model);
+        Task<ResponseModel> DeleteRatingAsync(Guid id);
         Task<Pagination<RatingModel>> GetRatingsByFilterAsync(RatingFilterModel model);
 
 
