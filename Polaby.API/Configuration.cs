@@ -132,6 +132,10 @@ namespace Polaby.API
             services.AddScoped<IHealthService, HealthService>();
             services.AddScoped<IHealthRepository, HealthRepository>();
 
+            //SafeFood
+            services.AddScoped<ISafeFoodRepository, SafeFoodRepository>();
+            services.AddScoped<ISafeFoodService, SafeFoodService>();
+
             return services;
         }
     }

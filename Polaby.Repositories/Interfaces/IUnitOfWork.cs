@@ -26,6 +26,7 @@
 		IEmotionRepository EmotionRepository { get; }
 		INoteRepository NoteRepository { get; }
         IHealthRepository HealthRepository { get; }
+        ISafeFoodRepository SafeFoodRepository { get; }
 
         public Task<int> SaveChangeAsync();
     }

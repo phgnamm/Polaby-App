@@ -29,6 +29,7 @@ namespace Polaby.Repositories.Common
         private readonly IEmotionRepository _motionRepository;
         private readonly INoteRepository _noteRepository;
         private readonly IHealthRepository _healthRepository;
+        private readonly ISafeFoodRepository _safeFoodRepository;
 
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
@@ -47,6 +48,8 @@ namespace Polaby.Repositories.Common
             IEmotionRepository motionRepository,
             INoteRepository noteRepository,
             IHealthRepository healthRepository
+            IHealthRepository healthRepository,
+            ISafeFoodRepository safeFoodRepository
         )
         {
             _dbContext = dbContext;
@@ -73,6 +76,7 @@ namespace Polaby.Repositories.Common
             _motionRepository = motionRepository;
             _noteRepository = noteRepository;
             _healthRepository = healthRepository;
+            _safeFoodRepository = safeFoodRepository;
         }
 
 
@@ -97,6 +101,7 @@ namespace Polaby.Repositories.Common
         public INotificationTypeRepository NotificationTypeRepository => _notificationTypeRepository;
         public IUserMenuRepository UserMenuRepository => _userMenuRepository;
         public IHealthRepository HealthRepository => _healthRepository;
+        public ISafeFoodRepository SafeFoodRepository => _safeFoodRepository;
 
         public IRatingRepository RatingRepository => _ratingRepository;
 

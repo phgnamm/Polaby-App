@@ -28,6 +28,8 @@ using Polaby.Repositories.Models.NoteModels;
 using Polaby.Services.Models.NoteModels;
 using Polaby.Services.Models.HealthModels;
 using Polaby.Repositories.Models.HealthModels;
+using Polaby.Services.Models.SafeFoodModels;
+using Polaby.Repositories.Models.SafeFoodModels;
 
 namespace Polaby.Services.Common
 {
@@ -116,7 +118,10 @@ namespace Polaby.Services.Common
             //Health
             CreateMap<HealthCreateModel, Health>();
             CreateMap<HealthUpdateModel, Health>();
-            CreateMap<Health, HealthModel>();
+            CreateMap<Health, HealthModel>().ReverseMap();
+
+            CreateMap<SafeFoodCreateModel, SafeFood>();
+            CreateMap<SafeFoodModel, SafeFood>().ReverseMap();
         }
     }
 }
