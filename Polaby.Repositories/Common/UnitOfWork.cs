@@ -1,4 +1,5 @@
 ﻿using Polaby.Repositories.Interfaces;
+using System.Security.AccessControl;
 
 namespace Polaby.Repositories.Common
 {
@@ -24,6 +25,9 @@ namespace Polaby.Repositories.Common
         private readonly INotificationSettingRepository _notificationSettingRepository;
         private readonly INotificationTypeRepository _notificationTypeRepository;
         private readonly IUserMenuRepository _userMenuRepository;
+        private readonly IRatingRepository _ratingRepository;
+        private readonly IEmotionRepository _motionRepository;
+        private readonly INoteRepository _noteRepository;
         private readonly IHealthRepository _healthRepository;
         private readonly ISafeFoodRepository _safeFoodRepository;
 
@@ -40,6 +44,9 @@ namespace Polaby.Repositories.Common
             INotificationTypeRepository notificationTypeRepository,
             INotificationSettingRepository notificationSettingRepository,
             IUserMenuRepository userMenuRepository,
+            IRatingRepository ratingRepository,
+            IEmotionRepository motionRepository,
+            INoteRepository noteRepository,
             IHealthRepository healthRepository,
             ISafeFoodRepository safeFoodRepository
         )
@@ -64,6 +71,9 @@ namespace Polaby.Repositories.Common
             _notificationTypeRepository = notificationTypeRepository;
             _notificationSettingRepository = notificationSettingRepository;
             _userMenuRepository = userMenuRepository;
+            _ratingRepository = ratingRepository;
+            _motionRepository = motionRepository;
+            _noteRepository = noteRepository;
             _healthRepository = healthRepository;
             _safeFoodRepository = safeFoodRepository;
         }
@@ -91,6 +101,12 @@ namespace Polaby.Repositories.Common
         public IUserMenuRepository UserMenuRepository => _userMenuRepository;
         public IHealthRepository HealthRepository => _healthRepository;
         public ISafeFoodRepository SafeFoodRepository => _safeFoodRepository;
+
+        public IRatingRepository RatingRepository => _ratingRepository;
+
+        public IEmotionRepository EmotionRepository => _motionRepository;
+
+        public INoteRepository NoteRepository => _noteRepository;
 
         public async Task<int> SaveChangeAsync()
         {

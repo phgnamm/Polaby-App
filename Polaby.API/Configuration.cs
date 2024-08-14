@@ -117,6 +117,17 @@ namespace Polaby.API
             services.AddScoped<INotificationTypeService, NotificationTypeService>();
             services.AddScoped<INotificationTypeRepository, NotificationTypeRepository>();
 
+            //Rating
+            services.AddScoped<IRatingService, RatingService>();
+            services.AddScoped<IRatingRepository,RatingRepository>();
+
+            //Emotion
+            services.AddScoped<IEmotionRepository, EmotionRepository>();
+            services.AddScoped<IEmotionService, EmotionService>();
+
+            //Note
+            services.AddScoped<INoteService, NoteService>();
+            services.AddScoped<INoteRepository, NoteRepository>();
             //Health
             services.AddScoped<IHealthService, HealthService>();
             services.AddScoped<IHealthRepository, HealthRepository>();
