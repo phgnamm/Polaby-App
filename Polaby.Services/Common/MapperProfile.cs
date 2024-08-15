@@ -24,6 +24,10 @@ using Polaby.Services.Models.ReportModels;
 using Polaby.Services.Models.WeeklyPostModels;
 using Polaby.Services.Models.NotificationModels;
 using Polaby.Services.Models.NotificationTypeModels;
+using Polaby.Repositories.Models.RatingModel;
+using Polaby.Repositories.Models.EmotionModels;
+using Polaby.Repositories.Models.NoteModels;
+using Polaby.Services.Models.NoteModels;
 using Polaby.Services.Models.HealthModels;
 using Polaby.Repositories.Models.HealthModels;
 using Polaby.Services.Models.SafeFoodModels;
@@ -106,6 +110,17 @@ namespace Polaby.Services.Common
             //NotificationType
             CreateMap<NotificationTypeModel, NotificationType>();
             CreateMap<NotificationType, NotificationTypeModel>();
+
+            //Rating
+            CreateMap<RatingModel, Rating>().ReverseMap();
+
+            //Emotion
+            CreateMap<EmotionModel, Emotion>().ReverseMap();
+
+            //Note
+            CreateMap<NoteModel, Note>().ReverseMap();
+            CreateMap<Note, NoteRequestModel>().ReverseMap();
+
 
             //Health
             CreateMap<HealthCreateModel, Health>();
