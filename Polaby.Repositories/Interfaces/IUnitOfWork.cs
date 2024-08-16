@@ -18,6 +18,7 @@
         IScheduleRepository ScheduleRepository { get; }
         IReportRepository ReportRepository { get; }
         IWeeklyPostRepository WeeklyPostRepository { get; }
+        IExpertRegistrationRepository ExpertRegistrationRepository { get; }
         INotificationRepository NotificationRepository { get; }
         INotificationTypeRepository NotificationTypeRepository { get; }
         INotificationSettingRepository NotificationSettingRepository { get; }

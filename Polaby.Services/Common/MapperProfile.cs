@@ -12,11 +12,13 @@ using Polaby.Services.Models.MealModels;
 using Polaby.Repositories.Models.MealModels;
 using Polaby.Services.Models.DishModels;
 using Polaby.Repositories.Models.DishModels;
+using Polaby.Repositories.Models.ExpertRegistrationModels;
 using Polaby.Services.Models.IngredientModels;
 using Polaby.Repositories.Models.IngredientModels;
 using Polaby.Services.Models.NutrientModels;
 using Polaby.Repositories.Models.NutrientModels;
 using Polaby.Repositories.Models.WeeklyPostModels;
+using Polaby.Services.Models.ExpertRegistrationModels;
 using Polaby.Services.Models.ScheduleModels;
 using Polaby.Services.Models.ReportModels;
 using Polaby.Services.Models.WeeklyPostModels;
@@ -46,6 +48,10 @@ namespace Polaby.Services.Common
             CreateMap<WeeklyPostModel, WeeklyPost>().ReverseMap();
             CreateMap<WeeklyPostCreateModel, WeeklyPost>();
 
+            //ExpertRegistration
+            CreateMap<ExpertRegistrationCreateModel, ExpertRegistration>();
+            CreateMap<ExpertRegistrationModel, ExpertRegistration>().ReverseMap();
+            
 			//Menu
 			CreateMap<MenuImportModel, Menu>().ReverseMap();
             CreateMap<MenuUpdateModel, Menu>().ForMember(dest => dest.Nutrients, opt => opt.Ignore());
@@ -57,7 +63,8 @@ namespace Polaby.Services.Common
             //Meal
             CreateMap<MealImportModel, Meal>().ReverseMap();
             CreateMap<MealUpdateModel, Meal>();
-            CreateMap<MealModel, Meal>().ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.ToString())).ReverseMap();
+            CreateMap<MealModel, Meal>().ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.ToString()))
+                .ReverseMap();
 
             //Dish
             CreateMap<DishImportModel, Dish>().ReverseMap();
