@@ -154,6 +154,7 @@ namespace Polaby.Services.Services
                         Status = true,
                         Message = "Login successfully",
                         EmailVerificationRequired = !user.EmailConfirmed,
+                        UserId = user.Id,
                         Data = new TokenModel
                         {
                             AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken),
@@ -391,7 +392,8 @@ namespace Polaby.Services.Services
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             // todo modify this Email body to send a URL redirect to the frontend page and contain the token as a parameter in the URL
             await _emailService.SendEmailAsync(user.Email!, "Polaby - Khôi phục mật khẩu",
-                $"Truy cập vào liên kết {token} để khôi phục mật khẩu cho tài khoản. Liên kết sẽ hết hạn sau 15 phút.", true);
+                $"Truy cập vào liên kết {token} để khôi phục mật khẩu cho tài khoản. Liên kết sẽ hết hạn sau 15 phút.",
+                true);
 
             return new ResponseModel
             {
