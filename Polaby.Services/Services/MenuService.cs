@@ -114,7 +114,8 @@ namespace Polaby.Services.Services
                                 ? x.OrderByDescending(x => x.CreationDate)
                                 : x.OrderBy(x => x.CreationDate);
                     }
-                }
+                },
+                 include: "Nutrients"
             );
             if (menuList != null)
             {
@@ -212,7 +213,7 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseModel> AddRangeMenuMeal(List<MenuMealCreateModel> menuMeals)
         {
-            var menuList = _mapper.Map<List<MenuMeal>>(menuMeals);
+            var menuList = menuMeals.SelectMany(menuMeal => _mapper.Map<List<MenuMeal>>(menuMeal)).ToList();
             if (menuList != null)
             {
                 await _unitOfWork.MenuMealRepository.AddRangeAsync(menuList);
@@ -360,21 +361,27 @@ namespace Polaby.Services.Services
                     menu.Kcal >= minCalories &&
                     menu.Kcal <= maxCalories,
                 orderBy: menus => menus.OrderBy(menu => menu.Name),
-                include: "MenuMeals,MenuMeals.Meal,MenuMeals.Meal.MealDishes,MenuMeals.Meal.MealDishes.Dish,MenuMeals.Meal.MealDishes.Dish.DishIngredients,MenuMeals.Meal.MealDishes.Dish.DishIngredients.Ingredient"
+                include: "MenuMeals,MenuMeals.Meal,MenuMeals.Meal.MealDishes,MenuMeals.Meal.MealDishes.Dish,MenuMeals.Meal.MealDishes.Dish.DishIngredients,MenuMeals.Meal.MealDishes.Dish.DishIngredients.Ingredient,Nutrients"
  );
 
 
-            var filteredMenus = queryResult.Data
-                .Where(menu =>
-                    menu.MenuMeals.All(menuMeal =>
-                        menuMeal.Meal.MealDishes.All(mealDish =>
-                            IsDietSuitable(mealDish.Dish, account.Diet)
-                        )
-                    )
+            var menus = queryResult.Data
+        .Where(menu =>
+            menu.MenuMeals.All(menuMeal =>
+                menuMeal.Meal.MealDishes.All(mealDish =>
+                    IsDietSuitable(mealDish.Dish, account.Diet)
                 )
-                .ToList();
+            )
+        )
+        .Select(menu =>
+        {
+            var menuModel = _mapper.Map<MenuModel>(menu);
+            menuModel.KcalRecomment = totalCaloriesRequired;
+            menuModel.MealCount = menu.MenuMeals.Count; // Count the number of meals
+            return menuModel;
+        })
+        .ToList();
 
-            var menus = _mapper.Map<List<MenuModel>>(filteredMenus);
             return new Pagination<MenuModel>(menus, queryResult.TotalCount, model.PageIndex, model.PageSize);
         }
 
