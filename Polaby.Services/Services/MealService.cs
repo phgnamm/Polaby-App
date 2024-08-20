@@ -56,7 +56,7 @@ namespace Polaby.Services.Services
             var mealIds = addedMeals.Data.Select(meal => meal.Id).ToList();
             var mealDishesGrouped = await _unitOfWork.MealDishRepository.GetAllAsync(
                 filter: md => mealIds.Contains((Guid)md.MealId),
-                include: "MealDishes,Dish"
+                include: "Meal,Dish"
             );
 
             var kcalUpdates = mealDishesGrouped.Data

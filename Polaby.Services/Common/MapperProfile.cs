@@ -58,7 +58,12 @@ namespace Polaby.Services.Common
             CreateMap<MenuModel, Menu>().ReverseMap();
 
             //MenuMeal
-            CreateMap<MenuMealCreateModel, MenuMeal>().ReverseMap();
+            CreateMap<MenuMealCreateModel, List<MenuMeal>>()
+           .ConvertUsing(src => src.MealIds.Select(mealId => new MenuMeal
+           {
+               MenuId = src.MenuId,
+               MealId = mealId
+           }).ToList());
 
             //Meal
             CreateMap<MealImportModel, Meal>().ReverseMap();
