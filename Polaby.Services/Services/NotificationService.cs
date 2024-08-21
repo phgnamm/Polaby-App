@@ -58,7 +58,7 @@ namespace Polaby.Services.Services
                     NotificationTypeName = c.NotificationType.Name.ToString()
                 }).ToList();
 
-                return new Pagination<NotificationModel>(notificationDetailList, notificationList.TotalCount, notificationFilterModel.PageIndex, notificationFilterModel.PageSize);
+                return new Pagination<NotificationModel>(notificationDetailList, notificationFilterModel.PageIndex, notificationFilterModel.PageSize, notificationList.TotalCount);
             }
             return null;
         }

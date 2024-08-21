@@ -160,6 +160,7 @@ namespace Polaby.Services.Services
                             AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken),
                             AccessTokenExpiryTime = jwtToken.ValidTo.ToLocalTime(),
                             RefreshToken = user.RefreshToken,
+                            RefreshTokenExpiryTime = user.RefreshTokenExpiryTime
                         }
                     };
                 }
@@ -219,6 +220,7 @@ namespace Polaby.Services.Services
                     AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken),
                     AccessTokenExpiryTime = jwtToken.ValidTo.ToLocalTime(),
                     RefreshToken = user.RefreshToken,
+                    RefreshTokenExpiryTime = user.RefreshTokenExpiryTime
                 }
             };
         }
@@ -568,6 +570,7 @@ namespace Polaby.Services.Services
                     AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken),
                     AccessTokenExpiryTime = jwtToken.ValidTo.ToLocalTime(),
                     RefreshToken = user.RefreshToken,
+                    RefreshTokenExpiryTime = user.RefreshTokenExpiryTime
                 }
             };
         }
@@ -594,7 +597,10 @@ namespace Polaby.Services.Services
                     if (result.Succeeded)
                     {
                         // Add role
-                        await _userManager.AddToRoleAsync(user, Repositories.Enums.Role.User.ToString());
+                        await _userManager.AddToRoleAsync(user,
+                            accountRegisterModel.Role != null
+                                ? accountRegisterModel.Role.ToString()
+                                : Repositories.Enums.Role.User.ToString());
 
                         // Email verification (disable this function if users are not required to verify their email)
                         // await SendVerificationEmail(user);
@@ -673,9 +679,8 @@ namespace Polaby.Services.Services
             );
 
             var accountModelList = _mapper.Map<List<AccountModel>>(accountList.Data);
-            return new Pagination<AccountModel>(accountModelList, accountList.TotalCount,
-                accountFilterModel.PageIndex,
-                accountFilterModel.PageSize);
+            return new Pagination<AccountModel>(accountModelList, accountFilterModel.PageIndex,
+                accountFilterModel.PageSize, accountList.TotalCount);
         }
 
         public async Task<ResponseModel> UpdateAccountUser(Guid id, AccountUserUpdateModel accountUserUpdateModel)
