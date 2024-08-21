@@ -1,5 +1,4 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.IngredientModels;
@@ -22,6 +21,7 @@ namespace Polaby.Services.Services
             _mapper = mapper;
             _claimsService = claimsService;
         }
+
         public async Task<ResponseModel> AddRangeIngredient(List<IngredientImportModel> ingredients)
         {
             var ingredientList = _mapper.Map<List<Ingredient>>(ingredients);
@@ -47,6 +47,7 @@ namespace Polaby.Services.Services
                     ingredient.Nutrients = nutrients;
                 }
             }
+
             await _unitOfWork.IngredientRepository.AddRangeAsync(ingredientList);
             await _unitOfWork.SaveChangeAsync();
 
@@ -58,7 +59,6 @@ namespace Polaby.Services.Services
         }
 
 
-
         public async Task<Pagination<IngredientModel>> GetAllIngredient(IngredientFilterModel ingredientFilterModel)
         {
             var ingredientList = await _unitOfWork.IngredientRepository.GetAllAsync(
@@ -66,7 +66,8 @@ namespace Polaby.Services.Services
                 pageSize: ingredientFilterModel.PageSize,
                 filter: x =>
                     x.IsDeleted == ingredientFilterModel.IsDeleted &&
-                    (!ingredientFilterModel.DishId.HasValue || x.DishIngredients.Any(di => di.DishId == ingredientFilterModel.DishId)) &&
+                    (!ingredientFilterModel.DishId.HasValue ||
+                     x.DishIngredients.Any(di => di.DishId == ingredientFilterModel.DishId)) &&
                     (string.IsNullOrEmpty(ingredientFilterModel.Search) ||
                      x.Name.ToLower().Contains(ingredientFilterModel.Search.ToLower())),
                 orderBy: x =>
@@ -95,11 +96,11 @@ namespace Polaby.Services.Services
                 var ingredientModelList = _mapper.Map<List<IngredientModel>>(ingredientList.Data);
                 return new Pagination<IngredientModel>(
                     ingredientModelList,
-                    ingredientList.TotalCount,
                     ingredientFilterModel.PageIndex,
-                    ingredientFilterModel.PageSize
+                    ingredientFilterModel.PageSize, ingredientList.TotalCount
                 );
             }
+
             return null;
         }
 
@@ -115,6 +116,7 @@ namespace Polaby.Services.Services
                     Message = "Ingredient not found!"
                 };
             }
+
             var existingNutrients = existingIngredient.Nutrients;
             var nutrientToUpdate = new List<Nutrient>();
 
@@ -143,6 +145,7 @@ namespace Polaby.Services.Services
                 _unitOfWork.NutrientRepository.UpdateRange(nutrientToUpdate);
                 await _unitOfWork.SaveChangeAsync();
             }
+
             return new ResponseModel()
             {
                 Status = true,

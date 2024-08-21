@@ -101,7 +101,7 @@ builder.Services.AddCors(options =>
         {
             builder
                 //.AllowAnyOrigin()
-                .WithOrigins("http://localhost:5173")
+                .WithOrigins("http://localhost:3000")
                 .AllowAnyHeader()
                 .WithExposedHeaders("X-Pagination")
                 .AllowAnyMethod()

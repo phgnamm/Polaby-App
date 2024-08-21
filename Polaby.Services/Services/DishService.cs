@@ -139,8 +139,8 @@ namespace Polaby.Services.Services
             if (dishList != null)
             {
                 var mealModelList = _mapper.Map<List<DishModel>>(dishList.Data);
-                return new Pagination<DishModel>(mealModelList, dishList.TotalCount, dishFilterModel.PageIndex,
-                    dishFilterModel.PageSize);
+                return new Pagination<DishModel>(mealModelList, dishFilterModel.PageIndex,
+                    dishFilterModel.PageSize, dishList.TotalCount);
             }
             return null;
         }

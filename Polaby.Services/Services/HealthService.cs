@@ -116,7 +116,7 @@ namespace Polaby.Services.Services
             if (healthList != null)
             {
                 var healthModelList = _mapper.Map<List<HealthModel>>(healthList.Data);
-                return new Pagination<HealthModel>(healthModelList, healthList.TotalCount, filterModel.PageIndex, filterModel.PageSize);
+                return new Pagination<HealthModel>(healthModelList, filterModel.PageIndex, filterModel.PageSize, healthList.TotalCount);
             }
             return null;
         }
