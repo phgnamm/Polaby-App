@@ -143,9 +143,9 @@ public class WeeklyPostService : IWeeklyPostService
         );
 
         var postModelList = _mapper.Map<List<WeeklyPostModel>>(postList.Data);
-        return new Pagination<WeeklyPostModel>(postModelList, postList.TotalCount,
+        return new Pagination<WeeklyPostModel>(postModelList,
             weeklyPostFilterModel.PageIndex,
-            weeklyPostFilterModel.PageSize);
+            weeklyPostFilterModel.PageSize, postList.TotalCount);
     }
 
     public async Task<ResponseModel> UpdateWeeklyPost(Guid id, WeeklyPostUpdateModel weeklyPostUpdateModel)

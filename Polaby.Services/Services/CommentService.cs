@@ -193,7 +193,7 @@ namespace Polaby.Services.Services
                     IsLiked = c.CommentLikes.Any()
                 }).ToList();
 
-                return new Pagination<CommentModel>(commentDetailList, commentList.TotalCount, commentFilterModel.PageIndex, commentFilterModel.PageSize);
+                return new Pagination<CommentModel>(commentDetailList, commentFilterModel.PageIndex, commentFilterModel.PageSize, commentList.TotalCount);
             }
             return null;
         }

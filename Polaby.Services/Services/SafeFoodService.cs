@@ -78,7 +78,7 @@ namespace Polaby.Services.Services
             if (safeFoodList != null)
             {
                 var safeFoodModelList = _mapper.Map<List<SafeFoodModel>>(safeFoodList.Data);
-                return new Pagination<SafeFoodModel>(safeFoodModelList, safeFoodList.TotalCount, filterModel.PageIndex, filterModel.PageSize);
+                return new Pagination<SafeFoodModel>(safeFoodModelList, filterModel.PageIndex, filterModel.PageSize, safeFoodList.TotalCount);
             }
             return null;
         }
