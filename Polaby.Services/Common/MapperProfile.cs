@@ -43,7 +43,7 @@ namespace Polaby.Services.Common
             CreateMap<AccountRegisterModel, Account>();
             CreateMap<GoogleUserInformationModel, Account>();
             CreateMap<AccountModel, Account>().ReverseMap();
-            
+
             //WeeklyPost
             CreateMap<WeeklyPostModel, WeeklyPost>().ReverseMap();
             CreateMap<WeeklyPostCreateModel, WeeklyPost>();
@@ -51,9 +51,9 @@ namespace Polaby.Services.Common
             //ExpertRegistration
             CreateMap<ExpertRegistrationCreateModel, ExpertRegistration>();
             CreateMap<ExpertRegistrationModel, ExpertRegistration>().ReverseMap();
-            
-			//Menu
-			CreateMap<MenuImportModel, Menu>().ReverseMap();
+
+            //Menu
+            CreateMap<MenuImportModel, Menu>().ReverseMap();
             CreateMap<MenuUpdateModel, Menu>().ForMember(dest => dest.Nutrients, opt => opt.Ignore());
             CreateMap<MenuModel, Menu>().ReverseMap();
 
@@ -94,8 +94,10 @@ namespace Polaby.Services.Common
             CreateMap<ReportModel, Report>().ReverseMap();
 
             //CommunityPost
-            CreateMap<CommunityPostCreateModel, CommunityPost>();
-            CreateMap<CommunityPost, CommunityPostModel>();
+            CreateMap<CommunityPostCreateModel, CommunityPost>()
+                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.UserId));
+            CreateMap<CommunityPost, CommunityPostModel>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.AccountId));
             CreateMap<CommunityPostUpdateModel, CommunityPost>();
 
             //Comment
