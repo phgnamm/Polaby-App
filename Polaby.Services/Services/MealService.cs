@@ -121,8 +121,8 @@ namespace Polaby.Services.Services
             if (mealList != null)
             {
                 var mealModelList = _mapper.Map<List<MealModel>>(mealList.Data);
-                return new Pagination<MealModel>(mealModelList, mealList.TotalCount, mealFilterModel.PageIndex,
-                    mealFilterModel.PageSize);
+                return new Pagination<MealModel>(mealModelList, mealFilterModel.PageIndex,
+                    mealFilterModel.PageSize, mealList.TotalCount);
             }
             return null;
         }

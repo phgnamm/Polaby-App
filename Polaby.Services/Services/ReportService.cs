@@ -176,9 +176,9 @@ public class ReportService : IReportService
         );
 
         var reportModelList = _mapper.Map<List<ReportModel>>(reportList.Data);
-        return new Pagination<ReportModel>(reportModelList, reportList.TotalCount,
+        return new Pagination<ReportModel>(reportModelList,
             reportFilterModel.PageIndex,
-            reportFilterModel.PageSize);
+            reportFilterModel.PageSize, reportList.TotalCount);
     }
 
     public async Task<ResponseModel> UpdateReport(Guid id, ReportUpdateModel reportUpdateModel)

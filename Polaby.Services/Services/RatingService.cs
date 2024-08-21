@@ -104,7 +104,7 @@ namespace Polaby.Services.Services
             );
 
             var ratings = _mapper.Map<List<RatingModel>>(queryResult.Data);
-            return new Pagination<RatingModel>(ratings, queryResult.TotalCount, model.PageIndex, model.PageSize);
+            return new Pagination<RatingModel>(ratings, model.PageIndex, model.PageSize, queryResult.TotalCount);
         }
 
         public async Task<ResponseDataModel<Rating?>> UpdateRatingAsync(Guid id, CreateRatingModel model)

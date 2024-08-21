@@ -157,9 +157,9 @@ public class ExpertRegistrationService : IExpertRegistrationService
         );
 
         var registrationList = _mapper.Map<List<ExpertRegistrationModel>>(registrations.Data);
-        return new Pagination<ExpertRegistrationModel>(registrationList, registrations.TotalCount,
+        return new Pagination<ExpertRegistrationModel>(registrationList,
             expertRegistrationFilterModel.PageIndex,
-            expertRegistrationFilterModel.PageSize);
+            expertRegistrationFilterModel.PageSize, registrations.TotalCount);
     }
 
     public async Task<ResponseModel> UpdateExpertRegistration(Guid id,
