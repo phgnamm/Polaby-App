@@ -80,6 +80,7 @@ namespace Polaby.API.Controllers
             }
         }
 
+        // [Authorize(Roles = "User")]
         [HttpPut("{id}/user")]
         public async Task<IActionResult> UpdateAccountUser(Guid id,
             [FromBody] AccountUserUpdateModel accountUserUpdateModel)
@@ -100,6 +101,7 @@ namespace Polaby.API.Controllers
             }
         }
 
+        // [Authorize(Roles = "Expert")]
         [HttpPut("{id}/expert")]
         public async Task<IActionResult> UpdateAccountExpert(Guid id,
             [FromBody] AccountExpertUpdateModel accountExpertUpdateModel)
@@ -107,6 +109,27 @@ namespace Polaby.API.Controllers
             try
             {
                 var result = await _accountService.UpdateAccountExpert(id, accountExpertUpdateModel);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+        
+        // [Authorize(Roles = "Admin")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAccount(Guid id,
+            [FromBody] AccountUpdateModel accountUpdateModel)
+        {
+            try
+            {
+                var result = await _accountService.UpdateAccount(id, accountUpdateModel);
                 if (result.Status)
                 {
                     return Ok(result);
