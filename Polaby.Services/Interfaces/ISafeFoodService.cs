@@ -1,6 +1,4 @@
-﻿
-
-using Polaby.Repositories.Models.SafeFoodModels;
+﻿using Polaby.Repositories.Models.SafeFoodModels;
 using Polaby.Services.Common;
 using Polaby.Services.Models.ResponseModels;
 using Polaby.Services.Models.SafeFoodModels;

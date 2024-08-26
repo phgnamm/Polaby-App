@@ -1,6 +1,4 @@
-﻿
-
-using Polaby.Repositories.Models.HealthModels;
+﻿using Polaby.Repositories.Models.HealthModels;
 using Polaby.Services.Common;
 using Polaby.Services.Models.HealthModels;
 using Polaby.Services.Models.ResponseModels;

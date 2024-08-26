@@ -4,7 +4,6 @@ using Polaby.Repositories.Entities;
 using Polaby.Repositories.Enums;
 using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.ExpertRegistrationModels;
-using Polaby.Repositories.Utils;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.ExpertRegistrationModels;
