@@ -22,7 +22,7 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseDataModel<CommunityPostModel>> Create(CommunityPostCreateModel communityPostCreateModel)
         {
-            var account = await _unitOfWork.AccountRepository.GetAccountById((Guid)communityPostCreateModel.UserId);
+            var account = await _unitOfWork.AccountRepository.GetAccountById((Guid)communityPostCreateModel.AccountId);
             if (account == null)
             {
                 return new ResponseDataModel<CommunityPostModel>()
