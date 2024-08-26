@@ -1,4 +1,5 @@
-﻿using Polaby.Repositories.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,12 @@ namespace Polaby.Repositories.Repositories
         public FollowRepository(AppDbContext dbContext, IClaimsService claimsService) : base(dbContext, claimsService)
         {
             _dbContext = dbContext;
+        }
+
+        public async Task<Follow> GetByUserAndExpert(Guid userId, Guid expertId)
+        {
+            return await _dbContext.Follow
+                                   .FirstOrDefaultAsync(x => x.UserId == userId && x.ExpertId == expertId);
         }
     }
 }

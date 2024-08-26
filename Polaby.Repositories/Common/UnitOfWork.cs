@@ -24,6 +24,8 @@ namespace Polaby.Repositories.Common
         private readonly INotificationSettingRepository _notificationSettingRepository;
         private readonly INotificationTypeRepository _notificationTypeRepository;
         private readonly IUserMenuRepository _userMenuRepository;
+        private readonly ICommentLikeRepository _commentLikeRepository;
+        private readonly ICommunityPostLikeRepository _communityPostLikeRepository;
 
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
@@ -37,7 +39,9 @@ namespace Polaby.Repositories.Common
             INotificationRepository notificationRepository,
             INotificationTypeRepository notificationTypeRepository,
             INotificationSettingRepository notificationSettingRepository,
-            IUserMenuRepository userMenuRepository
+            IUserMenuRepository userMenuRepository,
+            ICommentLikeRepository commentLikeRepository,
+            ICommunityPostLikeRepository communityPostLikeRepository
         )
         {
             _dbContext = dbContext;
@@ -60,6 +64,8 @@ namespace Polaby.Repositories.Common
             _notificationTypeRepository = notificationTypeRepository;
             _notificationSettingRepository = notificationSettingRepository;
             _userMenuRepository = userMenuRepository;
+            _commentLikeRepository = commentLikeRepository;
+            _communityPostLikeRepository = communityPostLikeRepository;
         }
 
 
@@ -83,6 +89,8 @@ namespace Polaby.Repositories.Common
         public INotificationSettingRepository NotificationSettingRepository => _notificationSettingRepository;
         public INotificationTypeRepository NotificationTypeRepository => _notificationTypeRepository;
         public IUserMenuRepository UserMenuRepository => _userMenuRepository;
+        public ICommentLikeRepository CommentLikeRepository => _commentLikeRepository;
+        public ICommunityPostLikeRepository CommunityPostLikeRepository => _communityPostLikeRepository;
 
         public async Task<int> SaveChangeAsync()
         {

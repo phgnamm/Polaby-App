@@ -11,7 +11,9 @@ namespace Polaby.Repositories
         }
 
         public DbSet<Comment> Comment { get; set; }
+        public DbSet<CommentLike> CommentLike { get; set; }
         public DbSet<CommunityPost> CommunityPost { get; set; }
+        public DbSet<CommunityPostLike> CommunityPostLike { get; set; }
         public DbSet<Dish> Dish { get; set; }
         public DbSet<DishIngredient> DishIngredient { get; set; }
         public DbSet<Emotion> Emotion { get; set; }

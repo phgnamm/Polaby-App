@@ -22,6 +22,8 @@
         INotificationTypeRepository NotificationTypeRepository { get; }
         INotificationSettingRepository NotificationSettingRepository { get; }
         IUserMenuRepository UserMenuRepository { get; }
+        ICommentLikeRepository CommentLikeRepository { get; }
+        ICommunityPostLikeRepository CommunityPostLikeRepository { get; }
 
         public Task<int> SaveChangeAsync();
     }

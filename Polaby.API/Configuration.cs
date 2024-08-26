@@ -117,6 +117,14 @@ namespace Polaby.API
             services.AddScoped<INotificationTypeService, NotificationTypeService>();
             services.AddScoped<INotificationTypeRepository, NotificationTypeRepository>();
 
+            //CommentLike
+            services.AddScoped<ICommentLikeService, CommentLikeService>();
+            services.AddScoped<ICommentLikeRepository, CommentLikeRepository>();
+
+            //CommunityPostLike
+            services.AddScoped<ICommunityPostLikeService, CommunityPostLikeService>();
+            services.AddScoped<ICommunityPostLikeRepository, CommunityPostLikeRepository>();
+
             return services;
         }
     }
