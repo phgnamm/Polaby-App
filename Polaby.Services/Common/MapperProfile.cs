@@ -24,6 +24,8 @@ using Polaby.Services.Models.ReportModels;
 using Polaby.Services.Models.WeeklyPostModels;
 using Polaby.Services.Models.NotificationModels;
 using Polaby.Services.Models.NotificationTypeModels;
+using Polaby.Services.Models.CommentLikeModels;
+using Polaby.Services.Models.CommunityPostLikeModels;
 using Polaby.Repositories.Models.RatingModel;
 using Polaby.Repositories.Models.EmotionModels;
 using Polaby.Repositories.Models.NoteModels;
@@ -117,6 +119,14 @@ namespace Polaby.Services.Common
             //NotificationType
             CreateMap<NotificationTypeModel, NotificationType>();
             CreateMap<NotificationType, NotificationTypeModel>();
+
+            //CommentLike
+            CreateMap<CommentLikeModel, CommentLike>();
+            CreateMap<CommentLike, CommentLikeModel>();
+
+            //CommunityPostLike
+            CreateMap<CommunityPostLikeModel, CommunityPostLike>();
+            CreateMap<CommunityPostLike, CommunityPostLikeModel>();
 
             //Rating
             CreateMap<RatingModel, Rating>().ReverseMap();

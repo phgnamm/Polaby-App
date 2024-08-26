@@ -162,7 +162,7 @@ namespace Polaby.Services.Services
                     Id = cp.Id,
                     Title = cp.Title,
                     Content = cp.Content,
-                    LikesCount = cp.LikesCount,
+                    LikesCount = cp.CommunityPostLikes.Count,
                     CommentsCount = cp.Comments.Count(c => !c.IsDeleted),
                     ImageUrl = cp.ImageUrl,
                     Attachments = cp.Attachments,

@@ -23,6 +23,8 @@
         INotificationTypeRepository NotificationTypeRepository { get; }
         INotificationSettingRepository NotificationSettingRepository { get; }
         IUserMenuRepository UserMenuRepository { get; }
+        ICommentLikeRepository CommentLikeRepository { get; }
+        ICommunityPostLikeRepository CommunityPostLikeRepository { get; }
         IRatingRepository RatingRepository { get; }	
 		IEmotionRepository EmotionRepository { get; }
 		INoteRepository NoteRepository { get; }

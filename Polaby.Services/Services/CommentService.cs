@@ -184,7 +184,7 @@ namespace Polaby.Services.Services
                 {
                     Id = c.Id,
                     Content = c.Content,
-                    LikesCount = c.LikesCount,
+                    LikesCount = c.CommentLikes.Count,
                     CommentsCount = c.CommentReplies.Count(c => !c.IsDeleted),
                     Attachments = c.Attachments,
                     UserId = c.AccountId,

@@ -142,14 +142,13 @@ namespace Polaby.Services.Services
                 }
             }
 
-            Follow follow = new()
-            {
-                UserId = user.Id,
-                ExpertId = expert.Id,
-            };
+            Follow follow = await _unitOfWork.FollowRepository.GetByUserAndExpert(Guid.Parse(followModel.UserId), Guid.Parse(followModel.ExpertId));
 
-            _unitOfWork.FollowRepository.HardDelete(follow);
-            await _unitOfWork.SaveChangeAsync();
+            if(follow != null)
+            {
+                _unitOfWork.FollowRepository.HardDelete(follow);
+                await _unitOfWork.SaveChangeAsync();
+            }
 
             return new ResponseModel()
             {
