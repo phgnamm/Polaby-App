@@ -174,7 +174,7 @@ namespace Polaby.Services.Services
                     IsLiked = cp.CommunityPostLikes.Any()
                 }).ToList();
 
-                return new Pagination<CommunityPostModel>(communityPostDetailList, communityPostList.TotalCount, communityPostFilterModel.PageIndex, communityPostFilterModel.PageSize);
+                return new Pagination<CommunityPostModel>(communityPostDetailList, communityPostFilterModel.PageIndex, communityPostFilterModel.PageSize, communityPostList.TotalCount);
             }
             return null;
         }

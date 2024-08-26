@@ -23,6 +23,7 @@ namespace Polaby.Services.Interfaces
 		Task<Pagination<AccountModel>> GetAllAccounts(AccountFilterModel accountFilterModel);
 		Task<ResponseModel> UpdateAccountUser(Guid id, AccountUserUpdateModel accountUserUpdateModel);
 		Task<ResponseModel> UpdateAccountExpert(Guid id, AccountExpertUpdateModel accountExpertUpdateModel);
+		Task<ResponseModel> UpdateAccount(Guid id, AccountUpdateModel accountUpdateModel);
 		Task<ResponseModel> DeleteAccount(Guid id);
 		Task<ResponseModel> RestoreAccount(Guid id);
 	}

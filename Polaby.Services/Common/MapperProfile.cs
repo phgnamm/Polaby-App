@@ -12,11 +12,13 @@ using Polaby.Services.Models.MealModels;
 using Polaby.Repositories.Models.MealModels;
 using Polaby.Services.Models.DishModels;
 using Polaby.Repositories.Models.DishModels;
+using Polaby.Repositories.Models.ExpertRegistrationModels;
 using Polaby.Services.Models.IngredientModels;
 using Polaby.Repositories.Models.IngredientModels;
 using Polaby.Services.Models.NutrientModels;
 using Polaby.Repositories.Models.NutrientModels;
 using Polaby.Repositories.Models.WeeklyPostModels;
+using Polaby.Services.Models.ExpertRegistrationModels;
 using Polaby.Services.Models.ScheduleModels;
 using Polaby.Services.Models.ReportModels;
 using Polaby.Services.Models.WeeklyPostModels;
@@ -24,6 +26,14 @@ using Polaby.Services.Models.NotificationModels;
 using Polaby.Services.Models.NotificationTypeModels;
 using Polaby.Services.Models.CommentLikeModels;
 using Polaby.Services.Models.CommunityPostLikeModels;
+using Polaby.Repositories.Models.RatingModel;
+using Polaby.Repositories.Models.EmotionModels;
+using Polaby.Repositories.Models.NoteModels;
+using Polaby.Services.Models.NoteModels;
+using Polaby.Services.Models.HealthModels;
+using Polaby.Repositories.Models.HealthModels;
+using Polaby.Services.Models.SafeFoodModels;
+using Polaby.Repositories.Models.SafeFoodModels;
 
 namespace Polaby.Services.Common
 {
@@ -40,18 +50,28 @@ namespace Polaby.Services.Common
             CreateMap<WeeklyPostModel, WeeklyPost>().ReverseMap();
             CreateMap<WeeklyPostCreateModel, WeeklyPost>();
 
+            //ExpertRegistration
+            CreateMap<ExpertRegistrationCreateModel, ExpertRegistration>();
+            CreateMap<ExpertRegistrationModel, ExpertRegistration>().ReverseMap();
+            
 			//Menu
 			CreateMap<MenuImportModel, Menu>().ReverseMap();
             CreateMap<MenuUpdateModel, Menu>().ForMember(dest => dest.Nutrients, opt => opt.Ignore());
             CreateMap<MenuModel, Menu>().ReverseMap();
 
             //MenuMeal
-            CreateMap<MenuMealCreateModel, MenuMeal>().ReverseMap();
+            CreateMap<MenuMealCreateModel, List<MenuMeal>>()
+           .ConvertUsing(src => src.MealIds.Select(mealId => new MenuMeal
+           {
+               MenuId = src.MenuId,
+               MealId = mealId
+           }).ToList());
 
             //Meal
             CreateMap<MealImportModel, Meal>().ReverseMap();
             CreateMap<MealUpdateModel, Meal>();
-            CreateMap<MealModel, Meal>().ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.ToString())).ReverseMap();
+            CreateMap<MealModel, Meal>().ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name.ToString()))
+                .ReverseMap();
 
             //Dish
             CreateMap<DishImportModel, Dish>().ReverseMap();
@@ -105,6 +125,25 @@ namespace Polaby.Services.Common
             //CommunityPostLike
             CreateMap<CommunityPostLikeModel, CommunityPostLike>();
             CreateMap<CommunityPostLike, CommunityPostLikeModel>();
+
+            //Rating
+            CreateMap<RatingModel, Rating>().ReverseMap();
+
+            //Emotion
+            CreateMap<EmotionModel, Emotion>().ReverseMap();
+
+            //Note
+            CreateMap<NoteModel, Note>().ReverseMap();
+            CreateMap<Note, NoteRequestModel>().ReverseMap();
+
+
+            //Health
+            CreateMap<HealthCreateModel, Health>();
+            CreateMap<HealthUpdateModel, Health>();
+            CreateMap<Health, HealthModel>().ReverseMap();
+
+            CreateMap<SafeFoodCreateModel, SafeFood>();
+            CreateMap<SafeFoodModel, SafeFood>().ReverseMap();
         }
     }
 }

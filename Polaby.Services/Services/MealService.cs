@@ -56,7 +56,7 @@ namespace Polaby.Services.Services
             var mealIds = addedMeals.Data.Select(meal => meal.Id).ToList();
             var mealDishesGrouped = await _unitOfWork.MealDishRepository.GetAllAsync(
                 filter: md => mealIds.Contains((Guid)md.MealId),
-                include: "MealDishes,Dish"
+                include: "Meal,Dish"
             );
 
             var kcalUpdates = mealDishesGrouped.Data
@@ -121,8 +121,8 @@ namespace Polaby.Services.Services
             if (mealList != null)
             {
                 var mealModelList = _mapper.Map<List<MealModel>>(mealList.Data);
-                return new Pagination<MealModel>(mealModelList, mealList.TotalCount, mealFilterModel.PageIndex,
-                    mealFilterModel.PageSize);
+                return new Pagination<MealModel>(mealModelList, mealFilterModel.PageIndex,
+                    mealFilterModel.PageSize, mealList.TotalCount);
             }
             return null;
         }

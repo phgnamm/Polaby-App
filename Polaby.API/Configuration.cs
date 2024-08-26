@@ -44,7 +44,7 @@ namespace Polaby.API
             services.AddScoped<IClaimsService, ClaimsService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IEmailService, EmailService>();
-
+           
             // Dependency Injection
             // Account
             services.AddScoped<IAccountService, AccountService>();
@@ -53,6 +53,10 @@ namespace Polaby.API
             // WeeklyPost
             services.AddScoped<IWeeklyPostService, WeeklyPostService>();
             services.AddScoped<IWeeklyPostRepository, WeeklyPostRepository>();
+
+            // ExpertRegistration
+            services.AddScoped<IExpertRegistrationService, ExpertRegistrationService>();
+            services.AddScoped<IExpertRegistrationRepository, ExpertRegistrationRepository>();
 
             //Menu
             services.AddScoped<IMenuService, MenuService>();
@@ -124,6 +128,25 @@ namespace Polaby.API
             //CommunityPostLike
             services.AddScoped<ICommunityPostLikeService, CommunityPostLikeService>();
             services.AddScoped<ICommunityPostLikeRepository, CommunityPostLikeRepository>();
+
+            //Rating
+            services.AddScoped<IRatingService, RatingService>();
+            services.AddScoped<IRatingRepository,RatingRepository>();
+
+            //Emotion
+            services.AddScoped<IEmotionRepository, EmotionRepository>();
+            services.AddScoped<IEmotionService, EmotionService>();
+
+            //Note
+            services.AddScoped<INoteService, NoteService>();
+            services.AddScoped<INoteRepository, NoteRepository>();
+            //Health
+            services.AddScoped<IHealthService, HealthService>();
+            services.AddScoped<IHealthRepository, HealthRepository>();
+
+            //SafeFood
+            services.AddScoped<ISafeFoodRepository, SafeFoodRepository>();
+            services.AddScoped<ISafeFoodService, SafeFoodService>();
 
             return services;
         }
