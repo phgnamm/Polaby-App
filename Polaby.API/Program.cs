@@ -142,6 +142,6 @@ app.UseMiddleware<AccountStatusMiddleware>();
 
 app.MapControllers();
 
-app.MapHub<NotificationHub>("/hubs/notification");
+app.MapHub<NotificationHub>("/notification");
 
-app.Run();
+app.Run(); 

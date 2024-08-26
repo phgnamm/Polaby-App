@@ -182,5 +182,25 @@ namespace Polaby.API.Controllers
                 return BadRequest(ex);
             }
         }
+
+        // [Authorize(Roles = "Admin")]
+        [HttpPost("{id}/check-password")]
+        public async Task<IActionResult> CheckPassword(Guid id, [FromBody]AccountCheckPasswordModel accountCheckPasswordModel)
+        {
+            try
+            {
+                var result = await _accountService.CheckPassword(id, accountCheckPasswordModel);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

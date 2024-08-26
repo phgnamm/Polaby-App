@@ -843,7 +843,7 @@ namespace Polaby.Services.Services
             // user.PhoneNumber = accountUpdateModel.PhoneNumber;
             user.ModificationDate = DateTime.Now;
             user.ModifiedBy = _claimsService.GetCurrentUserId;
-            
+
             user.ClinicAddress = accountUpdateModel.ClinicAddress;
             user.Description = accountUpdateModel.Description;
             user.Education = accountUpdateModel.Education;
@@ -948,6 +948,35 @@ namespace Polaby.Services.Services
             {
                 Status = false,
                 Message = "Cannot restore account",
+            };
+        }
+
+        public async Task<ResponseModel> CheckPassword(Guid id, AccountCheckPasswordModel accountCheckPasswordModel)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+            {
+                return new ResponseModel
+                {
+                    Status = false,
+                    Message = "User not found"
+                };
+            }
+
+            if (await _userManager.CheckPasswordAsync(user, accountCheckPasswordModel.Password))
+            {
+                return new ResponseModel
+                {
+                    Status = true,
+                    Message = "Password is correct"
+                };
+            }
+
+            return new ResponseModel
+            {
+                Status = false,
+                Message = "Password is wrong"
             };
         }
     }
