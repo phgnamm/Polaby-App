@@ -160,6 +160,7 @@ namespace Polaby.Services.Services
                             AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken),
                             AccessTokenExpiryTime = jwtToken.ValidTo.ToLocalTime(),
                             RefreshToken = user.RefreshToken,
+                            RefreshTokenExpiryTime = user.RefreshTokenExpiryTime
                         }
                     };
                 }
@@ -219,6 +220,7 @@ namespace Polaby.Services.Services
                     AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken),
                     AccessTokenExpiryTime = jwtToken.ValidTo.ToLocalTime(),
                     RefreshToken = user.RefreshToken,
+                    RefreshTokenExpiryTime = user.RefreshTokenExpiryTime
                 }
             };
         }
@@ -568,6 +570,7 @@ namespace Polaby.Services.Services
                     AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken),
                     AccessTokenExpiryTime = jwtToken.ValidTo.ToLocalTime(),
                     RefreshToken = user.RefreshToken,
+                    RefreshTokenExpiryTime = user.RefreshTokenExpiryTime
                 }
             };
         }
@@ -594,7 +597,10 @@ namespace Polaby.Services.Services
                     if (result.Succeeded)
                     {
                         // Add role
-                        await _userManager.AddToRoleAsync(user, Repositories.Enums.Role.User.ToString());
+                        await _userManager.AddToRoleAsync(user,
+                            accountRegisterModel.Role != null
+                                ? accountRegisterModel.Role.ToString()
+                                : Repositories.Enums.Role.User.ToString());
 
                         // Email verification (disable this function if users are not required to verify their email)
                         // await SendVerificationEmail(user);
@@ -642,25 +648,40 @@ namespace Polaby.Services.Services
                 pageSize: accountFilterModel.PageSize,
                 filter: (x =>
                     x.IsDeleted == accountFilterModel.IsDeleted &&
+                    (accountFilterModel.IsSubscriptionActive == null ||
+                     x.IsSubscriptionActive == accountFilterModel.IsSubscriptionActive) &&
+                    (accountFilterModel.EmailConfirmed == null ||
+                     x.EmailConfirmed == accountFilterModel.EmailConfirmed) &&
                     (accountFilterModel.Gender == null || x.Gender == accountFilterModel.Gender) &&
+                    (accountFilterModel.BMI == null || x.BMI == accountFilterModel.BMI) &&
+                    (accountFilterModel.FrequencyOfActivity == null ||
+                     x.FrequencyOfActivity == accountFilterModel.FrequencyOfActivity) &&
+                    (accountFilterModel.FrequencyOfStress == null ||
+                     x.FrequencyOfStress == accountFilterModel.FrequencyOfStress) &&
+                    (accountFilterModel.Diet == null || x.Diet == accountFilterModel.Diet) &&
+                    (accountFilterModel.Level == null || x.Level == accountFilterModel.Level) &&
                     (accountFilterModel.Role == null || x.Role == accountFilterModel.Role.ToString()) &&
                     (string.IsNullOrEmpty(accountFilterModel.Search) ||
                      x.FirstName!.ToLower().Contains(accountFilterModel.Search.ToLower()) ||
                      x.LastName!.ToLower().Contains(accountFilterModel.Search.ToLower()) ||
+                     x.Description.ToLower().Contains(accountFilterModel.Search.ToLower()) ||
+                     x.Education.ToLower().Contains(accountFilterModel.Search.ToLower()) ||
+                     x.ClinicAddress.ToLower().Contains(accountFilterModel.Search.ToLower()) ||
+                     x.Workplace.ToLower().Contains(accountFilterModel.Search.ToLower()) ||
                      x.Email!.ToLower().Contains(accountFilterModel.Search.ToLower()))),
                 orderBy: (x =>
                 {
                     switch (accountFilterModel.Order.ToLower())
                     {
-                        case "firstName":
+                        case "firstname":
                             return accountFilterModel.OrderByDescending
                                 ? x.OrderByDescending(x => x.FirstName)
                                 : x.OrderBy(x => x.FirstName);
-                        case "lastName":
+                        case "lastname":
                             return accountFilterModel.OrderByDescending
                                 ? x.OrderByDescending(x => x.LastName)
                                 : x.OrderBy(x => x.LastName);
-                        case "dateOfBirth":
+                        case "dateofbirth":
                             return accountFilterModel.OrderByDescending
                                 ? x.OrderByDescending(x => x.DateOfBirth)
                                 : x.OrderBy(x => x.DateOfBirth);
@@ -673,9 +694,8 @@ namespace Polaby.Services.Services
             );
 
             var accountModelList = _mapper.Map<List<AccountModel>>(accountList.Data);
-            return new Pagination<AccountModel>(accountModelList, accountList.TotalCount,
-                accountFilterModel.PageIndex,
-                accountFilterModel.PageSize);
+            return new Pagination<AccountModel>(accountModelList, accountFilterModel.PageIndex,
+                accountFilterModel.PageSize, accountList.TotalCount);
         }
 
         public async Task<ResponseModel> UpdateAccountUser(Guid id, AccountUserUpdateModel accountUserUpdateModel)
@@ -708,22 +728,7 @@ namespace Polaby.Services.Services
             user.BabyName = accountUserUpdateModel.BabyName;
             user.BabyGender = accountUserUpdateModel.BabyGender;
             user.DueDate = accountUserUpdateModel.DueDate;
-
-            double heightInMeters = user.Height.Value / 100.0; // Convert height from cm to meters
-            double bmi = user.InitialWeight.Value / (heightInMeters * heightInMeters);
-
-            if (bmi < 18.5)
-            {
-                user.BMI = BMI.Underweight;
-            }
-            else if (bmi is >= 18.5 and < 24.9)
-            {
-                user.BMI = BMI.NormalWeight;
-            }
-            else if (bmi >= 25)
-            {
-                user.BMI = BMI.Overweight;
-            }
+            user.BMI = CalculateBMI(user.Height, user.InitialWeight);
 
             var result = await _userManager.UpdateAsync(user);
 
@@ -741,6 +746,32 @@ namespace Polaby.Services.Services
                 Status = false,
                 Message = "Cannot update account",
             };
+        }
+
+        private BMI? CalculateBMI(double? height, double? weight)
+        {
+            if (height != null && weight != null)
+            {
+                double? heightInMeters = height / 100.0; // Convert height from cm to meters
+                double? bmi = weight / (heightInMeters * heightInMeters);
+
+                if (bmi < 18.5)
+                {
+                    return BMI.Underweight;
+                }
+
+                if (bmi is >= 18.5 and < 24.9)
+                {
+                    return BMI.NormalWeight;
+                }
+
+                if (bmi >= 25)
+                {
+                    return BMI.Overweight;
+                }
+            }
+
+            return null;
         }
 
         public async Task<ResponseModel> UpdateAccountExpert(Guid id, AccountExpertUpdateModel accountExpertUpdateModel)
@@ -771,6 +802,64 @@ namespace Polaby.Services.Services
             user.YearsOfExperience = accountExpertUpdateModel.YearsOfExperience;
             user.Workplace = accountExpertUpdateModel.Workplace;
             user.Level = accountExpertUpdateModel.Level;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return new ResponseModel
+                {
+                    Status = true,
+                    Message = "Update account successfully",
+                };
+            }
+
+            return new ResponseModel
+            {
+                Status = false,
+                Message = "Cannot update account",
+            };
+        }
+
+        public async Task<ResponseModel> UpdateAccount(Guid id, AccountUpdateModel accountUpdateModel)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+            {
+                return new ResponseModel
+                {
+                    Status = false,
+                    Message = "User not found"
+                };
+            }
+
+            user.FirstName = accountUpdateModel.FirstName;
+            user.LastName = accountUpdateModel.LastName;
+            // user.Gender = accountUpdateModel.Gender;
+            user.DateOfBirth = accountUpdateModel.DateOfBirth;
+            // user.Address = accountUpdateModel.Address;
+            user.Image = accountUpdateModel.Image;
+            // user.PhoneNumber = accountUpdateModel.PhoneNumber;
+            user.ModificationDate = DateTime.Now;
+            user.ModifiedBy = _claimsService.GetCurrentUserId;
+
+            user.ClinicAddress = accountUpdateModel.ClinicAddress;
+            user.Description = accountUpdateModel.Description;
+            user.Education = accountUpdateModel.Education;
+            user.YearsOfExperience = accountUpdateModel.YearsOfExperience;
+            user.Workplace = accountUpdateModel.Workplace;
+            user.Level = accountUpdateModel.Level;
+
+            user.Height = accountUpdateModel.Height;
+            user.InitialWeight = accountUpdateModel.InitialWeight;
+            user.Diet = accountUpdateModel.Diet;
+            user.FrequencyOfActivity = accountUpdateModel.FrequencyOfActivity;
+            user.FrequencyOfStress = accountUpdateModel.FrequencyOfStress;
+            user.BabyName = accountUpdateModel.BabyName;
+            user.BabyGender = accountUpdateModel.BabyGender;
+            user.DueDate = accountUpdateModel.DueDate;
+            user.BMI = CalculateBMI(user.Height, user.InitialWeight);
 
             var result = await _userManager.UpdateAsync(user);
 
@@ -859,6 +948,35 @@ namespace Polaby.Services.Services
             {
                 Status = false,
                 Message = "Cannot restore account",
+            };
+        }
+
+        public async Task<ResponseModel> CheckPassword(Guid id, AccountCheckPasswordModel accountCheckPasswordModel)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+            {
+                return new ResponseModel
+                {
+                    Status = false,
+                    Message = "User not found"
+                };
+            }
+
+            if (await _userManager.CheckPasswordAsync(user, accountCheckPasswordModel.Password))
+            {
+                return new ResponseModel
+                {
+                    Status = true,
+                    Message = "Password is correct"
+                };
+            }
+
+            return new ResponseModel
+            {
+                Status = false,
+                Message = "Password is wrong"
             };
         }
     }

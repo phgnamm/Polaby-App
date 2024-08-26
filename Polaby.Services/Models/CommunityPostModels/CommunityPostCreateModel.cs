@@ -15,6 +15,6 @@ namespace Polaby.Services.Models.CommunityPostModels
         public string? Attachments { get; set; }          
         public bool IsProfessional { get; set; }
         public PostVisibility Visibility { get; set; }
-        public Guid UserId { get; set; }
+        public Guid AccountId { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseDataModel<CommunityPostModel>> Create(CommunityPostCreateModel communityPostCreateModel)
         {
-            var account = await _unitOfWork.AccountRepository.GetAccountById((Guid)communityPostCreateModel.UserId);
+            var account = await _unitOfWork.AccountRepository.GetAccountById((Guid)communityPostCreateModel.AccountId);
             if (account == null)
             {
                 return new ResponseDataModel<CommunityPostModel>()
@@ -162,7 +162,7 @@ namespace Polaby.Services.Services
                     Id = cp.Id,
                     Title = cp.Title,
                     Content = cp.Content,
-                    LikesCount = cp.LikesCount,
+                    LikesCount = cp.CommunityPostLikes.Count,
                     CommentsCount = cp.Comments.Count(c => !c.IsDeleted),
                     ImageUrl = cp.ImageUrl,
                     Attachments = cp.Attachments,
@@ -174,7 +174,7 @@ namespace Polaby.Services.Services
                     IsLiked = cp.CommunityPostLikes.Any()
                 }).ToList();
 
-                return new Pagination<CommunityPostModel>(communityPostDetailList, communityPostList.TotalCount, communityPostFilterModel.PageIndex, communityPostFilterModel.PageSize);
+                return new Pagination<CommunityPostModel>(communityPostDetailList, communityPostFilterModel.PageIndex, communityPostFilterModel.PageSize, communityPostList.TotalCount);
             }
             return null;
         }

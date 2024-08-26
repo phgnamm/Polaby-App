@@ -140,7 +140,7 @@ namespace Polaby.Services.Services
                     UserName = cp.User.FirstName + " " + cp.User.FirstName
                 }).ToList();
 
-                return new Pagination<ScheduleModel>(scheduleDetailList, scheduleList.TotalCount, scheduleFilterModel.PageIndex, scheduleFilterModel.PageSize);
+                return new Pagination<ScheduleModel>(scheduleDetailList, scheduleFilterModel.PageIndex, scheduleFilterModel.PageSize, scheduleList.TotalCount);
             }
             return null;
         }

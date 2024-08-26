@@ -101,7 +101,7 @@ builder.Services.AddCors(options =>
         {
             builder
                 //.AllowAnyOrigin()
-                .WithOrigins("http://localhost:5173")
+                .WithOrigins("http://localhost:3000")
                 .AllowAnyHeader()
                 .WithExposedHeaders("X-Pagination")
                 .AllowAnyMethod()
@@ -142,6 +142,6 @@ app.UseMiddleware<AccountStatusMiddleware>();
 
 app.MapControllers();
 
-app.MapHub<NotificationHub>("/hubs/notification");
+app.MapHub<NotificationHub>("/notification");
 
-app.Run();
+app.Run(); 
