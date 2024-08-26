@@ -1,17 +1,10 @@
 ﻿using AutoMapper;
-using Azure;
 using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.EmotionModels;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.EmotionModels;
 using Polaby.Services.Models.ResponseModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Polaby.Services.Services
 {
     public class EmotionService : IEmotionService

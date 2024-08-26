@@ -48,8 +48,7 @@ namespace Polaby.Repositories.Common
             INotificationSettingRepository notificationSettingRepository,
             IUserMenuRepository userMenuRepository,
             ICommentLikeRepository commentLikeRepository,
-            ICommunityPostLikeRepository communityPostLikeRepository
-            IUserMenuRepository userMenuRepository,
+            ICommunityPostLikeRepository communityPostLikeRepository,
             IRatingRepository ratingRepository,
             IEmotionRepository motionRepository,
             INoteRepository noteRepository,
