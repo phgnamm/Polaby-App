@@ -11,5 +11,6 @@ namespace Polaby.Services.Interfaces
         Task<ResponseDataModel<CommentModel>> Update(Guid id, CommentUpdateModel commentUpdateModel);
         Task<ResponseDataModel<CommentModel>> Delete(Guid id);
         Task<Pagination<CommentModel>> GetAllComments(CommentFilterModel commentFilterModel);
+        Task<ResponseDataModel<CommentModel>> GetById(Guid id);
     }
 }

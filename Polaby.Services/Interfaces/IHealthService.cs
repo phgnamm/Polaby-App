@@ -11,5 +11,6 @@ namespace Polaby.Services.Interfaces
         Task<Pagination<HealthModel>> GetAllHealthAsync(HealthFilterModel filterModel);
         Task<ResponseModel> UpdateHealthAsync(Guid id, HealthUpdateModel updateModel);
         Task<ResponseModel> DeleteHealthAsync(Guid id);
+        Task<ResponseDataModel<HealthModel>> GetById(Guid id);
     }
 }

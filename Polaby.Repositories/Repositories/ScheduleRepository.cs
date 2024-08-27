@@ -1,4 +1,5 @@
-﻿using Polaby.Repositories.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,13 @@ namespace Polaby.Repositories.Repositories
         public ScheduleRepository(AppDbContext dbContext, IClaimsService claimsService) : base(dbContext, claimsService)
         {
             _dbContext = dbContext;
+        }
+
+        public async Task<Schedule> GetById(Guid id)
+        {
+            return await _dbContext.Schedule
+                .Include(cp => cp.User)
+                .FirstOrDefaultAsync(cp => cp.Id == id);
         }
     }
 }

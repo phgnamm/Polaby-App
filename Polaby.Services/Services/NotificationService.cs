@@ -2,8 +2,10 @@
 using Polaby.Repositories.Interfaces;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.NewFolder;
 using Polaby.Services.Models.NotificationModels;
+using Polaby.Services.Models.ResponseModels;
 
 namespace Polaby.Services.Services
 {
@@ -61,6 +63,34 @@ namespace Polaby.Services.Services
                 return new Pagination<NotificationModel>(notificationDetailList, notificationFilterModel.PageIndex, notificationFilterModel.PageSize, notificationList.TotalCount);
             }
             return null;
+        }
+
+        public async Task<ResponseDataModel<NotificationModel>> GetById(Guid id)
+        {
+            var notification = await _unitOfWork.NotificationRepository.GetById(id);
+
+            if (notification == null)
+            {
+                return new ResponseDataModel<NotificationModel>()
+                {
+                    Status = false,
+                    Message = "Notification not found"
+                };
+            }
+
+            var notificationModel = _mapper.Map<NotificationModel>(notification);
+            notificationModel.ReceiverName = notification.Receiver.FirstName + " " + notification.Receiver.LastName;
+            notificationModel.SenderName = notification.Sender.FirstName + " " + notification.Sender.LastName;
+            notificationModel.CommunityPostTitle = notification.Post.Title;
+            notificationModel.CommunityPostContent = notification.Post.Content;
+            notificationModel.NotificationTypeName = notification.NotificationType.Name.ToString();
+
+            return new ResponseDataModel<NotificationModel>()
+            {
+                Status = true,
+                Message = "Get otification successfully",
+                Data = notificationModel
+            };
         }
     }
 }

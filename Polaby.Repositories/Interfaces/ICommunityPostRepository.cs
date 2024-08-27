@@ -14,5 +14,6 @@ namespace Polaby.Repositories.Interfaces
      int? pageSize = null,
      Guid? currentUserId = null,
      bool? isFollowing = null);
+        Task<CommunityPost> GetById(Guid id);
     }
 }

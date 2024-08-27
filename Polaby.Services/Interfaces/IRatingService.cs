@@ -12,7 +12,7 @@ namespace Polaby.Services.Interfaces
         Task<ResponseDataModel<Rating?>> UpdateRatingAsync(Guid id,CreateRatingModel model);
         Task<ResponseModel> DeleteRatingAsync(Guid id);
         Task<Pagination<RatingModel>> GetRatingsByFilterAsync(RatingFilterModel model);
-
+        Task<ResponseDataModel<RatingModel>> GetById(Guid id);
 
     }
 }

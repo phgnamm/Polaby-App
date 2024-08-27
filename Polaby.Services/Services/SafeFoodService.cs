@@ -128,5 +128,28 @@ namespace Polaby.Services.Services
                 Message = "SafeFood deleted successfully"
             };
         }
+
+        public async Task<ResponseDataModel<SafeFoodModel>> GetById(Guid id)
+        {
+            var safeFood = await _unitOfWork.SafeFoodRepository.GetAsync(id);
+
+            if (safeFood == null)
+            {
+                return new ResponseDataModel<SafeFoodModel>()
+                {
+                    Status = false,
+                    Message = "Safe food not found"
+                };
+            }
+
+            var safeFoodModel = _mapper.Map<SafeFoodModel>(safeFood);
+
+            return new ResponseDataModel<SafeFoodModel>()
+            {
+                Status = true,
+                Message = "Get safe food successfully",
+                Data = safeFoodModel
+            };
+        }
     }
 }

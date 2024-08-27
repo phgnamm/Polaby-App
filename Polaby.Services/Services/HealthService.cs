@@ -5,6 +5,7 @@ using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.HealthModels;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.HealthModels;
 using Polaby.Services.Models.ResponseModels;
 
@@ -164,6 +165,29 @@ namespace Polaby.Services.Services
             {
                 Status = true,
                 Message = "Health deleted successfully"
+            };
+        }
+
+        public async Task<ResponseDataModel<HealthModel>> GetById(Guid id)
+        {
+            var health = await _unitOfWork.HealthRepository.GetAsync(id);
+
+            if (health == null)
+            {
+                return new ResponseDataModel<HealthModel>()
+                {
+                    Status = false,
+                    Message = "Health not found"
+                };
+            }
+
+            var healthModel = _mapper.Map<HealthModel>(health);
+
+            return new ResponseDataModel<HealthModel>()
+            {
+                Status = true,
+                Message = "Get health successfully",
+                Data = healthModel
             };
         }
     }
