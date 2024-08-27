@@ -11,6 +11,7 @@ namespace Polaby.Services.Models.CommunityPostModels
         public bool? IsProfessional { get; set; }
         public bool? IsFollowing { get; set; } = false; //filter bài viết chuyên gia đang follow
         public PostVisibility? Visibility { get; set; }
+        public Guid? PostId { get; set; }
         public Guid? AccountId { get; set; }
         public string? Search { get; set; }
         protected override int MinPageSize { get; set; } = PaginationConstant.DEFAULT_MIN_PAGE_SIZE;
