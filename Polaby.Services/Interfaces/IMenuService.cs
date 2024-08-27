@@ -17,5 +17,6 @@ namespace Polaby.Services.Interfaces
         Task<Pagination<MenuModel>> GetMenuRecommendations(MenuRecommentFilterModel model);
         Task<ResponseModel> DeleteUserMenu(Guid userId, Guid menuId);
         Task<ResponseModel> AddRangeUserMenu(List<UserMenuMCreateModel> models);
+        Task<ResponseDataModel<MenuModel>> GetById(Guid id);
     }
 }

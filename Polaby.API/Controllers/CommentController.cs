@@ -109,5 +109,24 @@ namespace Polaby.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetComment(Guid id)
+        {
+            try
+            {
+                var result = await _commentService.GetById(id);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

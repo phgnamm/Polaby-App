@@ -10,5 +10,6 @@ namespace Polaby.Services.Interfaces
         Task<ResponseDataModel<CommunityPostModel>> Update(Guid id, CommunityPostUpdateModel communityPostUpdateModel);
         Task<ResponseDataModel<CommunityPostModel>> Delete(Guid id);
         Task<Pagination<CommunityPostModel>> GetAllCommunityPosts(CommunityPostFilterModel communityPostFilterModel);
+        Task<ResponseDataModel<CommunityPostModel>> GetById(Guid id);
     }
 }

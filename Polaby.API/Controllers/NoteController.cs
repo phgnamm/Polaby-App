@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Polaby.Repositories.Models.NoteModels;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.NoteModels;
+using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
 {
@@ -73,6 +74,25 @@ namespace Polaby.API.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            try
+            {
+                var result = await _noteService.GetById(id);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
     }
 }

@@ -147,7 +147,6 @@ namespace Polaby.Services.Services
                 (commentFilterModel.PostId == null || x.PostId == commentFilterModel.PostId) &&
                 (commentFilterModel.ParentCommentId == null || x.ParentCommentId == commentFilterModel.ParentCommentId) &&
                 (commentFilterModel.AccountId == null || x.AccountId == commentFilterModel.AccountId) &&
-                (commentFilterModel.CommentId == null || x.Id == commentFilterModel.CommentId) &&
                 (string.IsNullOrEmpty(commentFilterModel.Search) ||
                  x.Content.ToLower().Contains(commentFilterModel.Search.ToLower())),
 
@@ -197,6 +196,34 @@ namespace Polaby.Services.Services
                 return new Pagination<CommentModel>(commentDetailList, commentFilterModel.PageIndex, commentFilterModel.PageSize, commentList.TotalCount);
             }
             return null;
+        }
+
+        public async Task<ResponseDataModel<CommentModel>> GetById(Guid id)
+        {
+            var comment = await _unitOfWork.CommentRepository.GetById(id);
+
+            if (comment == null)
+            {
+                return new ResponseDataModel<CommentModel>()
+                {
+                    Status = false,
+                    Message = "Comment not found"
+                };
+            }
+
+            var commentModel = _mapper.Map<CommentModel>(comment);
+            commentModel.UserName = comment.Account.FirstName + " " + comment.Account.LastName;
+            commentModel.ReportsCount = comment.Reports.Count;
+            commentModel.LikesCount = comment.CommentLikes.Count;
+            commentModel.CommentsCount = comment.CommentReplies.Count(c => !c.IsDeleted);
+            commentModel.IsLiked = comment.CommentLikes.Any();
+
+            return new ResponseDataModel<CommentModel>()
+            {
+                Status = true,
+                Message = "Get comment successfully",
+                Data = commentModel
+            };
         }
     }
 }

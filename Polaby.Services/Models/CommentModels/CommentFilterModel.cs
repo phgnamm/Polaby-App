@@ -17,7 +17,6 @@ namespace Polaby.Services.Models.CommentModels
         public Guid? AccountId { get; set; }
         public Guid? PostId { get; set; }
         public Guid? ParentCommentId { get; set; }
-        public Guid? CommentId { get; set; }
         public string? Search { get; set; }
         protected override int MinPageSize { get; set; } = PaginationConstant.DEFAULT_MIN_PAGE_SIZE;
         protected override int MaxPageSize { get; set; } = PaginationConstant.DEFAULT_MAX_PAGE_SIZE;
