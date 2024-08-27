@@ -116,6 +116,7 @@ namespace Polaby.Services.Services
                 x.IsDeleted == communityPostFilterModel.IsDeleted &&
                 (communityPostFilterModel.IsProfessional == null || x.IsProfessional == communityPostFilterModel.IsProfessional) &&
                 (communityPostFilterModel.Visibility == null || x.Visibility == communityPostFilterModel.Visibility) &&
+                (communityPostFilterModel.PostId == null || x.Id == communityPostFilterModel.PostId) &&
                 (communityPostFilterModel.AccountId == null || x.AccountId == communityPostFilterModel.AccountId) &&
                 (string.IsNullOrEmpty(communityPostFilterModel.Search) ||
                  x.Title.ToLower().Contains(communityPostFilterModel.Search.ToLower()) ||

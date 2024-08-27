@@ -147,6 +147,7 @@ namespace Polaby.Services.Services
                 (commentFilterModel.PostId == null || x.PostId == commentFilterModel.PostId) &&
                 (commentFilterModel.ParentCommentId == null || x.ParentCommentId == commentFilterModel.ParentCommentId) &&
                 (commentFilterModel.AccountId == null || x.AccountId == commentFilterModel.AccountId) &&
+                (commentFilterModel.CommentId == null || x.Id == commentFilterModel.CommentId) &&
                 (string.IsNullOrEmpty(commentFilterModel.Search) ||
                  x.Content.ToLower().Contains(commentFilterModel.Search.ToLower())),
 
