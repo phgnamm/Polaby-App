@@ -12,5 +12,12 @@ namespace Polaby.Repositories.Repositories
         {
             _dbContext = dbContext;
         }
+
+        public async Task<Menu> GetById(Guid id)
+        {
+            return await _dbContext.Menu
+                .Include(cp => cp.Nutrients)
+                .FirstOrDefaultAsync(cp => cp.Id == id);
+        }
     }
 }

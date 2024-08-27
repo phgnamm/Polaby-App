@@ -103,5 +103,28 @@ namespace Polaby.Services.Services
                 Data = updatedNoteModel
             };
         }
+
+        public async Task<ResponseDataModel<NoteModel>> GetById(Guid id)
+        {
+            var note = await _unitOfWork.NoteRepository.GetAsync(id);
+
+            if (note == null)
+            {
+                return new ResponseDataModel<NoteModel>()
+                {
+                    Status = false,
+                    Message = "Note not found"
+                };
+            }
+
+            var noteModel = _mapper.Map<NoteModel>(note);
+
+            return new ResponseDataModel<NoteModel>()
+            {
+                Status = true,
+                Message = "Get note successfully",
+                Data = noteModel
+            };
+        }
     }
 }

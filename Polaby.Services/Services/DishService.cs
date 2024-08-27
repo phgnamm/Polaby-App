@@ -5,6 +5,7 @@ using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.DishModels;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.DishModels;
 using Polaby.Services.Models.MenuModels;
 using Polaby.Services.Models.ResponseModels;
@@ -238,6 +239,29 @@ namespace Polaby.Services.Services
             {
                 Status = true,
                 Message = "DishIngredient deleted successfully"
+            };
+        }
+
+        public async Task<ResponseDataModel<DishModel>> GetById(Guid id)
+        {
+            var dish = await _unitOfWork.DishRepository.GetById(id);
+
+            if (dish == null)
+            {
+                return new ResponseDataModel<DishModel>()
+                {
+                    Status = false,
+                    Message = "Dish not found"
+                };
+            }
+
+            var dishModel = _mapper.Map<DishModel>(dish);
+
+            return new ResponseDataModel<DishModel>()
+            {
+                Status = true,
+                Message = "Get dish successfully",
+                Data = dishModel
             };
         }
     }

@@ -14,5 +14,6 @@ namespace Polaby.Services.Interfaces
         Task<ResponseModel> UpdateIngredient(Guid id, IngredientUpdateModel updateModel);
         Task<ResponseModel> DeleteIngredient(Guid id);
         Task<Pagination<IngredientModel>> GetAllIngredient(IngredientFilterModel ingredientFilterModel);
+        Task<ResponseDataModel<IngredientModel>> GetById(Guid id);
     }
 }

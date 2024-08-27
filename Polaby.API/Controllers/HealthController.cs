@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.HealthModels;
 using Polaby.Services.Models.ResponseModels;
+using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
 {
@@ -89,6 +90,25 @@ namespace Polaby.API.Controllers
             }
 
             return NotFound(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            try
+            {
+                var result = await _healthService.GetById(id);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
     }
 }

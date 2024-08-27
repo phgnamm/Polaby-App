@@ -10,5 +10,6 @@ namespace Polaby.Services.Interfaces
         Task<ResponseDataModel<ScheduleModel>> Update(Guid id, ScheduleUpdateModel scheduleUpdateModel);
         Task<ResponseModel> Delete(Guid id);
         Task<Pagination<ScheduleModel>> GetAllSchedules(ScheduleFilterModel scheduleFilterModel);
+        Task<ResponseDataModel<ScheduleModel>> GetById(Guid id);
     }
 }

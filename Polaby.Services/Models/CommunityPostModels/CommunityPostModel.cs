@@ -20,7 +20,7 @@ namespace Polaby.Services.Models.CommunityPostModels
         public bool IsProfessional { get; set; }
         public bool IsLiked { get; set; }
         public PostVisibility? Visibility { get; set; }
-        public Guid? UserId { get; set; }
+        public Guid? AccountId { get; set; }
         public string? UserName { get; set; }
     }
 }
