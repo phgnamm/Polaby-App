@@ -97,7 +97,7 @@ namespace Polaby.Services.Common
 
             //CommunityPost
             CreateMap<CommunityPostCreateModel, CommunityPost>()
-                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.UserId));
+                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId));
             CreateMap<CommunityPost, CommunityPostModel>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.AccountId));
             CreateMap<CommunityPostUpdateModel, CommunityPost>();
