@@ -197,5 +197,33 @@ namespace Polaby.Services.Services
             }
             return null;
         }
+
+        public async Task<ResponseDataModel<CommentModel>> GetById(Guid id)
+        {
+            var comment = await _unitOfWork.CommentRepository.GetById(id);
+
+            if (comment == null)
+            {
+                return new ResponseDataModel<CommentModel>()
+                {
+                    Status = false,
+                    Message = "Comment not found"
+                };
+            }
+
+            var commentModel = _mapper.Map<CommentModel>(comment);
+            commentModel.UserName = comment.Account.FirstName + " " + comment.Account.LastName;
+            commentModel.ReportsCount = comment.Reports.Count;
+            commentModel.LikesCount = comment.CommentLikes.Count;
+            commentModel.CommentsCount = comment.CommentReplies.Count(c => !c.IsDeleted);
+            commentModel.IsLiked = comment.CommentLikes.Any();
+
+            return new ResponseDataModel<CommentModel>()
+            {
+                Status = true,
+                Message = "Get comment successfully",
+                Data = commentModel
+            };
+        }
     }
 }

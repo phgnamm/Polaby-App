@@ -10,5 +10,6 @@ namespace Polaby.Services.Interfaces
         Task<ResponseDataModel<NoteModel>> UpdateNoteAsync(Guid id, NoteRequestModel model);
         Task<ResponseModel> DeleteNoteAsync(Guid id);
         Task<Pagination<NoteModel>> GetNotesAsync(NoteFilterModel model);
+        Task<ResponseDataModel<NoteModel>> GetById(Guid id);
     }
 }

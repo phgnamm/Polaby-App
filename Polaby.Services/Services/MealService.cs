@@ -212,5 +212,28 @@ namespace Polaby.Services.Services
                 Message = "MealDish deleted successfully"
             };
         }
+
+        public async Task<ResponseDataModel<MealModel>> GetById(Guid id)
+        {
+            var meal = await _unitOfWork.MealRepository.GetAsync(id);
+
+            if (meal == null)
+            {
+                return new ResponseDataModel<MealModel>()
+                {
+                    Status = false,
+                    Message = "Meal not found"
+                };
+            }
+
+            var mealModel = _mapper.Map<MealModel>(meal);
+
+            return new ResponseDataModel<MealModel>()
+            {
+                Status = true,
+                Message = "Get meal successfully",
+                Data = mealModel
+            };
+        }
     }
 }

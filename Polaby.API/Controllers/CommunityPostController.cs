@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Polaby.Repositories.Enums;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.CommunityPostModels;
+using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
 {
@@ -107,6 +108,25 @@ namespace Polaby.API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCommunityPost(Guid id)
+        {
+            try
+            {
+                var result = await _communityPostService.GetById(id);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
             }
         }
     }

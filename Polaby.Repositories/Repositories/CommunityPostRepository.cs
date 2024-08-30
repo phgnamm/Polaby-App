@@ -71,5 +71,14 @@ namespace Polaby.Repositories.Repositories
             };
         }
 
+        public async Task<CommunityPost> GetById(Guid id)
+        {
+            return await _dbContext.CommunityPost
+                .Include(cp => cp.Account)
+                .Include(cp => cp.Reports)
+                .Include(cp => cp.CommunityPostLikes)
+                .Include(cp => cp.Comments)
+                .FirstOrDefaultAsync(cp => cp.Id == id);
+        }
     }
 }

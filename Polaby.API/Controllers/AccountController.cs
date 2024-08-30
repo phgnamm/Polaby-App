@@ -183,7 +183,6 @@ namespace Polaby.API.Controllers
             }
         }
 
-        // [Authorize(Roles = "Admin")]
         [HttpPost("{id}/check-password")]
         public async Task<IActionResult> CheckPassword(Guid id, [FromBody]AccountCheckPasswordModel accountCheckPasswordModel)
         {

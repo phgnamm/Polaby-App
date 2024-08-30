@@ -4,6 +4,7 @@ using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.IngredientModels;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.IngredientModels;
 using Polaby.Services.Models.ResponseModels;
 
@@ -174,6 +175,29 @@ namespace Polaby.Services.Services
             {
                 Status = true,
                 Message = "Ingredient deleted successfully"
+            };
+        }
+
+        public async Task<ResponseDataModel<IngredientModel>> GetById(Guid id)
+        {
+            var ingredient = await _unitOfWork.IngredientRepository.GetById(id);
+
+            if (ingredient == null)
+            {
+                return new ResponseDataModel<IngredientModel>()
+                {
+                    Status = false,
+                    Message = "Ingredient not found"
+                };
+            }
+
+            var ingredientModel = _mapper.Map<IngredientModel>(ingredient);
+
+            return new ResponseDataModel<IngredientModel>()
+            {
+                Status = true,
+                Message = "Get ingredient successfully",
+                Data = ingredientModel
             };
         }
     }

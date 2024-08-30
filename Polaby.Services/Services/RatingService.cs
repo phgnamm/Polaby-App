@@ -3,16 +3,10 @@ using Azure;
 using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.RatingModel;
-using Polaby.Repositories.Repositories;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.RatingModel;
 using Polaby.Services.Models.ResponseModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Polaby.Services.Services
 {
@@ -154,6 +148,29 @@ namespace Polaby.Services.Services
             response.Data = rating;
 
             return response;
+        }
+
+        public async Task<ResponseDataModel<RatingModel>> GetById(Guid id)
+        {
+            var rating = await _unitOfWork.RatingRepository.GetAsync(id);
+
+            if (rating == null)
+            {
+                return new ResponseDataModel<RatingModel>()
+                {
+                    Status = false,
+                    Message = "Rating not found"
+                };
+            }
+
+            var ratingModel = _mapper.Map<RatingModel>(rating);
+
+            return new ResponseDataModel<RatingModel>()
+            {
+                Status = true,
+                Message = "Get rating successfully",
+                Data = ratingModel
+            };
         }
     }
 }

@@ -9,6 +9,7 @@ using Polaby.Services.Models.MenuModels;
 using Polaby.Repositories.Models.MenuModels;
 using Polaby.Services.Models.ResponseModels;
 using Polaby.Services.Models.UserMenuModels;
+using Polaby.Repositories.Models.IngredientModels;
 
 namespace Polaby.Services.Services
 {
@@ -465,6 +466,29 @@ namespace Polaby.Services.Services
                 default:
                     return true;
             }
+        }
+
+        public async Task<ResponseDataModel<MenuModel>> GetById(Guid id)
+        {
+            var menu = await _unitOfWork.MenuRepository.GetById(id);
+
+            if (menu == null)
+            {
+                return new ResponseDataModel<MenuModel>()
+                {
+                    Status = false,
+                    Message = "Menu not found"
+                };
+            }
+
+            var menuModel = _mapper.Map<MenuModel>(menu);
+
+            return new ResponseDataModel<MenuModel>()
+            {
+                Status = true,
+                Message = "Get menu successfully",
+                Data = menuModel
+            };
         }
     }
 }

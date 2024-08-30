@@ -11,5 +11,6 @@ namespace Polaby.Services.Interfaces
         Task<Pagination<SafeFoodModel>> GetAllSafeFoods(SafeFoodFilterModel filterModel);
         Task<ResponseModel> UpdateSafeFood(Guid id, SafeFoodCreateModel updateModel);
         Task<ResponseModel> DeleteSafeFood(Guid id);
+        Task<ResponseDataModel<SafeFoodModel>> GetById(Guid id);
     }
 }
