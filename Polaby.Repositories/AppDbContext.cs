@@ -17,6 +17,8 @@ namespace Polaby.Repositories
         public DbSet<Dish> Dish { get; set; }
         public DbSet<DishIngredient> DishIngredient { get; set; }
         public DbSet<Emotion> Emotion { get; set; }
+        public DbSet<EmotionTypeMapping> EmotionTypeMapping { get; set; }
+        public DbSet<NoteEmotion> NoteEmotion { get; set; }
         public DbSet<ExpertRegistration> ExpertRegistration { get; set; }
         public DbSet<Follow> Follow { get; set; }
         public DbSet<Health> Health { get; set; }
@@ -120,6 +122,33 @@ namespace Polaby.Repositories
                     .WithMany()
                     .HasForeignKey(f => f.UserId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<Emotion>(entity =>
+            {
+                entity.HasMany(e => e.EmotionTypes)
+                      .WithOne(et => et.Emotion)
+                      .HasForeignKey(et => et.EmotionId)
+                      .OnDelete(DeleteBehavior.Cascade); 
+
+                entity.HasMany(e => e.Notes)
+                      .WithOne(n => n.Emotion)
+                      .HasForeignKey(n => n.EmotionId)
+                      .OnDelete(DeleteBehavior.Cascade); 
+            });
+
+            modelBuilder.Entity<EmotionTypeMapping>(entity =>
+            {
+                entity.HasOne(et => et.Emotion)
+                      .WithMany(e => e.EmotionTypes)
+                      .HasForeignKey(et => et.EmotionId);
+            });
+
+            modelBuilder.Entity<NoteEmotion>(entity =>
+            {
+                entity.Property(n => n.IsSelected).IsRequired();
+                entity.HasOne(n => n.Emotion)
+                      .WithMany(e => e.Notes)
+                      .HasForeignKey(n => n.EmotionId);
             });
         }
     }

@@ -2,6 +2,7 @@
 using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.EmotionModels;
+using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.EmotionModels;
 using Polaby.Services.Models.ResponseModels;
@@ -17,61 +18,66 @@ namespace Polaby.Services.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async Task<ResponseDataModel<EmotionModel>> AddEmotionAsync(EmotionRequestModel model)
+
+        public async Task<ResponseDataModel<EmotionModel>> CreateEmotionAsync(EmotionRequestModel model)
         {
-            var user = await _unitOfWork.AccountRepository.GetAccountById(model.UserId);
-            if (user == null)
-            {
-                return new ResponseDataModel<EmotionModel>
-                {
-                    Status = false,
-                    Message = "User does not exist.",
-                    Data = null
-                };
-            }
             var emotion = new Emotion
             {
                 UserId = model.UserId,
-                Type = model.Type,
-                Date = DateOnly.FromDateTime(DateTime.Now)
+                Date = model.Date,
+                EmotionTypes = model.EmotionTypes.Select(et => new EmotionTypeMapping { Type = et }).ToList(),
+                Notes = model.Notes
+                     .Where(n => n.IsSelected)  // Chỉ thêm những note có IsSelected = true
+                     .Select(n => new NoteEmotion
+                     {
+                         Content = n.Content,
+                         IsSelected = n.IsSelected
+                     }).ToList()
             };
 
             await _unitOfWork.EmotionRepository.AddAsync(emotion);
             await _unitOfWork.SaveChangeAsync();
 
             var emotionModel = _mapper.Map<EmotionModel>(emotion);
+
             return new ResponseDataModel<EmotionModel>
             {
                 Status = true,
-                Message = "Emotion added successfully.",
+                Message = "Emotion created successfully.",
                 Data = emotionModel
             };
         }
-        public async Task<ResponseDataModel<EmotionModel>> DeleteEmotionAsync(Guid emotionId)
+
+        public async Task<Pagination<EmotionModel>> GetEmotionsByFilterAsync(EmotionFilterModel filterModel)
         {
-            // Tìm Emotion theo ID
+            var queryResult = await _unitOfWork.EmotionRepository.GetAllAsync(
+                filter: e => (filterModel.UserId == null || e.UserId == filterModel.UserId) && (filterModel.Date == null || e.Date == filterModel.Date),
+                include: "EmotionTypes,Notes",  
+                pageIndex: filterModel.PageIndex,
+                pageSize: filterModel.PageSize
+            );
+            var emotionModels = _mapper.Map<List<EmotionModel>>(queryResult.Data);
+            return new Pagination<EmotionModel>(emotionModels, filterModel.PageIndex, filterModel.PageSize, queryResult.TotalCount);
+        }
+        public async Task<ResponseModel> DeleteEmotionAsync(Guid emotionId)
+        {
+            var response = new ResponseModel();
+
             var emotion = await _unitOfWork.EmotionRepository.GetAsync(emotionId);
+
             if (emotion == null)
             {
-                return new ResponseDataModel<EmotionModel>
-                {
-                    Status = false,
-                    Message = "Emotion not found.",
-                    Data = null
-                };
+                response.Status = false;
+                response.Message = "Emotion not found.";
+                return response;
             }
 
-            // Xóa Emotion
             _unitOfWork.EmotionRepository.HardDelete(emotion);
             await _unitOfWork.SaveChangeAsync();
 
-            var emotionModel = _mapper.Map<EmotionModel>(emotion);
-            return new ResponseDataModel<EmotionModel>
-            {
-                Status = true,
-                Message = "Emotion deleted successfully.",
-                Data = emotionModel
-            };
+            response.Status = true;
+            response.Message = "Emotion deleted successfully.";
+            return response;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.EmotionModels;
 
@@ -9,33 +10,50 @@ namespace Polaby.API.Controllers
     public class EmotionController : ControllerBase
     {
         private readonly IEmotionService _emotionService;
+
         public EmotionController(IEmotionService emotionService)
         {
             _emotionService = emotionService;
         }
+
         [HttpPost]
-        //[Authorize("User")]
-        public async Task<IActionResult> AddEmotion([FromBody] EmotionRequestModel model)
+        public async Task<IActionResult> CreateEmotion([FromBody] EmotionRequestModel model)
         {
-            var result = await _emotionService.AddEmotionAsync(model);
-            if (!result.Status)
+            var result = await _emotionService.CreateEmotionAsync(model);
+            if (result.Status)
             {
-                return BadRequest(new { result.Message });
+                return Ok(result);
             }
+
+            return BadRequest(result.Message);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetEmotionsByFilter([FromQuery] EmotionFilterModel filterModel)
+        {
+            var result = await _emotionService.GetEmotionsByFilterAsync(filterModel);
+
+            var metadata = new
+            {
+                result.PageSize,
+                result.CurrentPage,
+                result.TotalPages,
+            };
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
 
             return Ok(result);
         }
         [HttpDelete("{id}")]
-        //[Authorize("User")]
         public async Task<IActionResult> DeleteEmotion(Guid id)
         {
             var result = await _emotionService.DeleteEmotionAsync(id);
-            if (!result.Status)
+            if (result.Status)
             {
-                return BadRequest(new { result.Message });
+                return Ok(result.Message);
             }
 
-            return Ok(result);
+            return NotFound(result.Message);
         }
     }
 }
