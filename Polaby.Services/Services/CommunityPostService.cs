@@ -172,7 +172,8 @@ namespace Polaby.Services.Services
                     AccountId = cp.AccountId,
                     UserName = cp.Account.FirstName + " " + cp.Account.LastName,
                     ReportsCount = cp.Reports.Count,
-                    IsLiked = cp.CommunityPostLikes.Any()
+                    IsLiked = cp.CommunityPostLikes.Any(),
+                    CreationDate = cp.CreationDate
                 }).ToList();
 
                 return new Pagination<CommunityPostModel>(communityPostDetailList, communityPostFilterModel.PageIndex, communityPostFilterModel.PageSize, communityPostList.TotalCount);

@@ -14,6 +14,7 @@ using Polaby.Repositories.Models.AccountModels;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.AccountModels;
+using Polaby.Services.Models.AccountModels.Validation;
 using Polaby.Services.Models.CommonModels;
 using Polaby.Services.Models.ResponseModels;
 using Polaby.Services.Models.TokenModels;
@@ -394,7 +395,7 @@ namespace Polaby.Services.Services
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             // todo modify this Email body to send a URL redirect to the frontend page and contain the token as a parameter in the URL
             await _emailService.SendEmailAsync(user.Email!, "Polaby - Khôi phục mật khẩu",
-                $"Truy cập vào liên kết {token} để khôi phục mật khẩu cho tài khoản. Liên kết sẽ hết hạn sau 15 phút.",
+                $"Truy cập vào <a href={_configuration["OAuth2:Server:RedirectURI"]}/khoi-phuc-mat-khau?email={user.Email}&token={token}>liên kết này</a> để khôi phục mật khẩu cho tài khoản. Liên kết sẽ hết hạn sau 15 phút.",
                 true);
 
             return new ResponseModel
@@ -977,6 +978,50 @@ namespace Polaby.Services.Services
             {
                 Status = false,
                 Message = "Password is wrong"
+            };
+        }
+
+        public async Task<ResponseModel> ExpertCreatePassword(AccountExpertCreatePassword accountExpertCreatePassword)
+        {
+            var user = await _userManager.FindByEmailAsync(accountExpertCreatePassword.Email);
+
+            if (user == null)
+            {
+                return new ResponseModel
+                {
+                    Status = false,
+                    Message = "User not found"
+                };
+            }
+
+            if (user.VerificationCode != accountExpertCreatePassword.VerificationCode)
+            {
+                return new ResponseModel
+                {
+                    Status = false,
+                    Message = "Invalid verification code"
+                };
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, accountExpertCreatePassword.Password);
+            
+            user.EmailConfirmed = true;
+            await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return new ResponseModel
+                {
+                    Status = true,
+                    Message = "Create password successfully",
+                };
+            }
+
+            return new ResponseModel
+            {
+                Status = false,
+                Message = "Cannot create password",
             };
         }
     }

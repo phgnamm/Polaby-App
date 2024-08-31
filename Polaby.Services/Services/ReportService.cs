@@ -48,7 +48,7 @@ public class ReportService : IReportService
             };
         }
 
-        if (reportCreateModel.CommentId != null && reportCreateModel.CommunityPostId == null)
+        if (reportCreateModel.CommentId != null)
         {
             var comment = await _unitOfWork.CommentRepository.GetAsync(reportCreateModel.CommentId.Value);
 
@@ -62,7 +62,7 @@ public class ReportService : IReportService
             }
         }
 
-        if (reportCreateModel.CommentId == null && reportCreateModel.CommunityPostId != null)
+        if (reportCreateModel.CommunityPostId != null)
         {
             var comment = await _unitOfWork.CommunityPostRepository.GetAsync(reportCreateModel.CommunityPostId.Value);
 

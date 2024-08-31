@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.AccountModels;
+using Polaby.Services.Models.AccountModels.Validation;
 using Polaby.Services.Models.CommonModels;
 using Polaby.Services.Models.TokenModels;
 
@@ -234,6 +235,26 @@ namespace Polaby.API.Controllers
                         result.Data.RefreshToken = null;
                     }
 
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+        
+        [HttpPost("password/expert/create")]
+        public async Task<IActionResult> ExpertCreatePassword(
+            [FromBody] AccountExpertCreatePassword accountChangePasswordModel)
+        {
+            try
+            {
+                var result = await _accountService.ExpertCreatePassword(accountChangePasswordModel);
+                if (result.Status)
+                {
                     return Ok(result);
                 }
 
