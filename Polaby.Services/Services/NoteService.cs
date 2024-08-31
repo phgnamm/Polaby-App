@@ -22,7 +22,6 @@ namespace Polaby.Services.Services
         public async Task<ResponseDataModel<NoteModel>> CreateNoteAsync(NoteRequestModel model)
         {
             var note = _mapper.Map<Note>(model);
-            note.Date = DateOnly.FromDateTime(DateTime.Now);
             await _unitOfWork.NoteRepository.AddAsync(note);
             await _unitOfWork.SaveChangeAsync();
             var noteModel = _mapper.Map<NoteModel>(note);
@@ -62,8 +61,10 @@ namespace Polaby.Services.Services
             }
 
             Expression<Func<Note, bool>> filter = note =>
-            note.UserId == model.UserId || note.Date == model.Date &&
-            (string.IsNullOrEmpty(model.SearchTerm) || note.Title.Contains(model.SearchTerm));
+                note.UserId == model.UserId &&
+                (model.Date == null || note.Date == model.Date) &&
+                (model.Trimester == null || note.Trimester == model.Trimester) &&
+                (string.IsNullOrEmpty(model.SearchTerm) || note.Title.Contains(model.SearchTerm));
 
             var queryResult = await _unitOfWork.NoteRepository.GetAllAsync(
                 filter: filter,
