@@ -1,14 +1,14 @@
-﻿using Polaby.Repositories.Entities;
-using Polaby.Repositories.Enums;
+﻿using Polaby.Repositories.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Polaby.Repositories.Entities;
 
 namespace Polaby.Services.Models.CommunityPostModels
 {
-    public class CommunityPostModel: BaseEntity
+    public class CommunityPostModel : BaseEntity
     {
         public Guid Id { get; set; }
         public string? Title { get; set; }
