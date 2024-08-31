@@ -148,6 +148,9 @@ namespace Polaby.API
             services.AddScoped<ISafeFoodRepository, SafeFoodRepository>();
             services.AddScoped<ISafeFoodService, SafeFoodService>();
 
+            //BackgroudService
+            services.AddHostedService<SubscriptionBackgroundService>();
+
             return services;
         }
     }
