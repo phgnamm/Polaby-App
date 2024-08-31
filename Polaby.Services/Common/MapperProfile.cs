@@ -132,7 +132,16 @@ namespace Polaby.Services.Common
             CreateMap<RatingModel, Rating>().ReverseMap();
 
             //Emotion
-            CreateMap<EmotionModel, Emotion>().ReverseMap();
+            CreateMap<Emotion, EmotionModel>()
+           .ForMember(dest => dest.EmotionTypes, opt => opt.MapFrom(src => src.EmotionTypes.Select(et => new EmotionTypeDto { EmotionType = et.Type })))
+           .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes.Select(n => new NoteEmotionDto { Content = n.Content, IsSelected = n.IsSelected })));
+
+            CreateMap<EmotionTypeMapping, EmotionTypeDto>()
+                .ForMember(dest => dest.EmotionType, opt => opt.MapFrom(src => src.Type));
+
+            CreateMap<NoteEmotion, NoteEmotionDto>()
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.IsSelected, opt => opt.MapFrom(src => src.IsSelected)); ;
 
             //Note
             CreateMap<NoteModel, Note>().ReverseMap();

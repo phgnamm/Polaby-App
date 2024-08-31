@@ -10,8 +10,20 @@ namespace Polaby.Repositories.Models.EmotionModels
 {
     public class EmotionModel : BaseEntity
     {
-        public EmotionType? Type { get; set; }
-        public DateOnly? Date { get; set; }
-        public Guid? UserId { get; set; }
+        public DateOnly Date { get; set; }
+        public Guid UserId { get; set; }
+        public List<EmotionTypeDto> EmotionTypes { get; set; }
+        public List<NoteEmotionDto> Notes { get; set; }
+    }
+
+    public class EmotionTypeDto
+    {
+        public EmotionType EmotionType { get; set; }
+    }
+
+    public class NoteEmotionDto
+    {
+        public string Content { get; set; }
+        public bool IsSelected { get; set; }
     }
 }
