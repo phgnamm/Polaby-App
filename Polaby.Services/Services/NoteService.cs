@@ -90,9 +90,6 @@ namespace Polaby.Services.Services
             }
 
             _mapper.Map(model, note);
-
-            note.Date = DateOnly.FromDateTime(DateTime.Now);
-
             _unitOfWork.NoteRepository.Update(note);
             await _unitOfWork.SaveChangeAsync();
 
