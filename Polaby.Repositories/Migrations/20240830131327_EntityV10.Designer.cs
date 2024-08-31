@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Polaby.Repositories;
 
@@ -11,9 +12,11 @@ using Polaby.Repositories;
 namespace Polaby.Repositories.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240830131327_EntityV10")]
+    partial class EntityV10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -661,7 +664,7 @@ namespace Polaby.Repositories.Migrations
                     b.Property<DateTime?>("DeletionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("EmotionId")
+                    b.Property<Guid>("EmotionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -1220,7 +1223,7 @@ namespace Polaby.Repositories.Migrations
                     b.Property<DateTime?>("DeletionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("EmotionId")
+                    b.Property<Guid>("EmotionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -1973,7 +1976,8 @@ namespace Polaby.Repositories.Migrations
                     b.HasOne("Polaby.Repositories.Entities.Emotion", "Emotion")
                         .WithMany("EmotionTypes")
                         .HasForeignKey("EmotionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Emotion");
                 });
@@ -2057,7 +2061,8 @@ namespace Polaby.Repositories.Migrations
                     b.HasOne("Polaby.Repositories.Entities.Emotion", "Emotion")
                         .WithMany("Notes")
                         .HasForeignKey("EmotionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Emotion");
                 });

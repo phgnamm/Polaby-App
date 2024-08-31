@@ -45,7 +45,7 @@ namespace Polaby.Services.Common
             CreateMap<AccountRegisterModel, Account>();
             CreateMap<GoogleUserInformationModel, Account>();
             CreateMap<AccountModel, Account>().ReverseMap();
-            
+
             //WeeklyPost
             CreateMap<WeeklyPostModel, WeeklyPost>().ReverseMap();
             CreateMap<WeeklyPostCreateModel, WeeklyPost>();
@@ -53,9 +53,9 @@ namespace Polaby.Services.Common
             //ExpertRegistration
             CreateMap<ExpertRegistrationCreateModel, ExpertRegistration>();
             CreateMap<ExpertRegistrationModel, ExpertRegistration>().ReverseMap();
-            
-			//Menu
-			CreateMap<MenuImportModel, Menu>().ReverseMap();
+
+            //Menu
+            CreateMap<MenuImportModel, Menu>().ReverseMap();
             CreateMap<MenuUpdateModel, Menu>().ForMember(dest => dest.Nutrients, opt => opt.Ignore());
             CreateMap<MenuModel, Menu>().ReverseMap();
 
@@ -96,8 +96,10 @@ namespace Polaby.Services.Common
             CreateMap<ReportModel, Report>().ReverseMap();
 
             //CommunityPost
-            CreateMap<CommunityPostCreateModel, CommunityPost>();
-            CreateMap<CommunityPost, CommunityPostModel>();
+            CreateMap<CommunityPostCreateModel, CommunityPost>()
+                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId));
+            CreateMap<CommunityPost, CommunityPostModel>()
+                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId));
             CreateMap<CommunityPostUpdateModel, CommunityPost>();
 
             //Comment
@@ -130,7 +132,16 @@ namespace Polaby.Services.Common
             CreateMap<RatingModel, Rating>().ReverseMap();
 
             //Emotion
-            CreateMap<EmotionModel, Emotion>().ReverseMap();
+            CreateMap<Emotion, EmotionModel>()
+           .ForMember(dest => dest.EmotionTypes, opt => opt.MapFrom(src => src.EmotionTypes.Select(et => new EmotionTypeDto { EmotionType = et.Type })))
+           .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes.Select(n => new NoteEmotionDto { Content = n.Content, IsSelected = n.IsSelected })));
+
+            CreateMap<EmotionTypeMapping, EmotionTypeDto>()
+                .ForMember(dest => dest.EmotionType, opt => opt.MapFrom(src => src.Type));
+
+            CreateMap<NoteEmotion, NoteEmotionDto>()
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.IsSelected, opt => opt.MapFrom(src => src.IsSelected)); ;
 
             //Note
             CreateMap<NoteModel, Note>().ReverseMap();

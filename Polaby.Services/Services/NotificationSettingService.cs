@@ -102,7 +102,8 @@ namespace Polaby.Services.Services
                     AccountId = cp.Account.Id,
                     AccountName = cp.Account.FirstName + " " + cp.Account.LastName,
                     NotificationTypeId = cp.NotificationType.Id,
-                    NotificationTypeName = cp.NotificationType.Name.ToString()
+                    NotificationTypeName = cp.NotificationType.Name.ToString(),
+                    NotificationTypeContent = cp.NotificationType.Content
                 }).ToList();
 
                 return new Pagination<NotificationSettingModel>(notificationSettingDetailList, notificationSettingList.TotalCount, notificationSettingFilterModel.PageIndex, notificationSettingFilterModel.PageSize);
