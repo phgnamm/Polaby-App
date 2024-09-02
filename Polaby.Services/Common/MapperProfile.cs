@@ -52,6 +52,7 @@ namespace Polaby.Services.Common
 
             //ExpertRegistration
             CreateMap<ExpertRegistrationCreateModel, ExpertRegistration>();
+            CreateMap<ExpertRegistration, Account>();
             CreateMap<ExpertRegistrationModel, ExpertRegistration>().ReverseMap();
 
             //Menu
