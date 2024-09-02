@@ -144,9 +144,9 @@ namespace Polaby.Services.Services
             if (nutrientToUpdate.Any())
             {
                 _unitOfWork.NutrientRepository.UpdateRange(nutrientToUpdate);
-                await _unitOfWork.SaveChangeAsync();
+               
             }
-
+            await _unitOfWork.SaveChangeAsync();
             return new ResponseModel()
             {
                 Status = true,
