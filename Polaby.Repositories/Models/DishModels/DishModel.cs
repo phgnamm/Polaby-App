@@ -1,4 +1,6 @@
 ﻿
+using Polaby.Repositories.Entities;
+using Polaby.Repositories.Models.IngredientModels;
 using Polaby.Repositories.Models.NutrientModels;
 
 namespace Polaby.Repositories.Models.DishModels
@@ -14,6 +16,7 @@ namespace Polaby.Repositories.Models.DishModels
         public float? Protein { get; set; }
         public float? Carbohydrates { get; set; }
         public float? Fat { get; set; }
+        public List<IngredientModel>? Ingredients { get; set; }
         public List<NutrientModel>? Nutrients { get; set; }
     }
 }
