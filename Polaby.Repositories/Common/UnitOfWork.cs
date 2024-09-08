@@ -33,6 +33,8 @@ namespace Polaby.Repositories.Common
         private readonly INoteRepository _noteRepository;
         private readonly IHealthRepository _healthRepository;
         private readonly ISafeFoodRepository _safeFoodRepository;
+        private readonly IIngredientSearchRepository _ingredientSearchRepository;
+        private readonly IIngredientSearchNutrientRepository _ingredientSearchNutrientRepository;
 
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
@@ -53,7 +55,9 @@ namespace Polaby.Repositories.Common
             IEmotionRepository motionRepository,
             INoteRepository noteRepository,
             IHealthRepository healthRepository,
-            ISafeFoodRepository safeFoodRepository
+            ISafeFoodRepository safeFoodRepository,
+            IIngredientSearchRepository ingredientSearchRepository,
+            IIngredientSearchNutrientRepository ingredientSearchNutrientRepository
         )
         {
             _dbContext = dbContext;
@@ -84,6 +88,8 @@ namespace Polaby.Repositories.Common
             _noteRepository = noteRepository;
             _healthRepository = healthRepository;
             _safeFoodRepository = safeFoodRepository;
+            _ingredientSearchRepository = ingredientSearchRepository;
+            _ingredientSearchNutrientRepository = ingredientSearchNutrientRepository;
         }
 
         public AppDbContext DbContext => _dbContext;
@@ -117,6 +123,8 @@ namespace Polaby.Repositories.Common
         public IEmotionRepository EmotionRepository => _motionRepository;
 
         public INoteRepository NoteRepository => _noteRepository;
+        public IIngredientSearchRepository IngredientSearchRepository => _ingredientSearchRepository;
+        public IIngredientSearchNutrientRepository IngredientSearchNutrientRepository => _ingredientSearchNutrientRepository;
 
         public async Task<int> SaveChangeAsync()
         {

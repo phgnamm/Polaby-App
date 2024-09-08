@@ -38,6 +38,7 @@ namespace Polaby.Repositories
         public DbSet<Transaction> Transaction { get; set; }
         public DbSet<UserMenu> UserMenu { get; set; }
         public DbSet<WeeklyPost> WeeklyPost { get; set; }
+        public DbSet<IngredientSearch> IngredientSearch { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -154,6 +154,13 @@ namespace Polaby.API
             //BackgroudService
             services.AddHostedService<SubscriptionBackgroundService>();
 
+            //IngredientSearch
+            services.AddScoped<IIngredientSearchService, IngredientSearchService>();
+            services.AddScoped<IIngredientSearchRepository, IngredientSearchRepository>();
+
+            //IngredientSearchNutrient
+            services.AddScoped<IIngredientSearchNutrientRepository, IngredientSearchNutrientRepository>();
+
             return services;
         }
     }

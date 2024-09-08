@@ -30,6 +30,8 @@
 		INoteRepository NoteRepository { get; }
         IHealthRepository HealthRepository { get; }
         ISafeFoodRepository SafeFoodRepository { get; }
+        IIngredientSearchRepository IngredientSearchRepository { get; }
+        IIngredientSearchNutrientRepository IngredientSearchNutrientRepository { get; }
 
         public Task<int> SaveChangeAsync();
     }

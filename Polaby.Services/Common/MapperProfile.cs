@@ -34,6 +34,8 @@ using Polaby.Services.Models.HealthModels;
 using Polaby.Repositories.Models.HealthModels;
 using Polaby.Services.Models.SafeFoodModels;
 using Polaby.Repositories.Models.SafeFoodModels;
+using Polaby.Services.Models.IngredientSearchModels;
+using Polaby.Repositories.Models.IngredientSearchModels;
 
 namespace Polaby.Services.Common
 {
@@ -156,6 +158,12 @@ namespace Polaby.Services.Common
 
             CreateMap<SafeFoodCreateModel, SafeFood>();
             CreateMap<SafeFoodModel, SafeFood>().ReverseMap();
+
+            //IngredientSearch
+            CreateMap<IngredientSearchtImportModel, IngredientSearch>().ReverseMap();
+            CreateMap<IngredientSearchUpdateModel, IngredientSearch>();
+            CreateMap<IngredientSearch, IngredientSearchModel>()
+           .ForMember(dest => dest.Nutrients, opt => opt.MapFrom(src => src.IngredientSearchNutrients.Select(ins => ins.Nutrient).ToList()));
         }
     }
 }
