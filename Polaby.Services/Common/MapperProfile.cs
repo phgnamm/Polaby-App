@@ -130,7 +130,8 @@ namespace Polaby.Services.Common
             CreateMap<CommunityPostLike, CommunityPostLikeModel>();
 
             //Rating
-            CreateMap<RatingModel, Rating>().ReverseMap();
+            CreateMap<Rating, RatingModel>()
+         .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName)).ReverseMap();
 
             //Emotion
             CreateMap<Emotion, EmotionModel>()
