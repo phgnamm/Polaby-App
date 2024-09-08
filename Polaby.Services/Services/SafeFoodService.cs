@@ -50,7 +50,7 @@ namespace Polaby.Services.Services
                 pageSize: filterModel.PageSize,
                 filter: (x =>
                     !x.IsDeleted &&
-                     x.IsSafe == filterModel.IsSafe &&
+                   (filterModel.IsSafe == null || x.IsSafe == filterModel.IsSafe) &&
                     (string.IsNullOrEmpty(filterModel.Search) ||
                      x.Name.ToLower().Contains(filterModel.Search.ToLower()) ||
                      x.Description.ToLower().Contains(filterModel.Search.ToLower()))
