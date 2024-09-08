@@ -20,6 +20,7 @@ namespace Polaby.Repositories.Entities
 
         //Relationship
         public virtual Ingredient? Ingredient { get; set; }
+        public virtual ICollection<IngredientSearchNutrient> IngredientSearchNutrients { get; set; } = new List<IngredientSearchNutrient>();
         public virtual Dish? Dish { get; set; }
         public virtual Menu? Menu { get; set; }
     }
