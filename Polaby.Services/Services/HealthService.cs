@@ -21,18 +21,24 @@ namespace Polaby.Services.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-
+            
         public async Task<ResponseModel> AddHealthAsync(List<HealthCreateModel> healthModels)
         {
             var healthEntities = _mapper.Map<List<Health>>(healthModels)
-                    .Select(entity =>
-                    {
-                        if (entity.Date == default)
-                        {
-                            entity.Date = DateOnly.FromDateTime(DateTime.Now);
-                        }
-                        return entity;
-                    }).ToList();
+             .Select((entity, index) =>
+             {
+                 var modelDate = healthModels[index].Date;
+                 if (modelDate.HasValue)
+                 {
+                     entity.Date = modelDate.Value;
+                 }
+                 else if (entity.Date == default)
+                 {
+                     entity.Date = DateOnly.FromDateTime(DateTime.Now);
+                 }
+
+                 return entity;
+             }).ToList();
 
 
             if (healthEntities == null || !healthEntities.Any())
