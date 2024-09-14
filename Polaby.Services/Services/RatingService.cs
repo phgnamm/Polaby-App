@@ -93,6 +93,7 @@ namespace Polaby.Services.Services
         public async Task<Pagination<RatingModel>> GetRatingsByFilterAsync(RatingFilterModel model)
         {
             var queryResult = await _unitOfWork.RatingRepository.GetAllAsync(
+                include: "User",
                 pageIndex: model.PageIndex,
                 pageSize: model.PageSize
             );

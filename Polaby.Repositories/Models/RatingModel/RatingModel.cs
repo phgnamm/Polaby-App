@@ -13,6 +13,8 @@ namespace Polaby.Repositories.Models.RatingModel
         public string? Comment { get; set; }
         public Guid? ExpertId { get; set; }
         public Guid? UserId { get; set; }
+        public string? FullName { get; set; }
+
 
     }
 }
