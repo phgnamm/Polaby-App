@@ -25,8 +25,13 @@ build:
 deploy_to_dockerhub:
   stage: deploy
   image: docker:24.0.7
+  before_script:
+  - mkdir -p /root/.docker
+  - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKERHUB_USERNAME:$DOCKERHUB_PASSWORD" | base64)\"}}}" > /root/.docker/config.json
+  - export DOCKER_CONFIG=/root/.docker
+
   script:
-    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
+    # - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $DOCKERHUB_REPO:$CI_COMMIT_SHA
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $DOCKERHUB_REPO:latest
