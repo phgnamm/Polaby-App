@@ -1,8 +1,8 @@
 
-image: docker:24.0.7
+image: docker:27.2.0
 
 services:
-  - docker:24.0.7-dind
+  - docker:27.2.0-dind
 
 stages:
   - build
@@ -24,11 +24,11 @@ build:
     
 deploy_to_dockerhub:
   stage: deploy
-  image: docker:24.0.7
+  image: docker:latest
   script:
     # - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
     - mkdir -p /root/.docker
-    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"$(echo -n "$DOCKERHUB_USERNAME:$DOCKERHUB_PASSWORD" | base64)\"}}}" > /root/.docker/config.json
+    - echo "{\"auths\":{\"https://index.docker.io/v1/\":{\"username\":\"$DOCKERHUB_USERNAME\",\"password\":\"$DOCKERHUB_PASSWORD\"}, \"https://registry.gitlab.com/\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > ~/.docker/config.json
     - export DOCKER_CONFIG=/root/.docker
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $DOCKERHUB_REPO:$CI_COMMIT_SHA
