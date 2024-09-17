@@ -24,9 +24,9 @@ build:
     
 deploy_to_dockerhub:
   stage: deploy
-  image: docker:latest
+  image: docker:dind
   script:
-    - echo "$DOCKERHUB_ACCESS_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin --no-tty
+    - echo "$DOCKERHUB_ACCESS_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $DOCKERHUB_REPO:$CI_COMMIT_SHA
     - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $DOCKERHUB_REPO:latest
