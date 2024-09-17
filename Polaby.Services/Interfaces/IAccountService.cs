@@ -1,6 +1,7 @@
 ﻿using Polaby.Repositories.Models.AccountModels;
 using Polaby.Services.Common;
 using Polaby.Services.Models.AccountModels;
+using Polaby.Services.Models.AccountModels.Validation;
 using Polaby.Services.Models.CommonModels;
 using Polaby.Services.Models.ResponseModels;
 using Polaby.Services.Models.TokenModels;
@@ -23,7 +24,10 @@ namespace Polaby.Services.Interfaces
 		Task<Pagination<AccountModel>> GetAllAccounts(AccountFilterModel accountFilterModel);
 		Task<ResponseModel> UpdateAccountUser(Guid id, AccountUserUpdateModel accountUserUpdateModel);
 		Task<ResponseModel> UpdateAccountExpert(Guid id, AccountExpertUpdateModel accountExpertUpdateModel);
+		Task<ResponseModel> UpdateAccount(Guid id, AccountUpdateModel accountUpdateModel);
 		Task<ResponseModel> DeleteAccount(Guid id);
 		Task<ResponseModel> RestoreAccount(Guid id);
-	}
+        Task<ResponseModel> CheckPassword(Guid id, AccountCheckPasswordModel accountCheckPasswordModel);
+        Task<ResponseModel> ExpertCreatePassword(AccountExpertCreatePassword accountExpertCreatePassword);
+    }
 }

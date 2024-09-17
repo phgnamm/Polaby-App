@@ -22,7 +22,6 @@ namespace Polaby.Services.Services
         public async Task<ResponseDataModel<NoteModel>> CreateNoteAsync(NoteRequestModel model)
         {
             var note = _mapper.Map<Note>(model);
-            note.Date = DateOnly.FromDateTime(DateTime.Now);
             await _unitOfWork.NoteRepository.AddAsync(note);
             await _unitOfWork.SaveChangeAsync();
             var noteModel = _mapper.Map<NoteModel>(note);
@@ -62,8 +61,10 @@ namespace Polaby.Services.Services
             }
 
             Expression<Func<Note, bool>> filter = note =>
-            note.UserId == model.UserId || note.Date == model.Date &&
-            (string.IsNullOrEmpty(model.SearchTerm) || note.Title.Contains(model.SearchTerm));
+                note.UserId == model.UserId &&
+                (model.Date == null || note.Date == model.Date) &&
+                (model.Trimester == null || note.Trimester == model.Trimester) &&
+                (string.IsNullOrEmpty(model.SearchTerm) || note.Title.Contains(model.SearchTerm));
 
             var queryResult = await _unitOfWork.NoteRepository.GetAllAsync(
                 filter: filter,
@@ -89,9 +90,6 @@ namespace Polaby.Services.Services
             }
 
             _mapper.Map(model, note);
-
-            note.Date = DateOnly.FromDateTime(DateTime.Now);
-
             _unitOfWork.NoteRepository.Update(note);
             await _unitOfWork.SaveChangeAsync();
 
@@ -101,6 +99,29 @@ namespace Polaby.Services.Services
                 Status = true,
                 Message = "Note updated successfully",
                 Data = updatedNoteModel
+            };
+        }
+
+        public async Task<ResponseDataModel<NoteModel>> GetById(Guid id)
+        {
+            var note = await _unitOfWork.NoteRepository.GetAsync(id);
+
+            if (note == null)
+            {
+                return new ResponseDataModel<NoteModel>()
+                {
+                    Status = false,
+                    Message = "Note not found"
+                };
+            }
+
+            var noteModel = _mapper.Map<NoteModel>(note);
+
+            return new ResponseDataModel<NoteModel>()
+            {
+                Status = true,
+                Message = "Get note successfully",
+                Data = noteModel
             };
         }
     }

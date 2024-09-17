@@ -7,5 +7,6 @@
         public bool IsSafe { get; set; }
         public string? Source { get; set; }
         public string? SourceUrl { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

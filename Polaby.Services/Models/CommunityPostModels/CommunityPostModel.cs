@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Polaby.Repositories.Entities;
 
 namespace Polaby.Services.Models.CommunityPostModels
 {
-    public class CommunityPostModel
+    public class CommunityPostModel : BaseEntity
     {
         public Guid Id { get; set; }
         public string? Title { get; set; }
@@ -20,7 +21,7 @@ namespace Polaby.Services.Models.CommunityPostModels
         public bool IsProfessional { get; set; }
         public bool IsLiked { get; set; }
         public PostVisibility? Visibility { get; set; }
-        public Guid? UserId { get; set; }
+        public Guid? AccountId { get; set; }
         public string? UserName { get; set; }
     }
 }

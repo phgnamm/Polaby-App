@@ -24,6 +24,8 @@ using Polaby.Services.Models.ReportModels;
 using Polaby.Services.Models.WeeklyPostModels;
 using Polaby.Services.Models.NotificationModels;
 using Polaby.Services.Models.NotificationTypeModels;
+using Polaby.Services.Models.CommentLikeModels;
+using Polaby.Services.Models.CommunityPostLikeModels;
 using Polaby.Repositories.Models.RatingModel;
 using Polaby.Repositories.Models.EmotionModels;
 using Polaby.Repositories.Models.NoteModels;
@@ -32,6 +34,8 @@ using Polaby.Services.Models.HealthModels;
 using Polaby.Repositories.Models.HealthModels;
 using Polaby.Services.Models.SafeFoodModels;
 using Polaby.Repositories.Models.SafeFoodModels;
+using Polaby.Services.Models.IngredientSearchModels;
+using Polaby.Repositories.Models.IngredientSearchModels;
 
 namespace Polaby.Services.Common
 {
@@ -50,6 +54,7 @@ namespace Polaby.Services.Common
 
             //ExpertRegistration
             CreateMap<ExpertRegistrationCreateModel, ExpertRegistration>();
+            CreateMap<ExpertRegistration, Account>();
             CreateMap<ExpertRegistrationModel, ExpertRegistration>().ReverseMap();
 
             //Menu
@@ -95,9 +100,9 @@ namespace Polaby.Services.Common
 
             //CommunityPost
             CreateMap<CommunityPostCreateModel, CommunityPost>()
-                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.UserId));
+                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId));
             CreateMap<CommunityPost, CommunityPostModel>()
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.AccountId));
+                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId));
             CreateMap<CommunityPostUpdateModel, CommunityPost>();
 
             //Comment
@@ -118,11 +123,29 @@ namespace Polaby.Services.Common
             CreateMap<NotificationTypeModel, NotificationType>();
             CreateMap<NotificationType, NotificationTypeModel>();
 
+            //CommentLike
+            CreateMap<CommentLikeModel, CommentLike>();
+            CreateMap<CommentLike, CommentLikeModel>();
+
+            //CommunityPostLike
+            CreateMap<CommunityPostLikeModel, CommunityPostLike>();
+            CreateMap<CommunityPostLike, CommunityPostLikeModel>();
+
             //Rating
-            CreateMap<RatingModel, Rating>().ReverseMap();
+            CreateMap<Rating, RatingModel>()
+         .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName)).ReverseMap();
 
             //Emotion
-            CreateMap<EmotionModel, Emotion>().ReverseMap();
+            CreateMap<Emotion, EmotionModel>()
+           .ForMember(dest => dest.EmotionTypes, opt => opt.MapFrom(src => src.EmotionTypes.Select(et => new EmotionTypeDto { EmotionType = et.Type })))
+           .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes.Select(n => new NoteEmotionDto { Content = n.Content, IsSelected = n.IsSelected })));
+
+            CreateMap<EmotionTypeMapping, EmotionTypeDto>()
+                .ForMember(dest => dest.EmotionType, opt => opt.MapFrom(src => src.Type));
+
+            CreateMap<NoteEmotion, NoteEmotionDto>()
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.IsSelected, opt => opt.MapFrom(src => src.IsSelected)); ;
 
             //Note
             CreateMap<NoteModel, Note>().ReverseMap();
@@ -136,6 +159,12 @@ namespace Polaby.Services.Common
 
             CreateMap<SafeFoodCreateModel, SafeFood>();
             CreateMap<SafeFoodModel, SafeFood>().ReverseMap();
+
+            //IngredientSearch
+            CreateMap<IngredientSearchtImportModel, IngredientSearch>().ReverseMap();
+            CreateMap<IngredientSearchUpdateModel, IngredientSearch>();
+            CreateMap<IngredientSearch, IngredientSearchModel>()
+           .ForMember(dest => dest.Nutrients, opt => opt.MapFrom(src => src.IngredientSearchNutrients.Select(ins => ins.Nutrient).ToList()));
         }
     }
 }

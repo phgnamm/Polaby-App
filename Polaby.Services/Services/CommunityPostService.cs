@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
+using Polaby.Repositories.Models.AccountModels;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.CommunityPostModels;
 using Polaby.Services.Models.ResponseModels;
-using System.Linq.Expressions;
-
 namespace Polaby.Services.Services
 {
     public class CommunityPostService : ICommunityPostService
@@ -22,7 +22,7 @@ namespace Polaby.Services.Services
 
         public async Task<ResponseDataModel<CommunityPostModel>> Create(CommunityPostCreateModel communityPostCreateModel)
         {
-            var account = await _unitOfWork.AccountRepository.GetAccountById((Guid)communityPostCreateModel.UserId);
+            var account = await _unitOfWork.AccountRepository.GetAccountById((Guid)communityPostCreateModel.AccountId);
             if (account == null)
             {
                 return new ResponseDataModel<CommunityPostModel>()
@@ -33,6 +33,7 @@ namespace Polaby.Services.Services
             }
 
             CommunityPost communityPost = _mapper.Map<CommunityPost>(communityPostCreateModel);
+            communityPost.Account = account;
 
             await _unitOfWork.CommunityPostRepository.AddAsync(communityPost);
             await _unitOfWork.SaveChangeAsync();
@@ -162,21 +163,50 @@ namespace Polaby.Services.Services
                     Id = cp.Id,
                     Title = cp.Title,
                     Content = cp.Content,
-                    LikesCount = cp.LikesCount,
+                    LikesCount = cp.CommunityPostLikes.Count,
                     CommentsCount = cp.Comments.Count(c => !c.IsDeleted),
                     ImageUrl = cp.ImageUrl,
                     Attachments = cp.Attachments,
                     IsProfessional = cp.IsProfessional,
                     Visibility = cp.Visibility,
-                    UserId = cp.AccountId,
+                    AccountId = cp.AccountId,
                     UserName = cp.Account.FirstName + " " + cp.Account.LastName,
                     ReportsCount = cp.Reports.Count,
-                    IsLiked = cp.CommunityPostLikes.Any()
+                    IsLiked = cp.CommunityPostLikes.Any(),
+                    CreationDate = cp.CreationDate
                 }).ToList();
 
                 return new Pagination<CommunityPostModel>(communityPostDetailList, communityPostFilterModel.PageIndex, communityPostFilterModel.PageSize, communityPostList.TotalCount);
             }
             return null;
+        }
+
+        public async Task<ResponseDataModel<CommunityPostModel>> GetById(Guid id)
+        {
+            var communityPost = await _unitOfWork.CommunityPostRepository.GetById(id);
+
+            if (communityPost == null)
+            {
+                return new ResponseDataModel<CommunityPostModel>()
+                {
+                    Status = false,
+                    Message = "Post not found"
+                };
+            }
+
+            var communityPostModel = _mapper.Map<CommunityPostModel>(communityPost);
+            communityPostModel.UserName = communityPost.Account.FirstName + " " + communityPost.Account.LastName;
+            communityPostModel.ReportsCount = communityPost.Reports.Count;
+            communityPostModel.LikesCount = communityPost.CommunityPostLikes.Count;
+            communityPostModel.CommentsCount = communityPost.Comments.Count(c => !c.IsDeleted);
+            communityPostModel.IsLiked = communityPost.CommunityPostLikes.Any();
+
+            return new ResponseDataModel<CommunityPostModel>()
+            {
+                Status = true,
+                Message = "Get post successfully",
+                Data = communityPostModel
+            };
         }
     }
 }

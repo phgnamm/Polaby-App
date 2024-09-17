@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.MenuModels;
 using Polaby.Services.Models.UserMenuModels;
+using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
 {
@@ -138,7 +139,7 @@ namespace Polaby.API.Controllers
 
         [HttpPost("user-menus")]
         //[Authorize(Roles = "User")]
-        public async Task<IActionResult> CreateUserMenu(List<UserMenuMCreateModel> models)
+        public async Task<IActionResult> CreateUserMenu(UserMenuMCreateModel model)
         {
             try
             {
@@ -146,12 +147,27 @@ namespace Polaby.API.Controllers
                 {
                     return ValidationProblem(ModelState);
                 }
-                var result = await _menuService.AddRangeUserMenu(models);
+                var result = await _menuService.AddUserMenu(model);
                 if (result.Status)
                 {
                     return Ok(result);
                 }
                 return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("user-menus/{userId}")]
+        //[Authorize(Roles = "User")]
+        public async Task<IActionResult> DeleteUserMenu(Guid userId)
+        {
+            try
+            {
+                var result = await _menuService.GetAllUserMenuAsync(userId);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -194,6 +210,25 @@ namespace Polaby.API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            try
+            {
+                var result = await _menuService.GetById(id);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
             }
         }
     }

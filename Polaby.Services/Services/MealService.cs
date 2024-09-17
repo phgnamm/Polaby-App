@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Polaby.Repositories.Entities;
+using Polaby.Repositories.Enums;
 using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.MealModels;
 using Polaby.Services.Common;
@@ -104,8 +105,8 @@ namespace Polaby.Services.Services
                     {
                         case "name":
                             return mealFilterModel.OrderByDescending
-                                ? x.OrderByDescending(x => x.Name)
-                                : x.OrderBy(x => x.Name);
+                                ? x.OrderBy(x => x.Name.HasValue ? (int)x.Name.Value : int.MaxValue)
+                                : x.OrderByDescending(x => x.Name.HasValue ? (int)x.Name.Value : int.MinValue);
                         case "kcal":
                             return mealFilterModel.OrderByDescending
                                 ? x.OrderByDescending(x => x.Kcal)
@@ -210,6 +211,29 @@ namespace Polaby.Services.Services
             {
                 Status = true,
                 Message = "MealDish deleted successfully"
+            };
+        }
+
+        public async Task<ResponseDataModel<MealModel>> GetById(Guid id)
+        {
+            var meal = await _unitOfWork.MealRepository.GetAsync(id);
+
+            if (meal == null)
+            {
+                return new ResponseDataModel<MealModel>()
+                {
+                    Status = false,
+                    Message = "Meal not found"
+                };
+            }
+
+            var mealModel = _mapper.Map<MealModel>(meal);
+
+            return new ResponseDataModel<MealModel>()
+            {
+                Status = true,
+                Message = "Get meal successfully",
+                Data = mealModel
             };
         }
     }

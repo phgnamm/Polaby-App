@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Polaby.Repositories.Entities;
 using Polaby.Repositories.Enums;
 using Polaby.Repositories.Interfaces;
@@ -18,14 +19,16 @@ public class ExpertRegistrationService : IExpertRegistrationService
     private readonly UserManager<Account> _userManager;
     private readonly IMapper _mapper;
     private readonly IEmailService _emailService;
+    private readonly IConfiguration _configuration;
 
     public ExpertRegistrationService(IUnitOfWork unitOfWork, UserManager<Account> userManager, IMapper mapper,
-        IEmailService emailService)
+        IEmailService emailService, IConfiguration configuration)
     {
         _unitOfWork = unitOfWork;
         _userManager = userManager;
         _mapper = mapper;
         _emailService = emailService;
+        _configuration = configuration;
     }
 
     public async Task<ResponseModel> CreateExpertRegistration(
@@ -35,7 +38,7 @@ public class ExpertRegistrationService : IExpertRegistrationService
         var existedRegistration =
             await _unitOfWork.ExpertRegistrationRepository.GetByEmail(expertRegistrationCreateModel.Email);
 
-        if (existedAccount != null || existedRegistration != null)
+        if (existedAccount != null || existedRegistration != null && !existedRegistration.IsDeleted)
         {
             return new ResponseModel
             {
@@ -96,7 +99,7 @@ public class ExpertRegistrationService : IExpertRegistrationService
             return new ResponseDataModel<ExpertRegistrationModel>
             {
                 Status = false,
-                Message = "Weekly post not found"
+                Message = "Registration not found"
             };
         }
 
@@ -118,6 +121,8 @@ public class ExpertRegistrationService : IExpertRegistrationService
             pageSize: expertRegistrationFilterModel.PageSize,
             filter: x =>
                 x.IsDeleted == expertRegistrationFilterModel.IsDeleted &&
+                (expertRegistrationFilterModel.Status == null ||
+                 x.Status == expertRegistrationFilterModel.Status) &&
                 (expertRegistrationFilterModel.MinYearsOfExperience == null ||
                  x.YearsOfExperience >= expertRegistrationFilterModel.MinYearsOfExperience) &&
                 (expertRegistrationFilterModel.MaxYearsOfExperience == null ||
@@ -274,26 +279,45 @@ public class ExpertRegistrationService : IExpertRegistrationService
         if (expertRegistrationUpdateStatusModel.Status == ExpertRegistrationStatus.Rejected)
         {
             await _emailService.SendEmailAsync(registration.Email!, "Polaby - Đơn đăng ký của bạn đã được xem xét",
-                $"Đơn đăng ký của bạn đã bị từ chối, nếu bạn nghĩ đây là một sai sót, vui lòng kiểm tra lại đơn đăng ký của bạn và nộp lại một lần nữa. Ghi chú: {expertRegistrationUpdateStatusModel.Note}",
+                $"Đơn đăng ký của bạn đã bị từ chối, nếu bạn nghĩ đây là một sai sót, vui lòng tạo mới đơn đăng ký. <p>Ghi chú: {expertRegistrationUpdateStatusModel.Note}</p>",
                 true);
+
+            _unitOfWork.ExpertRegistrationRepository.HardDelete(registration);
         }
-        
+
         if (expertRegistrationUpdateStatusModel.Status == ExpertRegistrationStatus.Approved)
         {
             // Create new account
             var user = _mapper.Map<Account>(registration);
             user.UserName = user.Email;
             user.CreationDate = DateTime.Now;
-            // user.VerificationCode = AuthenticationTools.GenerateVerificationCode(6);
+            user.VerificationCode = AuthenticationTools.GenerateVerificationCode(6);
             // user.VerificationCodeExpiryTime = DateTime.Now.AddMinutes(15);
-            
-            // thông báo tạo thành công, tái sử dụng lại api forget pw và reset pw
-            
-            await _emailService.SendEmailAsync(registration.Email!, "Polaby - Đơn đăng ký của bạn đã được xem xét",
-                $"Đơn đăng ký của bạn đã bị từ chối, nếu bạn nghĩ đây là một sai sót, vui lòng kiểm tra lại đơn đăng ký của bạn và nộp lại một lần nữa. Ghi chú: {expertRegistrationUpdateStatusModel.Note}",
-                true);
+
+            var result = await _userManager.CreateAsync(user);
+
+            if (result.Succeeded)
+            {
+                // Add role
+                await _userManager.AddToRoleAsync(user, Repositories.Enums.Role.Expert.ToString());
+                
+                await _emailService.SendEmailAsync(registration.Email!, "Polaby - Đơn đăng ký của bạn đã được xem xét",
+                    $"Đơn đăng ký của bạn đã được chấp nhận, vui lòng cập nhật mật khẩu cho tài khoản tại <a href={_configuration["OAuth2:Server:RedirectURI"]}/chuyen-gia/tao-mat-khau?email={user.Email}&verificationCode={user.VerificationCode}>Liên kết này</a>",
+                    true);
+
+                registration.Status = expertRegistrationUpdateStatusModel.Status;
+                _unitOfWork.ExpertRegistrationRepository.Update(registration);
+            }
+            else
+            {
+                return new ResponseModel
+                {
+                    Status = true,
+                    Message = "Cannot create account"
+                };
+            }
         }
-        
+
         if (await _unitOfWork.SaveChangeAsync() > 0)
         {
             return new ResponseModel

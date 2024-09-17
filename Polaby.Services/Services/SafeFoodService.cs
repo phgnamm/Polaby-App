@@ -50,10 +50,9 @@ namespace Polaby.Services.Services
                 pageSize: filterModel.PageSize,
                 filter: (x =>
                     !x.IsDeleted &&
-                     x.IsSafe == filterModel.IsSafe &&
+                   (filterModel.IsSafe == null || x.IsSafe == filterModel.IsSafe) &&
                     (string.IsNullOrEmpty(filterModel.Search) ||
-                     x.Name.ToLower().Contains(filterModel.Search.ToLower()) ||
-                     x.Description.ToLower().Contains(filterModel.Search.ToLower()))
+                     x.Name.ToLower().Contains(filterModel.Search.ToLower()))
                 ),
                 orderBy: x =>
                 {
@@ -126,6 +125,29 @@ namespace Polaby.Services.Services
             {
                 Status = true,
                 Message = "SafeFood deleted successfully"
+            };
+        }
+
+        public async Task<ResponseDataModel<SafeFoodModel>> GetById(Guid id)
+        {
+            var safeFood = await _unitOfWork.SafeFoodRepository.GetAsync(id);
+
+            if (safeFood == null)
+            {
+                return new ResponseDataModel<SafeFoodModel>()
+                {
+                    Status = false,
+                    Message = "Safe food not found"
+                };
+            }
+
+            var safeFoodModel = _mapper.Map<SafeFoodModel>(safeFood);
+
+            return new ResponseDataModel<SafeFoodModel>()
+            {
+                Status = true,
+                Message = "Get safe food successfully",
+                Data = safeFoodModel
             };
         }
     }

@@ -3,7 +3,6 @@ using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
-using Polaby.Services.Models.CommunityPostModels;
 using Polaby.Services.Models.ResponseModels;
 using Polaby.Services.Models.ScheduleModels;
 
@@ -143,6 +142,30 @@ namespace Polaby.Services.Services
                 return new Pagination<ScheduleModel>(scheduleDetailList, scheduleFilterModel.PageIndex, scheduleFilterModel.PageSize, scheduleList.TotalCount);
             }
             return null;
+        }
+
+        public async Task<ResponseDataModel<ScheduleModel>> GetById(Guid id)
+        {
+            var schedule = await _unitOfWork.ScheduleRepository.GetById(id);
+
+            if (schedule == null)
+            {
+                return new ResponseDataModel<ScheduleModel>()
+                {
+                    Status = false,
+                    Message = "Schedule not found"
+                };
+            }
+
+            var scheduleModel = _mapper.Map<ScheduleModel>(schedule);
+            scheduleModel.UserName = schedule.User.FirstName + " " + schedule.User.LastName;
+
+            return new ResponseDataModel<ScheduleModel>()
+            {
+                Status = true,
+                Message = "Get schedule successfully",
+                Data = scheduleModel
+            };
         }
     }
 }

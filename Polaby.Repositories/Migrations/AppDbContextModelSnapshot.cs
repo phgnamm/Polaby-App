@@ -633,9 +633,6 @@ namespace Polaby.Repositories.Migrations
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("Type")
-                        .HasColumnType("int");
-
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
@@ -644,6 +641,46 @@ namespace Polaby.Repositories.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Emotion");
+                });
+
+            modelBuilder.Entity("Polaby.Repositories.Entities.EmotionTypeMapping", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("EmotionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmotionId");
+
+                    b.ToTable("EmotionTypeMapping");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.ExpertRegistration", b =>
@@ -931,6 +968,122 @@ namespace Polaby.Repositories.Migrations
                     b.ToTable("Ingredient");
                 });
 
+            modelBuilder.Entity("Polaby.Repositories.Entities.IngredientSearch", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Animal")
+                        .HasColumnType("bit");
+
+                    b.Property<float?>("Carbohydrates")
+                        .HasColumnType("real");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<float?>("DisposalRate")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("Fat")
+                        .HasColumnType("real");
+
+                    b.Property<string>("FoodGroup")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FoodGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("IndexFoodGroup")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<float?>("Kcal")
+                        .HasColumnType("real");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float?>("Protein")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Source")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SourceUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float?>("Water")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IngredientSearch");
+                });
+
+            modelBuilder.Entity("Polaby.Repositories.Entities.IngredientSearchNutrient", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("IngredientSearchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("NutrientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngredientSearchId");
+
+                    b.HasIndex("NutrientId");
+
+                    b.ToTable("IngredientSearchNutrient");
+                });
+
             modelBuilder.Entity("Polaby.Repositories.Entities.Meal", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1159,6 +1312,50 @@ namespace Polaby.Repositories.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Note");
+                });
+
+            modelBuilder.Entity("Polaby.Repositories.Entities.NoteEmotion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("EmotionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSelected")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmotionId");
+
+                    b.ToTable("NoteEmotion");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.Notification", b =>
@@ -1526,6 +1723,9 @@ namespace Polaby.Repositories.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -1887,6 +2087,16 @@ namespace Polaby.Repositories.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Polaby.Repositories.Entities.EmotionTypeMapping", b =>
+                {
+                    b.HasOne("Polaby.Repositories.Entities.Emotion", "Emotion")
+                        .WithMany("EmotionTypes")
+                        .HasForeignKey("EmotionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Emotion");
+                });
+
             modelBuilder.Entity("Polaby.Repositories.Entities.ExpertRegistration", b =>
                 {
                     b.HasOne("Polaby.Repositories.Entities.Account", "Expert")
@@ -1920,6 +2130,21 @@ namespace Polaby.Repositories.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Polaby.Repositories.Entities.IngredientSearchNutrient", b =>
+                {
+                    b.HasOne("Polaby.Repositories.Entities.IngredientSearch", "IngredientSearch")
+                        .WithMany("IngredientSearchNutrients")
+                        .HasForeignKey("IngredientSearchId");
+
+                    b.HasOne("Polaby.Repositories.Entities.Nutrient", "Nutrient")
+                        .WithMany("IngredientSearchNutrients")
+                        .HasForeignKey("NutrientId");
+
+                    b.Navigation("IngredientSearch");
+
+                    b.Navigation("Nutrient");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.MealDish", b =>
@@ -1959,6 +2184,16 @@ namespace Polaby.Repositories.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Polaby.Repositories.Entities.NoteEmotion", b =>
+                {
+                    b.HasOne("Polaby.Repositories.Entities.Emotion", "Emotion")
+                        .WithMany("Notes")
+                        .HasForeignKey("EmotionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Emotion");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.Notification", b =>
@@ -2151,11 +2386,23 @@ namespace Polaby.Repositories.Migrations
                     b.Navigation("Nutrients");
                 });
 
+            modelBuilder.Entity("Polaby.Repositories.Entities.Emotion", b =>
+                {
+                    b.Navigation("EmotionTypes");
+
+                    b.Navigation("Notes");
+                });
+
             modelBuilder.Entity("Polaby.Repositories.Entities.Ingredient", b =>
                 {
                     b.Navigation("DishIngredients");
 
                     b.Navigation("Nutrients");
+                });
+
+            modelBuilder.Entity("Polaby.Repositories.Entities.IngredientSearch", b =>
+                {
+                    b.Navigation("IngredientSearchNutrients");
                 });
 
             modelBuilder.Entity("Polaby.Repositories.Entities.Meal", b =>
@@ -2177,6 +2424,11 @@ namespace Polaby.Repositories.Migrations
             modelBuilder.Entity("Polaby.Repositories.Entities.NotificationType", b =>
                 {
                     b.Navigation("NotificationSettings");
+                });
+
+            modelBuilder.Entity("Polaby.Repositories.Entities.Nutrient", b =>
+                {
+                    b.Navigation("IngredientSearchNutrients");
                 });
 #pragma warning restore 612, 618
         }

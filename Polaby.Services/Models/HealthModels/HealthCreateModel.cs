@@ -16,5 +16,6 @@ namespace Polaby.Services.Models.HealthModels
 
         [Required(ErrorMessage = "Health Unit is required.")]
         public HealthUnit Unit { get; set; }
+        public DateOnly? Date { get; set; }
     }
 }

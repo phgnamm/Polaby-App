@@ -3,8 +3,10 @@ using AutoMapper;
 using Polaby.Repositories.Entities;
 using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.DishModels;
+using Polaby.Repositories.Models.IngredientModels;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.DishModels;
 using Polaby.Services.Models.MenuModels;
 using Polaby.Services.Models.ResponseModels;
@@ -134,14 +136,27 @@ namespace Polaby.Services.Services
                                 : x.OrderBy(x => x.CreationDate);
                     }
                 },
-                include: "DishIngredients,Nutrients"
+                include: "Nutrients,DishIngredients.Ingredient"
             );
             if (dishList != null)
             {
-                var mealModelList = _mapper.Map<List<DishModel>>(dishList.Data);
-                return new Pagination<DishModel>(mealModelList, dishFilterModel.PageIndex,
+                var dishModelList = _mapper.Map<List<DishModel>>(dishList.Data);
+
+                foreach (var dishModel in dishModelList)
+                {
+                    var dishEntity = dishList.Data.FirstOrDefault(d => d.Id == dishModel.Id);
+                    if (dishEntity != null && dishEntity.DishIngredients != null)
+                    {
+                        dishModel.Ingredients = dishEntity.DishIngredients
+                            .Select(di => _mapper.Map<IngredientModel>(di.Ingredient))
+                            .ToList();
+                    }
+                }
+
+                return new Pagination<DishModel>(dishModelList, dishFilterModel.PageIndex,
                     dishFilterModel.PageSize, dishList.TotalCount);
             }
+
             return null;
         }
 
@@ -240,5 +255,34 @@ namespace Polaby.Services.Services
                 Message = "DishIngredient deleted successfully"
             };
         }
+
+        public async Task<ResponseDataModel<DishModel>> GetById(Guid id)
+        {
+            var dish = await _unitOfWork.DishRepository.GetAsync(id, "DishIngredients.Ingredient,Nutrients");
+            if (dish == null)
+            {
+                return new ResponseDataModel<DishModel>()
+                {
+                    Status = false,
+                    Message = "Dish not found"
+                };
+            }
+
+            var dishModel = _mapper.Map<DishModel>(dish);
+            if (dish.DishIngredients != null)
+            {
+                dishModel.Ingredients = dish.DishIngredients
+                    .Select(di => _mapper.Map<IngredientModel>(di.Ingredient))
+                    .ToList();
+            }
+
+            return new ResponseDataModel<DishModel>()
+            {
+                Status = true,
+                Message = "Get dish successfully",
+                Data = dishModel
+            };
+        }
+
     }
 }

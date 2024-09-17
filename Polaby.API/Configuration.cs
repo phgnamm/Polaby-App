@@ -50,6 +50,9 @@ namespace Polaby.API
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAccountRepository, AccountRepository>();
 
+            // Dashboard
+            services.AddScoped<IDashboardService, DashboardService>();
+            
             // WeeklyPost
             services.AddScoped<IWeeklyPostService, WeeklyPostService>();
             services.AddScoped<IWeeklyPostRepository, WeeklyPostRepository>();
@@ -121,6 +124,14 @@ namespace Polaby.API
             services.AddScoped<INotificationTypeService, NotificationTypeService>();
             services.AddScoped<INotificationTypeRepository, NotificationTypeRepository>();
 
+            //CommentLike
+            services.AddScoped<ICommentLikeService, CommentLikeService>();
+            services.AddScoped<ICommentLikeRepository, CommentLikeRepository>();
+
+            //CommunityPostLike
+            services.AddScoped<ICommunityPostLikeService, CommunityPostLikeService>();
+            services.AddScoped<ICommunityPostLikeRepository, CommunityPostLikeRepository>();
+
             //Rating
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IRatingRepository,RatingRepository>();
@@ -139,6 +150,16 @@ namespace Polaby.API
             //SafeFood
             services.AddScoped<ISafeFoodRepository, SafeFoodRepository>();
             services.AddScoped<ISafeFoodService, SafeFoodService>();
+
+            //BackgroudService
+            services.AddHostedService<SubscriptionBackgroundService>();
+
+            //IngredientSearch
+            services.AddScoped<IIngredientSearchService, IngredientSearchService>();
+            services.AddScoped<IIngredientSearchRepository, IngredientSearchRepository>();
+
+            //IngredientSearchNutrient
+            services.AddScoped<IIngredientSearchNutrientRepository, IngredientSearchNutrientRepository>();
 
             return services;
         }

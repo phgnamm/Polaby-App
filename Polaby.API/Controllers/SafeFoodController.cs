@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.SafeFoodModels;
+using Polaby.Services.Services;
 
 namespace Polaby.API.Controllers
 {
@@ -101,6 +102,25 @@ namespace Polaby.API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            try
+            {
+                var result = await _safeFoodService.GetById(id);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
             }
         }
     }

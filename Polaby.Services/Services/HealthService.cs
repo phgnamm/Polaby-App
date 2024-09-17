@@ -5,6 +5,7 @@ using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.HealthModels;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.HealthModels;
 using Polaby.Services.Models.ResponseModels;
 
@@ -20,18 +21,24 @@ namespace Polaby.Services.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-
+            
         public async Task<ResponseModel> AddHealthAsync(List<HealthCreateModel> healthModels)
         {
             var healthEntities = _mapper.Map<List<Health>>(healthModels)
-                    .Select(entity =>
-                    {
-                        if (entity.Date == default)
-                        {
-                            entity.Date = DateOnly.FromDateTime(DateTime.Now);
-                        }
-                        return entity;
-                    }).ToList();
+             .Select((entity, index) =>
+             {
+                 var modelDate = healthModels[index].Date;
+                 if (modelDate.HasValue)
+                 {
+                     entity.Date = modelDate.Value;
+                 }
+                 else if (entity.Date == default)
+                 {
+                     entity.Date = DateOnly.FromDateTime(DateTime.Now);
+                 }
+
+                 return entity;
+             }).ToList();
 
 
             if (healthEntities == null || !healthEntities.Any())
@@ -164,6 +171,29 @@ namespace Polaby.Services.Services
             {
                 Status = true,
                 Message = "Health deleted successfully"
+            };
+        }
+
+        public async Task<ResponseDataModel<HealthModel>> GetById(Guid id)
+        {
+            var health = await _unitOfWork.HealthRepository.GetAsync(id);
+
+            if (health == null)
+            {
+                return new ResponseDataModel<HealthModel>()
+                {
+                    Status = false,
+                    Message = "Health not found"
+                };
+            }
+
+            var healthModel = _mapper.Map<HealthModel>(health);
+
+            return new ResponseDataModel<HealthModel>()
+            {
+                Status = true,
+                Message = "Get health successfully",
+                Data = healthModel
             };
         }
     }

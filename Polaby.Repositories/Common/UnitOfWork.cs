@@ -26,11 +26,15 @@ namespace Polaby.Repositories.Common
         private readonly INotificationSettingRepository _notificationSettingRepository;
         private readonly INotificationTypeRepository _notificationTypeRepository;
         private readonly IUserMenuRepository _userMenuRepository;
+        private readonly ICommentLikeRepository _commentLikeRepository;
+        private readonly ICommunityPostLikeRepository _communityPostLikeRepository;
         private readonly IRatingRepository _ratingRepository;
         private readonly IEmotionRepository _motionRepository;
         private readonly INoteRepository _noteRepository;
         private readonly IHealthRepository _healthRepository;
         private readonly ISafeFoodRepository _safeFoodRepository;
+        private readonly IIngredientSearchRepository _ingredientSearchRepository;
+        private readonly IIngredientSearchNutrientRepository _ingredientSearchNutrientRepository;
 
         public UnitOfWork(AppDbContext dbContext, IAccountRepository accountRepository,
             IMenuRepository menuRepository, IMenuMealRepository menuMealRepository,
@@ -45,11 +49,15 @@ namespace Polaby.Repositories.Common
             INotificationTypeRepository notificationTypeRepository,
             INotificationSettingRepository notificationSettingRepository,
             IUserMenuRepository userMenuRepository,
+            ICommentLikeRepository commentLikeRepository,
+            ICommunityPostLikeRepository communityPostLikeRepository,
             IRatingRepository ratingRepository,
             IEmotionRepository motionRepository,
             INoteRepository noteRepository,
             IHealthRepository healthRepository,
-            ISafeFoodRepository safeFoodRepository
+            ISafeFoodRepository safeFoodRepository,
+            IIngredientSearchRepository ingredientSearchRepository,
+            IIngredientSearchNutrientRepository ingredientSearchNutrientRepository
         )
         {
             _dbContext = dbContext;
@@ -73,11 +81,15 @@ namespace Polaby.Repositories.Common
             _notificationTypeRepository = notificationTypeRepository;
             _notificationSettingRepository = notificationSettingRepository;
             _userMenuRepository = userMenuRepository;
+            _commentLikeRepository = commentLikeRepository;
+            _communityPostLikeRepository = communityPostLikeRepository;
             _ratingRepository = ratingRepository;
             _motionRepository = motionRepository;
             _noteRepository = noteRepository;
             _healthRepository = healthRepository;
             _safeFoodRepository = safeFoodRepository;
+            _ingredientSearchRepository = ingredientSearchRepository;
+            _ingredientSearchNutrientRepository = ingredientSearchNutrientRepository;
         }
 
         public AppDbContext DbContext => _dbContext;
@@ -101,6 +113,8 @@ namespace Polaby.Repositories.Common
         public INotificationSettingRepository NotificationSettingRepository => _notificationSettingRepository;
         public INotificationTypeRepository NotificationTypeRepository => _notificationTypeRepository;
         public IUserMenuRepository UserMenuRepository => _userMenuRepository;
+        public ICommentLikeRepository CommentLikeRepository => _commentLikeRepository;
+        public ICommunityPostLikeRepository CommunityPostLikeRepository => _communityPostLikeRepository;
         public IHealthRepository HealthRepository => _healthRepository;
         public ISafeFoodRepository SafeFoodRepository => _safeFoodRepository;
 
@@ -109,6 +123,8 @@ namespace Polaby.Repositories.Common
         public IEmotionRepository EmotionRepository => _motionRepository;
 
         public INoteRepository NoteRepository => _noteRepository;
+        public IIngredientSearchRepository IngredientSearchRepository => _ingredientSearchRepository;
+        public IIngredientSearchNutrientRepository IngredientSearchNutrientRepository => _ingredientSearchNutrientRepository;
 
         public async Task<int> SaveChangeAsync()
         {

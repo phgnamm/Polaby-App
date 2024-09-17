@@ -4,7 +4,6 @@ namespace Polaby.Repositories.Entities
 {
     public class Emotion : BaseEntity
     {
-        public EmotionType? Type { get; set; }
         public DateOnly? Date { get; set; }
 
         // Foreign key
@@ -12,5 +11,9 @@ namespace Polaby.Repositories.Entities
 
         // Relationship
         public virtual Account? User { get; set; }
+        public virtual ICollection<EmotionTypeMapping> EmotionTypes { get; set; } = new List<EmotionTypeMapping>();
+        public virtual ICollection<NoteEmotion> Notes { get; set; } = new List<NoteEmotion>();
+
+
     }
 }
