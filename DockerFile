@@ -6,6 +6,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 
 # Copy các dự án và csproj
+COPY [".Polaby.API/"]
 COPY ["Polaby.API/Polaby.API.csproj", "Polaby.API/"]
 COPY ["Polaby.Services/Polaby.Services.csproj", "Polaby.Services/"]
 COPY ["Polaby.Repositories/Polaby.Repositories.csproj", "Polaby.Repositories/"]
