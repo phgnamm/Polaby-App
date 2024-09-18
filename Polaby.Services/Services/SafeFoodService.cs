@@ -52,8 +52,7 @@ namespace Polaby.Services.Services
                     !x.IsDeleted &&
                    (filterModel.IsSafe == null || x.IsSafe == filterModel.IsSafe) &&
                     (string.IsNullOrEmpty(filterModel.Search) ||
-                     x.Name.ToLower().Contains(filterModel.Search.ToLower()) ||
-                     x.Description.ToLower().Contains(filterModel.Search.ToLower()))
+                     x.Name.ToLower().Contains(filterModel.Search.ToLower()))
                 ),
                 orderBy: x =>
                 {

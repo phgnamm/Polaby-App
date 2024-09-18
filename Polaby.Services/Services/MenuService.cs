@@ -254,9 +254,9 @@ namespace Polaby.Services.Services
             };
         }
 
-        public async Task<ResponseModel> AddRangeUserMenu(List<UserMenuMCreateModel> models)
+        public async Task<ResponseModel> AddUserMenu(UserMenuMCreateModel model)
         {
-            if (models == null || !models.Any())
+            if (model == null)
             {
                 return new ResponseModel()
                 {
@@ -264,35 +264,20 @@ namespace Polaby.Services.Services
                     Message = "No UserMenus provided!"
                 };
             }
-
-            var userMenuList = models
-                .Where(model => model.UserId.HasValue && model.MenuIds != null && model.MenuIds.Any())
-                .SelectMany(model => model.MenuIds.Select(menuId => new UserMenu
-                {
-                    UserId = model.UserId.Value,
-                    MenuId = menuId
-                }))
-                .ToList();
-
-            if (userMenuList.Any())
+            var userMenu = new UserMenu
             {
-                await _unitOfWork.UserMenuRepository.AddRangeAsync(userMenuList);
-                await _unitOfWork.SaveChangeAsync();
+                UserId = model.UserId.Value,
+                MenuId = model.MenuId.Value 
+            };
 
-                return new ResponseModel()
-                {
-                    Status = true,
-                    Message = "Menus saved successfully!"
-                };
-            }
-            else
+            await _unitOfWork.UserMenuRepository.AddAsync(userMenu);
+            await _unitOfWork.SaveChangeAsync();
+
+            return new ResponseModel()
             {
-                return new ResponseModel()
-                {
-                    Status = false,
-                    Message = "No valid UserMenus to save!"
-                };
-            }
+                Status = true,
+                Message = "Menu saved successfully!"
+            };
         }
 
         public async Task<ResponseDataModel<List<Menu>>> GetAllUserMenuAsync(Guid userId)

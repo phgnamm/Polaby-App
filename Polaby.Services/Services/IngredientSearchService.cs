@@ -83,11 +83,16 @@ namespace Polaby.Services.Services
                 pageIndex: ingredientFilterModel.PageIndex,
                 pageSize: ingredientFilterModel.PageSize,
                 filter: x =>
-                    x.IsDeleted == ingredientFilterModel.IsDeleted &&
-                    (ingredientFilterModel.FoodGroup == null ||
-             x.FoodGroup.Equals(ingredientFilterModel.FoodGroup.Value.ToFriendlyString())) &&
-                    (string.IsNullOrEmpty(ingredientFilterModel.Search) ||
-                     x.Name.ToLower().Contains(ingredientFilterModel.Search.ToLower())),
+                        x.IsDeleted == ingredientFilterModel.IsDeleted &&
+                        (ingredientFilterModel.FoodGroup == null ||
+                        x.FoodGroup.Equals(ingredientFilterModel.FoodGroup.Value.ToFriendlyString())) &&
+                        (string.IsNullOrEmpty(ingredientFilterModel.Search) ||
+                        x.Name.ToLower().Contains(ingredientFilterModel.Search.ToLower()) ||
+                        x.Kcal.ToString().Contains(ingredientFilterModel.Search) ||
+                        x.Protein.ToString().Contains(ingredientFilterModel.Search) ||
+                        x.Water.ToString().Contains(ingredientFilterModel.Search) ||
+                        x.Fat.ToString().Contains(ingredientFilterModel.Search) ||
+                        x.Carbohydrates.ToString().Contains(ingredientFilterModel.Search)),
                 orderBy: x =>
                 {
                     switch (ingredientFilterModel.Order.ToLower())
@@ -105,7 +110,8 @@ namespace Polaby.Services.Services
                                 ? x.OrderByDescending(i => i.CreationDate)
                                 : x.OrderBy(i => i.CreationDate);
                     }
-                }
+                },
+                include: "IngredientSearchNutrients,IngredientSearchNutrients.Nutrient"
             );
 
             if (ingredientList != null)
