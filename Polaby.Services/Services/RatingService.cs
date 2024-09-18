@@ -92,8 +92,10 @@ namespace Polaby.Services.Services
 
         public async Task<Pagination<RatingModel>> GetRatingsByFilterAsync(RatingFilterModel model)
         {
+            // Thêm filter để lọc theo UserId
             var queryResult = await _unitOfWork.RatingRepository.GetAllAsync(
-                include: "User",
+                filter: r => (model.AccountId == null || r.UserId == model.AccountId || r.ExpertId == model.AccountId),  
+                include: "User",                      
                 pageIndex: model.PageIndex,
                 pageSize: model.PageSize
             );
@@ -101,6 +103,7 @@ namespace Polaby.Services.Services
             var ratings = _mapper.Map<List<RatingModel>>(queryResult.Data);
             return new Pagination<RatingModel>(ratings, model.PageIndex, model.PageSize, queryResult.TotalCount);
         }
+
 
         public async Task<ResponseDataModel<Rating?>> UpdateRatingAsync(Guid id, CreateRatingModel model)
         {
