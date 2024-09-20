@@ -12,5 +12,6 @@
         public bool? EmailVerificationRequired { get; set; }
         public bool? IsBlocked { get; set; }
         public Guid? UserId { get; set; }
+        public bool? InformationRequired { get; set; }
     }
 }
