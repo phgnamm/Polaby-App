@@ -156,6 +156,7 @@ namespace Polaby.Services.Services
                         Message = "Login successfully",
                         EmailVerificationRequired = !user.EmailConfirmed,
                         UserId = user.Id,
+                        InformationRequired = user.BMI == null,
                         Data = new TokenModel
                         {
                             AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken),
@@ -1005,7 +1006,7 @@ namespace Polaby.Services.Services
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var result = await _userManager.ResetPasswordAsync(user, token, accountExpertCreatePassword.Password);
-            
+
             user.EmailConfirmed = true;
             await _userManager.UpdateAsync(user);
 
