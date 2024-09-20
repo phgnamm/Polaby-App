@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.DashboardModels;
 
 namespace Polaby.API.Controllers
 {
@@ -17,11 +18,11 @@ namespace Polaby.API.Controllers
 
         // [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<IActionResult> GetAdminDashboard()
+        public async Task<IActionResult> GetAdminDashboard([FromQuery] DashboardFilterModel dashboardFilterModel)
         {
             try
             {
-                var result = await _dashboardService.GetAdminDashboard();
+                var result = await _dashboardService.GetAdminDashboard(dashboardFilterModel);
                 if (result.Status)
                 {
                     return Ok(result);
