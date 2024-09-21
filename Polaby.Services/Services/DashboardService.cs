@@ -3,6 +3,7 @@ using Polaby.Repositories.Enums;
 using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.DashboardModels;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.DashboardModels;
 using Polaby.Services.Models.ResponseModels;
 
 namespace Polaby.Services.Services;
@@ -16,8 +17,13 @@ public class DashboardService : IDashboardService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<ResponseDataModel<AdminDashboardModel>> GetAdminDashboard()
+    public async Task<ResponseDataModel<AdminDashboardModel>> GetAdminDashboard(
+        DashboardFilterModel dashboardFilterModel)
     {
+        // Create a date range for the specified month and year
+        var startDate = new DateTime(dashboardFilterModel.Year, dashboardFilterModel.Month, 1);
+        var endDate = startDate.AddMonths(1).AddDays(-1); // Last day of the month
+
         int totalAccount = await _unitOfWork.DbContext.Users
             .Where(x => !x.IsDeleted)
             .CountAsync();
@@ -27,21 +33,19 @@ public class DashboardService : IDashboardService
             .CountAsync();
 
         int totalPost = await _unitOfWork.DbContext.CommunityPost
-            .Where(x => !x.IsDeleted)
+            .Where(x => !x.IsDeleted && x.CreationDate >= startDate && x.CreationDate <= endDate)
             .CountAsync();
 
         float totalEarning = await _unitOfWork.DbContext.Transaction
-            .Where(x => !x.IsDeleted && x.Status == TransactionStatus.Completed)
+            .Where(x => !x.IsDeleted && x.Status == TransactionStatus.Completed && x.CreationDate >= startDate &&
+                        x.CreationDate <= endDate)
             .SumAsync(x => x.Amount);
 
-        // // Get the first date from transactions
-        // DateOnly firstDate = DateOnly.FromDateTime(await _unitOfWork.DbContext.Transaction
-        //     .MinAsync(x => x.CreationDate));
-
-        // Get the sum of transactions for each day
+        // Get the sum of transactions for each day within the specified month and year
         var earningsGroupedByDate = await _unitOfWork.DbContext.Transaction
-            .Where(x => !x.IsDeleted && x.Status == TransactionStatus.Completed)
-            .GroupBy(x => x.CreationDate.Date) // Group by the date part of CreationDate
+            .Where(x => !x.IsDeleted && x.Status == TransactionStatus.Completed && x.CreationDate >= startDate &&
+                        x.CreationDate <= endDate)
+            .GroupBy(x => x.CreationDate.Date)
             .Select(g => new
             {
                 Date = DateOnly.FromDateTime(g.Key),
@@ -49,35 +53,38 @@ public class DashboardService : IDashboardService
             })
             .ToListAsync();
 
-        // Create a list of Earning objects from the grouped results
-        List<Earning> earnings = earningsGroupedByDate
-            .Select(e => new Earning
+        // Create a list of all days in the month
+        var allDaysInMonth = Enumerable.Range(0,
+                DateTime.DaysInMonth(dashboardFilterModel.Year, dashboardFilterModel.Month))
+            .Select(day => new DateOnly(dashboardFilterModel.Year, dashboardFilterModel.Month, day + 1))
+            .ToList();
+
+        // Create a list of Earning objects, ensuring all days are included
+        List<Earning> earnings = allDaysInMonth
+            .Select(day => new Earning
             {
-                Date = e.Date,
-                Amount = e.TotalAmount
+                Date = day,
+                Amount = earningsGroupedByDate.FirstOrDefault(e => e.Date == day)?.TotalAmount ?? 0
             })
             .ToList();
 
-        // Get the number of posts and comments grouped by date
+        // Get the number of posts grouped by date within the specified month and year
         var forumsGroupedByDate = await _unitOfWork.DbContext.CommunityPost
-            .Where(x => !x.IsDeleted)
-            .GroupBy(x => x.CreationDate.Date) // Assuming `PostDate` is the date field for posts
+            .Where(x => !x.IsDeleted && x.CreationDate >= startDate && x.CreationDate <= endDate)
+            .GroupBy(x => x.CreationDate.Date)
             .Select(g => new
             {
                 Date = DateOnly.FromDateTime(g.Key),
-                TotalPost = g.Count(),
-                // TotalComment =
-                //     g.Sum(x => x.Comments.Count) // Assuming `Comments` is a collection of comments for each post
+                TotalPost = g.Count()
             })
             .ToListAsync();
 
-        // Create a list of Forum objects from the grouped results
-        List<Forum> forums = forumsGroupedByDate
-            .Select(f => new Forum
+        // Create a list of Forum objects, ensuring all days are included
+        List<Forum> forums = allDaysInMonth
+            .Select(day => new Forum
             {
-                Date = f.Date,
-                TotalPost = f.TotalPost,
-                // TotalComment = f.TotalComment
+                Date = day,
+                TotalPost = forumsGroupedByDate.FirstOrDefault(f => f.Date == day)?.TotalPost ?? 0
             })
             .ToList();
 
