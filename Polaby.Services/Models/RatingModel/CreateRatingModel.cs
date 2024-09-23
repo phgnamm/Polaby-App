@@ -12,5 +12,6 @@ namespace Polaby.Services.Models.RatingModel
         public Guid ExpertId { get; set; }
         public int Star { get; set; }
         public string? Comment { get; set; }
+        public string? SubscriptionId { get; set; }
     }
 }

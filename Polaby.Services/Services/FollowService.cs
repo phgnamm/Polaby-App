@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Polaby.API.Helper;
 using Polaby.Repositories.Entities;
+using Polaby.Repositories.Enums;
 using Polaby.Repositories.Interfaces;
 using Polaby.Services.Interfaces;
-using Polaby.Services.Models.AccountModels;
 using Polaby.Services.Models.FollowModels;
 using Polaby.Services.Models.ResponseModels;
+using Polaby.Services.Notification;
 
 namespace Polaby.Services.Services
 {
@@ -14,12 +16,15 @@ namespace Polaby.Services.Services
         private readonly UserManager<Account> _userManager;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly OneSignalPushNotificationService _oneSignalPushNotificationService;
 
-        public FollowService(IUnitOfWork unitOfWork, IMapper mapper, UserManager<Account> userManager)
+        public FollowService(IUnitOfWork unitOfWork, IMapper mapper, UserManager<Account> userManager,
+            OneSignalPushNotificationService oneSignalPushNotificationService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _userManager = userManager;
+            _oneSignalPushNotificationService = oneSignalPushNotificationService;
         }
 
         public async Task<ResponseModel> Follow(FollowModel followModel)
@@ -81,7 +86,14 @@ namespace Polaby.Services.Services
             };
 
             await _unitOfWork.FollowRepository.AddAsync(follow);
-            await _unitOfWork.SaveChangeAsync();
+            int check = await _unitOfWork.SaveChangeAsync();
+
+            if (check != 0)
+            {
+                var notificationType = await _unitOfWork.NotificationTypeRepository.GetByName(NotificationTypeName.Follow);
+                var content = user.FirstName + " " + user.LastName + " " + notificationType.Content;
+                _oneSignalPushNotificationService.SendNotificationAsync("Thích", content, followModel.SubscriptionId);
+            }
 
             return new ResponseModel()
             {

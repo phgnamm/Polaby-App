@@ -4,5 +4,6 @@
     {
         public Guid? CommunityPostId { get; set; }
         public Guid? UserId { get; set; }
+        public string? SubscriptionId { get; set; }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Azure;
+using Polaby.API.Helper;
 using Polaby.Repositories.Entities;
+using Polaby.Repositories.Enums;
 using Polaby.Repositories.Interfaces;
 using Polaby.Repositories.Models.RatingModel;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.CommentLikeModels;
 using Polaby.Services.Models.RatingModel;
 using Polaby.Services.Models.ResponseModels;
 
@@ -14,10 +17,14 @@ namespace Polaby.Services.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public RatingService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly OneSignalPushNotificationService _oneSignalPushNotificationService;
+
+        public RatingService(IUnitOfWork unitOfWork, IMapper mapper,
+            OneSignalPushNotificationService oneSignalPushNotificationService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _oneSignalPushNotificationService = oneSignalPushNotificationService;
         }
 
         public async Task<ResponseDataModel<Rating>> CreateRatingAsync(CreateRatingModel model)
@@ -63,7 +70,14 @@ namespace Polaby.Services.Services
                 Comment = model.Comment,
             };
             await _unitOfWork.RatingRepository.AddAsync(rating);
-            await _unitOfWork.SaveChangeAsync();
+            int check = await _unitOfWork.SaveChangeAsync();
+
+            if(check != 0)
+            {
+                var notificationType = await _unitOfWork.NotificationTypeRepository.GetByName(NotificationTypeName.Rate);
+                var content = user.FirstName + " " + user.LastName + " " + notificationType.Content;
+                _oneSignalPushNotificationService.SendNotificationAsync("Thích", content, model.SubscriptionId);
+            }
 
             response.Status = true;
             response.Message = "Rating create successfully";

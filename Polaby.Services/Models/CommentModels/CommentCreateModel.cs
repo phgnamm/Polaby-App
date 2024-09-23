@@ -13,5 +13,6 @@ namespace Polaby.Services.Models.CommentModels
         public Guid AccountId { get; set; }
         public Guid? PostId { get; set; }
         public Guid? ParentCommentId { get; set; }
+        public string? SubscriptionId { get; set; }
     }
 }

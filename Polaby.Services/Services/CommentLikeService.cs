@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Polaby.API.Helper;
 using Polaby.Repositories.Entities;
+using Polaby.Repositories.Enums;
 using Polaby.Repositories.Interfaces;
 using Polaby.Services.Interfaces;
 using Polaby.Services.Models.CommentLikeModels;
@@ -11,11 +13,15 @@ namespace Polaby.Services.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly OneSignalPushNotificationService _oneSignalPushNotificationService;
 
-        public CommentLikeService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CommentLikeService(IUnitOfWork unitOfWork, IMapper mapper,
+            OneSignalPushNotificationService oneSignalPushNotificationService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _oneSignalPushNotificationService = oneSignalPushNotificationService;
+
         }
 
         public async Task<ResponseModel> Like(CommentLikeModel commentLikeModel)
@@ -43,9 +49,25 @@ namespace Polaby.Services.Services
             CommentLike commentLike = _mapper.Map<CommentLike>(commentLikeModel);
 
             await _unitOfWork.CommentLikeRepository.AddAsync(commentLike);
-            await _unitOfWork.SaveChangeAsync();
+            int check = await _unitOfWork.SaveChangeAsync();
 
-            return new ResponseModel()
+            //CommentLikeResponseModel responseModel = _mapper.Map<CommentLike>(commentLikeModel);
+            //CommentLikeResponseModel responseModel = new()
+            //{
+            //    CommentId = commentLike.CommentId,
+            //    UserId = commentLike.Id,
+            //    UserName = account.FirstName + " " + account.LastName,
+            //};
+
+            if(check != 0)
+            {
+                var notificationType = await _unitOfWork.NotificationTypeRepository.GetByName(NotificationTypeName.Like);
+                var content = account.FirstName + " " + account.LastName + " " + notificationType.Content;
+
+                _oneSignalPushNotificationService.SendNotificationAsync("Thích", content, commentLikeModel.SubscriptionId);
+            }
+
+            return new ResponseModel
             {
                 Message = "Like successfully",
                 Status = true
