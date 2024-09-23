@@ -71,21 +71,21 @@ namespace Polaby.Repositories
 
             modelBuilder.Entity<Ingredient>(entity =>
             {
-                entity.Property(x => x.Name).HasMaxLength(50);
-                entity.Property(x => x.Description).HasMaxLength(256);
+                entity.Property(x => x.Name).HasMaxLength(150);
+                entity.Property(x => x.Description);
             });
 
-            modelBuilder.Entity<Meal>(entity => { entity.Property(x => x.Name).HasMaxLength(50); });
+            modelBuilder.Entity<Meal>(entity => { entity.Property(x => x.Name).HasMaxLength(250); });
 
             modelBuilder.Entity<Menu>(entity =>
             {
-                entity.Property(x => x.Name).HasMaxLength(50);
-                entity.Property(x => x.Description).HasMaxLength(256);
+                entity.Property(x => x.Name).HasMaxLength(250);
+                entity.Property(x => x.Description);
             });
 
             modelBuilder.Entity<NotificationType>(entity => { entity.Property(x => x.Name).HasMaxLength(156); });
 
-            modelBuilder.Entity<SafeFood>(entity => { entity.Property(x => x.Name).HasMaxLength(50); });
+            modelBuilder.Entity<SafeFood>(entity => { entity.Property(x => x.Name).HasMaxLength(150); });
 
             modelBuilder.Entity<Role>(entity => { entity.Property(x => x.Description).HasMaxLength(256); });
 
