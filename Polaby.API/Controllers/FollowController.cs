@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Polaby.API.Helper;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.CommunityPostLikeModels;
 using Polaby.Services.Models.FollowModels;
 
 namespace Polaby.API.Controllers
@@ -9,10 +11,12 @@ namespace Polaby.API.Controllers
     public class FollowController : ControllerBase
     {
         private readonly IFollowService _followService;
+        private readonly OneSignalPushNotificationService _oneSignalPushNotificationService;
 
-        public FollowController(IFollowService followService)
+        public FollowController(IFollowService followService, OneSignalPushNotificationService oneSignalPushNotificationService)
         {
             _followService = followService;
+            _oneSignalPushNotificationService = oneSignalPushNotificationService;
         }
 
         [HttpPost()]

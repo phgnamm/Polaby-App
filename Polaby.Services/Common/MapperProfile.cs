@@ -36,6 +36,7 @@ using Polaby.Services.Models.SafeFoodModels;
 using Polaby.Repositories.Models.SafeFoodModels;
 using Polaby.Services.Models.IngredientSearchModels;
 using Polaby.Repositories.Models.IngredientSearchModels;
+using Polaby.Services.Notification;
 
 namespace Polaby.Services.Common
 {

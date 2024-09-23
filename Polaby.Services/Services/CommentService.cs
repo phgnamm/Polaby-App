@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Polaby.API.Helper;
 using Polaby.Repositories.Entities;
+using Polaby.Repositories.Enums;
 using Polaby.Repositories.Interfaces;
 using Polaby.Services.Common;
 using Polaby.Services.Interfaces;
+using Polaby.Services.Models.CommentLikeModels;
 using Polaby.Services.Models.CommentModels;
 using Polaby.Services.Models.CommunityPostModels;
 using Polaby.Services.Models.ResponseModels;
@@ -13,11 +16,14 @@ namespace Polaby.Services.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly OneSignalPushNotificationService _oneSignalPushNotificationService;
 
-        public CommentService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CommentService(IUnitOfWork unitOfWork, IMapper mapper,
+            OneSignalPushNotificationService oneSignalPushNotificationService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _oneSignalPushNotificationService = oneSignalPushNotificationService;
         }
 
         public async Task<ResponseDataModel<CommentModel>> Create(CommentCreateModel commentCreateModel)
@@ -65,7 +71,16 @@ namespace Polaby.Services.Services
             Comment comment = _mapper.Map<Comment>(commentCreateModel);
 
             await _unitOfWork.CommentRepository.AddAsync(comment);
-            await _unitOfWork.SaveChangeAsync();
+            int check = await _unitOfWork.SaveChangeAsync();
+
+            if (check != 0)
+            {
+                var notificationType = await _unitOfWork.NotificationTypeRepository.GetByName(NotificationTypeName.Like);
+                var content = account.FirstName + " " + account.LastName + " " + notificationType.Content;
+
+                _oneSignalPushNotificationService.SendNotificationAsync("Thích", content, commentCreateModel.SubscriptionId);
+            }
+            
 
             var result = _mapper.Map<CommentModel>(comment);
             return new ResponseDataModel<CommentModel>()

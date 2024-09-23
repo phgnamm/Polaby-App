@@ -7,7 +7,6 @@ using Microsoft.OpenApi.Models;
 using Polaby.Repositories;
 using Polaby.Repositories.Common;
 using System.Text;
-using Polaby.API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -111,6 +110,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSignalR();
 
+//builder.Services.RegisterCorePush();
+
 var app = builder.Build();
 
 // Allow CORS
@@ -141,7 +142,5 @@ app.UseAuthorization();
 app.UseMiddleware<AccountStatusMiddleware>();
 
 app.MapControllers();
-
-app.MapHub<NotificationHub>("/notification");
 
 app.Run(); 
