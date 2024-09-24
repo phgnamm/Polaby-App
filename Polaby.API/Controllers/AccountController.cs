@@ -201,5 +201,25 @@ namespace Polaby.API.Controllers
                 return BadRequest(ex);
             }
         }
+        
+        // [Authorize(Roles = "User")]
+        [HttpPost("{id}/subscription")]
+        public async Task<IActionResult> Subscription(Guid id, [FromBody] AccountCreateSubscriptionModel model)
+        {
+            try
+            {
+                var result = await _accountService.Subscription(id, model);
+                if (result.Status)
+                {
+                    return Ok(result);
+                }
+
+                return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

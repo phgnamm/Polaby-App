@@ -32,6 +32,8 @@
         ISafeFoodRepository SafeFoodRepository { get; }
         IIngredientSearchRepository IngredientSearchRepository { get; }
         IIngredientSearchNutrientRepository IngredientSearchNutrientRepository { get; }
+        ISubscriptionFormRepository SubscriptionFormRepository { get; }
+        ITransactionRepository TransactionRepository { get; }
 
         public Task<int> SaveChangeAsync();
     }

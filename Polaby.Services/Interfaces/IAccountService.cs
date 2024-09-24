@@ -29,5 +29,6 @@ namespace Polaby.Services.Interfaces
 		Task<ResponseModel> RestoreAccount(Guid id);
         Task<ResponseModel> CheckPassword(Guid id, AccountCheckPasswordModel accountCheckPasswordModel);
         Task<ResponseModel> ExpertCreatePassword(AccountExpertCreatePassword accountExpertCreatePassword);
+        Task<ResponseModel> Subscription(Guid id, AccountCreateSubscriptionModel accountCreateSubscriptionModel);
     }
 }

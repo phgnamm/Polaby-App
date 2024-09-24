@@ -55,9 +55,16 @@ namespace Polaby.API
             // Dashboard
             services.AddScoped<IDashboardService, DashboardService>();
             
+            // Transaction
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
+            
             // WeeklyPost
             services.AddScoped<IWeeklyPostService, WeeklyPostService>();
             services.AddScoped<IWeeklyPostRepository, WeeklyPostRepository>();
+            
+            // SubscriptionForm
+            services.AddScoped<ISubscriptionFormService, SubscriptionFormService>();
+            services.AddScoped<ISubscriptionFormRepository, SubscriptionFormRepository>();
 
             // ExpertRegistration
             services.AddScoped<IExpertRegistrationService, ExpertRegistrationService>();
