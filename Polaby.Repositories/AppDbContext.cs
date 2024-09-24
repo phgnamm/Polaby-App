@@ -57,8 +57,8 @@ namespace Polaby.Repositories
 
             modelBuilder.Entity<Dish>(entity =>
             {
-                entity.Property(x => x.Name).HasMaxLength(50);
-                entity.Property(x => x.Description).HasMaxLength(256);
+                entity.Property(x => x.Name);
+                entity.Property(x => x.Description);
             });
 
             modelBuilder.Entity<ExpertRegistration>(entity =>
