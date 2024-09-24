@@ -10,6 +10,8 @@ using Polaby.API.Middlewares;
 using Polaby.API.Utils;
 using Polaby.Repositories.Repositories;
 using Polaby.Services.Common;
+using Polaby.API.Helper;
+using Polaby.Services.Notification;
 
 namespace Polaby.API
 {
@@ -160,6 +162,9 @@ namespace Polaby.API
 
             //IngredientSearchNutrient
             services.AddScoped<IIngredientSearchNutrientRepository, IngredientSearchNutrientRepository>();
+
+            services.AddScoped<IOneSignalPushNotificationService, OneSignalPushNotificationService>();
+            services.AddHttpClient<OneSignalPushNotificationService>();
 
             return services;
         }

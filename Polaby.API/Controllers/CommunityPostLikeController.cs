@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Polaby.API.Helper;
 using Polaby.Services.Interfaces;
-using Polaby.Services.Models.CommentLikeModels;
 using Polaby.Services.Models.CommunityPostLikeModels;
 
 namespace Polaby.API.Controllers
@@ -10,10 +10,13 @@ namespace Polaby.API.Controllers
     public class CommunityPostLikeController : ControllerBase
     {
         private readonly ICommunityPostLikeService _communityPostLikeService;
+        private readonly OneSignalPushNotificationService _oneSignalPushNotificationService;
 
-        public CommunityPostLikeController(ICommunityPostLikeService communityPostLikeService)
+        public CommunityPostLikeController(ICommunityPostLikeService communityPostLikeService, 
+            OneSignalPushNotificationService oneSignalPushNotificationService)
         {
             _communityPostLikeService = communityPostLikeService;
+            _oneSignalPushNotificationService = oneSignalPushNotificationService;
         }
 
         [HttpPost()]
