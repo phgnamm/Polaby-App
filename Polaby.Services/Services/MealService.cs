@@ -46,7 +46,7 @@ namespace Polaby.Services.Services
                 .SelectMany(mealImportModel =>
                     mealImportModel.DishIds.Select(dishId => new MealDish
                     {
-                        MealId = addedMeals.Data.First(meal => meal.Name == mealImportModel.Name).Id,
+                        MealId = addedMeals.Data.Last(meal => meal.Name == mealImportModel.Name).Id,
                         DishId = dishId
                     })
                 ).ToList();
