@@ -1025,5 +1025,55 @@ namespace Polaby.Services.Services
                 Message = "Cannot create password",
             };
         }
+
+        public async Task<ResponseModel> Subscription(Guid id,
+            AccountCreateSubscriptionModel accountCreateSubscriptionModel)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+            {
+                return new ResponseModel
+                {
+                    Status = false,
+                    Message = "User not found"
+                };
+            }
+
+            user.IsSubscriptionActive = true;
+            user.SubscriptionStartDate = DateTime.Now;
+            user.SubscriptionEndDate =
+                DateTime.Now.AddMonths(accountCreateSubscriptionModel.SubscriptionType == SubscriptionType.Monthly
+                    ? 1
+                    : 12);
+
+            var transaction = new Transaction
+            {
+                User = user,
+                Code = user.Id.ToString() + "_" + accountCreateSubscriptionModel.SubscriptionType.ToString() + "_" +
+                       DateTime.Now.ToString("yyyyMMddHHmmss"),
+                Message = "Đăng ký gói",
+                TransactionType = TransactionType.Payment,
+                Status = TransactionStatus.Completed,
+                Amount = accountCreateSubscriptionModel.Price
+            };
+
+            await _unitOfWork.TransactionRepository.AddAsync(transaction);
+
+            if (await _unitOfWork.SaveChangeAsync() > 0)
+            {
+                return new ResponseModel
+                {
+                    Status = true,
+                    Message = "Subscription successfully",
+                };
+            }
+
+            return new ResponseModel
+            {
+                Status = false,
+                Message = "Cannot create subscription",
+            };
+        }
     }
 }

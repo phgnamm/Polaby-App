@@ -36,6 +36,7 @@ using Polaby.Services.Models.SafeFoodModels;
 using Polaby.Repositories.Models.SafeFoodModels;
 using Polaby.Services.Models.IngredientSearchModels;
 using Polaby.Repositories.Models.IngredientSearchModels;
+using Polaby.Services.Models.SubscriptionFormModels;
 using Polaby.Services.Notification;
 
 namespace Polaby.Services.Common
@@ -48,6 +49,9 @@ namespace Polaby.Services.Common
             CreateMap<AccountRegisterModel, Account>();
             CreateMap<GoogleUserInformationModel, Account>();
             CreateMap<AccountModel, Account>().ReverseMap();
+            
+            //WeeklyPost
+            CreateMap<SubscriptionFormCreateModel, SubscriptionForm>().ReverseMap();
 
             //WeeklyPost
             CreateMap<WeeklyPostModel, WeeklyPost>().ReverseMap();
