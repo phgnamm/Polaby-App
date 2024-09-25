@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Polaby.Repositories;
 using Polaby.Repositories.Common;
 using System.Text;
+using Net.payOS;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 //}
 //builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connection));
 
+PayOS payOS = new PayOS(builder.Configuration["PayOS:ClientId"] ?? throw new Exception("Cannot find environment"),
+    builder.Configuration["PayOS:APIKey"] ?? throw new Exception("Cannot find environment"),
+    builder.Configuration["PayOS:CheckSumKey"] ?? throw new Exception("Cannot find environment"));
+
+builder.Services.AddSingleton(payOS);
 
 // Add API Configuration
 builder.Services.AddAPIConfiguration();
@@ -140,4 +146,4 @@ app.UseMiddleware<AccountStatusMiddleware>();
 
 app.MapControllers();
 
-app.Run(); 
+app.Run();
