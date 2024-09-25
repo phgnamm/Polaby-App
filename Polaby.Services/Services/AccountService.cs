@@ -9,6 +9,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
+using Net.payOS;
+using Net.payOS.Types;
 using Polaby.Repositories.Enums;
 using Polaby.Repositories.Models.AccountModels;
 using Polaby.Services.Common;
@@ -18,6 +20,7 @@ using Polaby.Services.Models.AccountModels.Validation;
 using Polaby.Services.Models.CommonModels;
 using Polaby.Services.Models.ResponseModels;
 using Polaby.Services.Models.TokenModels;
+using Transaction = Polaby.Repositories.Entities.Transaction;
 
 namespace Polaby.Services.Services
 {
@@ -29,9 +32,10 @@ namespace Polaby.Services.Services
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
         private readonly IClaimsService _claimsService;
+        private readonly PayOS _payOS;
 
         public AccountService(UserManager<Account> userManager, IUnitOfWork unitOfWork, IMapper mapper,
-            IConfiguration configuration, IEmailService emailService, IClaimsService claimsService)
+            IConfiguration configuration, IEmailService emailService, IClaimsService claimsService, PayOS payOS)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
@@ -39,6 +43,7 @@ namespace Polaby.Services.Services
             _configuration = configuration;
             _emailService = emailService;
             _claimsService = claimsService;
+            _payOS = payOS;
         }
 
         public async Task<ResponseModel> Register(AccountRegisterModel accountRegisterModel)
@@ -1008,6 +1013,7 @@ namespace Polaby.Services.Services
             var result = await _userManager.ResetPasswordAsync(user, token, accountExpertCreatePassword.Password);
 
             user.EmailConfirmed = true;
+            user.VerificationCode = null;
             await _userManager.UpdateAsync(user);
 
             if (result.Succeeded)
@@ -1026,10 +1032,70 @@ namespace Polaby.Services.Services
             };
         }
 
-        public async Task<ResponseModel> Subscription(Guid id,
-            AccountCreateSubscriptionModel accountCreateSubscriptionModel)
+        public async Task<ResponseDataModel<CreatePaymentResult>> CreatePayment(AccountCreatePaymentModel model)
         {
-            var user = await _userManager.FindByIdAsync(id.ToString());
+            var user = await _userManager.FindByNameAsync(model.Email);
+
+            if (user != null)
+            {
+                if (user.IsDeleted)
+                {
+                    return new ResponseDataModel<CreatePaymentResult>
+                    {
+                        Status = false,
+                        Message = "Account has been deleted"
+                    };
+                }
+
+                if (await _userManager.CheckPasswordAsync(user, model.Password))
+                {
+                    if (user.IsSubscriptionActive)
+                    {
+                        return new ResponseDataModel<CreatePaymentResult>
+                        {
+                            Status = false,
+                            Message = "Account subscription is already active"
+                        };
+                    }
+                    
+                    // Payment
+                    int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
+                    ItemData item = new ItemData("Polaby Nâng cao (" + model.SubscriptionType.ToString() + ")", 1,
+                        49000);
+                    List<ItemData> items = new List<ItemData>();
+                    items.Add(item);
+
+                    _ = int.TryParse(_configuration["PayOS:MonthlyPrice"],
+                        out int monthlyPrice);
+                    
+                    user.VerificationCode = AuthenticationTools.GenerateVerificationCode(6);
+                    await _userManager.UpdateAsync(user);
+
+                    PaymentData paymentData = new PaymentData(orderCode, monthlyPrice,
+                        "Polaby Nâng cao (" + model.SubscriptionType.ToString() + ")", items,
+                        model.CancelUrl,
+                        $"{_configuration["OAuth2:Server:RedirectURI"]}/nguoi-dung/nang-cap-tai-khoan?email={user.Email}&verificationCode={user.VerificationCode}");
+                    CreatePaymentResult createPayment = await _payOS.createPaymentLink(paymentData);
+
+                    return new ResponseDataModel<CreatePaymentResult>
+                    {
+                        Status = true,
+                        Message = "Create payment successfully",
+                        Data = createPayment
+                    };
+                }
+            }
+
+            return new ResponseDataModel<CreatePaymentResult>
+            {
+                Status = false,
+                Message = "User not found"
+            };
+        }
+
+        public async Task<ResponseModel> UpdateSubscription(AccountUpdateSubscriptionModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user == null)
             {
@@ -1040,22 +1106,33 @@ namespace Polaby.Services.Services
                 };
             }
 
+            if (model.VerificationCode != user.VerificationCode)
+            {
+                return new ResponseModel
+                {
+                    Status = false,
+                    Message = "Invalid verification code"
+                };
+            }
+
+            //Update database
+            user.VerificationCode = null;
             user.IsSubscriptionActive = true;
             user.SubscriptionStartDate = DateTime.Now;
             user.SubscriptionEndDate =
-                DateTime.Now.AddMonths(accountCreateSubscriptionModel.SubscriptionType == SubscriptionType.Monthly
-                    ? 1
-                    : 12);
+                DateTime.Now.AddMonths(1);
+
+            _ = int.TryParse(_configuration["PayOS:MonthlyPrice"],
+                out int monthlyPrice);
 
             var transaction = new Transaction
             {
                 User = user,
-                Code = user.Id.ToString() + "_" + accountCreateSubscriptionModel.SubscriptionType.ToString() + "_" +
-                       DateTime.Now.ToString("yyyyMMddHHmmss"),
+                Code = user.Id.ToString() + "_" + DateTime.Now.ToString("yyyyMMddHHmmss"),
                 Message = "Đăng ký gói",
                 TransactionType = TransactionType.Payment,
                 Status = TransactionStatus.Completed,
-                Amount = accountCreateSubscriptionModel.Price
+                Amount = monthlyPrice
             };
 
             await _unitOfWork.TransactionRepository.AddAsync(transaction);
